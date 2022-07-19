@@ -1,7 +1,7 @@
 import { openDatabase, SQLTransaction, SQLError } from 'expo-sqlite'
 import { SQLColumnInfo, SQLIndexInfo } from './types'
 
-const db = openDatabase('rn-template-db10.sqlite')
+const db = openDatabase('Sadhana-db10.sqlite')
 
 export const tableInfo = (tables: string[]): Promise<SQLColumnInfo[][]> =>
 	pragma(...tables.map((t) => `table_info(${t});`))

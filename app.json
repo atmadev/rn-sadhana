@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "rn-template",
-    "slug": "rn-template",
-    "version": "1.0.0",
+    "name": "Sadhana",
+    "slug": "Sadhana",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
