@@ -16,6 +16,7 @@ import { TabTwo } from 'screens/TabTwoScreen'
 import { setNavigation } from './utils'
 import { store } from 'store'
 import { observer } from 'mobx-react-lite'
+import { LoginScreen } from 'screens/LoginScreen'
 
 export const Navigation = observer(() => {
 	return (
@@ -23,21 +24,36 @@ export const Navigation = observer(() => {
 			ref={setNavigation}
 			theme={store.colorScheme === 'dark' ? DarkTheme : DefaultTheme}
 		>
-			<Stack.Navigator>
-				<Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-				<Stack.Group screenOptions={{ presentation: 'modal' }}>
-					<Stack.Screen {...ModalExample.Screen} />
-				</Stack.Group>
-			</Stack.Navigator>
+			<RootStack.Navigator screenOptions={{ headerShown: false }}>
+				<RootStack.Screen name="MainStack" component={MainStackContainer} />
+				<RootStack.Screen
+					name="Root"
+					component={BottomTabNavigator}
+					options={{ headerShown: false }}
+				/>
+				<RootStack.Group screenOptions={{ presentation: 'modal' }}>
+					<RootStack.Screen {...ModalExample.Screen} />
+				</RootStack.Group>
+			</RootStack.Navigator>
 		</NavigationContainer>
 	)
 })
+
+// TODO: change blank component to the splash
+export const MainStackContainer = () => (
+	<MainStack.Navigator screenOptions={{ headerShown: false }}>
+		{/* <MainStack.Screen name="Init" component={BlankComponent} /> */}
+		<MainStack.Screen {...LoginScreen.Screen} />
+	</MainStack.Navigator>
+)
 
 /**
  * A root stack navigator is often used for displaying modals on top of all other content.
  * https://reactnavigation.org/docs/modal
  */
-const Stack = createNativeStackNavigator()
+const RootStack = createNativeStackNavigator()
+
+const MainStack = createNativeStackNavigator()
 
 /**
  * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
