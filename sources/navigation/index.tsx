@@ -10,10 +10,8 @@ import * as React from 'react'
 import { Pressable, Text } from 'react-native'
 
 import { ModalExample } from 'screens/ModalExample'
-import { SQLiteTestLab } from 'screens/SQLiteTestLab'
-import { SQLiteSearchProfile } from 'screens/SQLiteTestLab/SearchProfileScreen'
 import { TabTwo } from 'screens/TabTwoScreen'
-import { setNavigation } from './utils'
+import { BlankComponent, setNavigation } from './utils'
 import { store } from 'store'
 import { observer } from 'mobx-react-lite'
 import { LoginScreen } from 'screens/LoginScreen'
@@ -84,7 +82,7 @@ const BottomTabNavigator = () => {
 				headerShown: false,
 			}}
 		>
-			<BottomTab.Screen name="TabOne" component={SQLStackNavigator} options={options} />
+			<BottomTab.Screen name="TabOne" component={BlankComponent} options={options} />
 			<BottomTab.Screen
 				{...TabTwo.Screen}
 				options={{
@@ -95,15 +93,6 @@ const BottomTabNavigator = () => {
 		</BottomTab.Navigator>
 	)
 }
-
-const SQLStack = createNativeStackNavigator()
-
-const SQLStackNavigator = () => (
-	<SQLStack.Navigator>
-		<SQLStack.Screen {...SQLiteTestLab.Screen} />
-		<SQLStack.Screen {...SQLiteSearchProfile.Screen} />
-	</SQLStack.Navigator>
-)
 
 const pressedStyle = ({ pressed }: { pressed: boolean }) => ({
 	opacity: pressed ? 0.5 : 1,

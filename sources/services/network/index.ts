@@ -12,10 +12,7 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 		}
 	},
 	response?: { [shapeName: string]: ResponseShape },
-): Promise<
-	| { success: true; data: Response<Shaped<ResponseShape>> }
-	| { success: false; error: { name: string; message: string } }
-> => {
+): Promise<Response<Shaped<ResponseShape>>> => {
 	console.log('request', method, url, request?.body?.data)
 	let body
 

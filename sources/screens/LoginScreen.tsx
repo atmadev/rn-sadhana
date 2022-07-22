@@ -35,6 +35,7 @@ import {
 } from 'constants/index'
 import * as Haptics from 'expo-haptics'
 import { createScreen } from 'screens/utils'
+import { login } from 'logic'
 
 let keyboardMarginBottom = 0
 const formHorizontalOffset = new Animated.Value(0)
@@ -65,23 +66,31 @@ export const LoginScreen = createScreen('Login', () => {
 		return () => listener.remove()
 	}, [isKeyboardVisible])
 
-	const login = useCallback(() => {
+	const loginCallback = useCallback(() => {
 		if (!isInputValid) return
 		setLoading(true)
 		setError(null)
 
-		setTimeout(() => {
-			Animated.timing(formHorizontalOffset, {
-				toValue: 1,
-				useNativeDriver: true,
-				duration: 600,
-				easing: Easing.linear,
-			}).start(() => formHorizontalOffset.setValue(0))
+		login(email, password)
+			.then((result) => {
+				if (result.success) {
+					Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+					// TODO:
+					// loading sadhana here
+					// add login store to change message text reactively
+				} else {
+					Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+					Animated.timing(formHorizontalOffset, {
+						toValue: 1,
+						useNativeDriver: true,
+						duration: 600,
+						easing: Easing.linear,
+					}).start(() => formHorizontalOffset.setValue(0))
 
-			Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-			setLoading(false)
-			setError('Неправильный пароль')
-		}, 1000)
+					setError(result.message)
+				}
+			})
+			.finally(() => setLoading(false))
 	}, [isInputValid, setLoading, setError])
 
 	const validate = useCallback(() => {
@@ -153,14 +162,14 @@ export const LoginScreen = createScreen('Login', () => {
 								keyboardAppearance="dark"
 								returnKeyType="done"
 								enablesReturnKeyAutomatically
-								onSubmitEditing={login}
+								onSubmitEditing={loginCallback}
 								onChangeText={onPasswordChange}
 							/>
 							<TouchableHighlight
 								style={{ ...styles.button, backgroundColor: buttonDisabled ? GRAY_LIGHT : ORANGE }}
 								underlayColor={ORANGE_LIGHT}
 								activeOpacity={1}
-								onPress={login}
+								onPress={loginCallback}
 								disabled={buttonDisabled}
 							>
 								{isLoading ? (

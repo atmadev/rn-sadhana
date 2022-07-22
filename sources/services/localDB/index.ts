@@ -1,18 +1,15 @@
+import { Tokens } from 'services/network/vsShapes'
 import { Profile, ProfileConfig } from 'shared/types'
-import { PersistentShaped, ShapeName } from 'shared/types/primitives'
-import { styleLog } from 'shared/utils'
+import { PersistentShaped, Shaped, ShapeName } from 'shared/types/primitives'
+import { shape } from 'shared/types/shapeTool'
 import { setupDB, SQLDB } from './sqlite'
 import { SQLSchema } from './sqlite/types'
-import { runTest as _runTest } from './tests'
-import { testMigratedData } from './tests/migrated'
 
 const useShapes = <SN extends ShapeName>(...names: SN[]) => names
 
-const usedShapeNames = useShapes('Entry', 'Profile', 'ProfileConfig', 'TestEntity')
-const usedShapeNames2 = useShapes('TestEntity2')
+const usedShapeNames = useShapes('Entry', 'Profile', 'ProfileConfig', 'KeyValue')
 
 type UsedShapeNames = typeof usedShapeNames[number]
-type UsedShapeNames2 = typeof usedShapeNames2[number]
 
 const schema: SQLSchema<UsedShapeNames> = {
 	Profile: {},
@@ -21,27 +18,10 @@ const schema: SQLSchema<UsedShapeNames> = {
 		unique: [['uid', 'd DESC']],
 		index: [['uid', 'dateSynced']],
 	},
-	TestEntity: {
-		index: [['number'], ['nullable'], ['boolean'], ['boolean', 'number']],
-		columnNamesHistory: {
-			boolean: ['bool'],
-		},
-		tableNamesHistory: ['TestEntity2'],
-	},
-}
-
-const schema2: SQLSchema<UsedShapeNames2> = {
-	TestEntity2: {
-		index: [['number'], ['bool'], ['bool', 'number'], ['newField DESC']],
-		columnNamesHistory: {
-			bool: ['boolean'],
-		},
-		tableNamesHistory: ['TestEntity'],
-	},
+	KeyValue: {},
 }
 
 let db: SQLDB<UsedShapeNames>
-let db2: SQLDB<UsedShapeNames2>
 
 type Entry = PersistentShaped<'Entry'>
 
@@ -95,19 +75,34 @@ export const entriesToSync = (uid: string) =>
 		.or('dateSynced', '<', 'du', true)
 		.fetch()
 
-export const runTest = async () => {
-	try {
-		if (!db) await initLocalDB()
+const LocalStoreShape = shape({
+	tokens: Tokens,
+})
 
-		await _runTest(db.table('TestEntity'))
-		db2 = await setupDB(schema2)
-		await testMigratedData(db2.table('TestEntity2'))
+type LocalStore = Shaped<typeof LocalStoreShape>
 
-		db = await setupDB(schema)
-		await _runTest(db.table('TestEntity'))
+export const setValueToLocalStore = <K extends keyof LocalStore, V extends LocalStore[K]>(
+	key: K,
+	value: V,
+) => db.table('KeyValue').insert({ key, value })
 
-		console.log(styleLog('bold', '🎉 Test success!'))
-	} catch (e) {
-		console.log(styleLog('red', '⛔️ Test error:'), e)
-	}
+export const getValueFromLocalStore = async <K extends keyof LocalStore, V extends LocalStore[K]>(
+	key: K,
+): Promise<V | null> => {
+	const [{ value }] = await db.table('KeyValue').select('value').match({ key }).fetch()
+	return value ?? null
 }
+
+export const setObjectToLocalStore = <K extends keyof LocalStore, V extends LocalStore[K]>(
+	key: K,
+	object: V,
+) => db.table('KeyValue').insert({ key, object })
+
+export const getObjectFromLocalStore = async <K extends keyof LocalStore, V extends LocalStore[K]>(
+	key: K,
+) => {
+	const [{ object }] = await db.table('KeyValue').select('object').match({ key }).fetch()
+	return (object ?? null) as V | null
+}
+
+export const clearLocalStore = () => db.table('KeyValue').delete().run()

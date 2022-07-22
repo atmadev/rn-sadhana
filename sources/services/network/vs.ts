@@ -1,4 +1,4 @@
-import { Shaped, Shape } from 'shared/types/primitives'
+import { Shaped, Shape, FALSE } from 'shared/types/primitives'
 import { request, RequestMethod } from '.'
 import {
 	EntriesRequest,
@@ -28,9 +28,12 @@ export const login = async (username: string, password: string) => {
 			},
 			{ Tokens },
 		)
-		console.log('result', result)
+		console.log({ result })
+
+		return result
 	} catch (e) {
 		console.log('login error', e)
+		return { success: FALSE, error: { name: 'Error', message: 'Please, try again' } }
 	}
 }
 

@@ -59,22 +59,8 @@ export const Entry = shape({
 	uid: r(string, 'local'),
 })
 
-export const TestEntity = shape({
-	id: p(number),
-	number: r(number),
-	string: r(string),
-	boolean: r(boolean),
-	nullable: TRUE,
-	word: string,
-	changedType: string,
-})
-
-export const TestEntity2 = shape({
-	id: p(number),
-	number: r(number),
-	string: r(string),
-	bool: r(boolean),
-	nullable: TRUE,
-	newField: string,
-	changedType: number,
+export const KeyValue = shape({
+	key: p(string),
+	value: any,
+	object: {},
 })
