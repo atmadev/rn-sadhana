@@ -1,4 +1,4 @@
-import { Tokens } from 'services/network/vsShapes'
+import { sTokens } from 'services/network/vsShapes'
 import { Profile, ProfileConfig } from 'shared/types'
 import { PersistentShaped, Shaped, ShapeName } from 'shared/types/primitives'
 import { shape } from 'shared/types/shapeTool'
@@ -76,10 +76,21 @@ export const entriesToSync = (uid: string) =>
 		.fetch()
 
 const LocalStoreShape = shape({
-	tokens: Tokens,
+	tokens: sTokens,
 })
 
 type LocalStore = Shaped<typeof LocalStoreShape>
+
+export const fetchLocalStore = async () => {
+	const result = await db.table('KeyValue').select().fetch()
+
+	const localStore: LocalStore = {}
+	result.forEach((row) => {
+		// @ts-ignore
+		localStore[row.key] = row.value ?? row.object
+	})
+	return localStore
+}
 
 export const setValueToLocalStore = <K extends keyof LocalStore, V extends LocalStore[K]>(
 	key: K,

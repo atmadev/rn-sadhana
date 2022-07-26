@@ -8,7 +8,7 @@ import {
 	login,
 	me,
 	postEntry,
-	refreshToken,
+	refreshTokens,
 	updateEntry,
 	updateOptions,
 } from 'services/network/vs'
@@ -17,7 +17,7 @@ import { Button } from 'react-native'
 export const TabTwo = createScreen('TabTwo', () => {
 	const loginCallback = React.useCallback(() => login('sanio91@ya.ru', 'Ale248Vai'), [])
 	const meCallback = React.useCallback(() => me(), [])
-	const refreshTokenCallback = React.useCallback(() => refreshToken(), [])
+	const refreshTokenCallback = React.useCallback(() => refreshTokens(), [])
 	const entriesCallback = React.useCallback(
 		() =>
 			entries('398', {

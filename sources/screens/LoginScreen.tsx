@@ -1,16 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import {
-	ActivityIndicator,
-	Animated,
-	Easing,
-	Image,
-	Keyboard,
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
-	ViewStyle,
-} from 'react-native'
+// prettier-ignore
+import { ActivityIndicator, Animated, Easing, Image, Keyboard, StyleSheet, Text, TextInput, View, ViewStyle } from 'react-native'
 import {
 	TouchableHighlight,
 	TouchableOpacity,
@@ -35,7 +25,7 @@ import {
 } from 'constants/index'
 import * as Haptics from 'expo-haptics'
 import { createScreen } from 'screens/utils'
-import { login } from 'logic'
+import { login } from 'logic/auth'
 
 let keyboardMarginBottom = 0
 const formHorizontalOffset = new Animated.Value(0)

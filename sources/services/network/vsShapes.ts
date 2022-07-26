@@ -1,13 +1,15 @@
 // prettier-ignore
 import {  r,  shape } from 'shared/types/shapeTool'
-import { primitiveTypes } from 'shared/types/primitives'
+import { Expand, primitiveTypes, Shaped } from 'shared/types/primitives'
 
 const { string, boolean, number } = primitiveTypes
 
-export const Tokens = shape({
+export const sTokens = shape({
 	access_token: r(string),
 	refresh_token: r(string),
 })
+
+export type Tokens = Expand<Shaped<typeof sTokens>>
 
 export const LoginParams = shape({
 	username: r(string),

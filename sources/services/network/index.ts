@@ -1,4 +1,4 @@
-import { FALSE, Shape, Shaped, TRUE } from 'shared/types/primitives'
+import { Expand, FALSE, Shape, Shaped, TRUE } from 'shared/types/primitives'
 import { validateObjectWithShape } from 'shared/types/utils'
 
 export const request = async <ParamsShape extends Shape, ResponseShape extends Shape>(
@@ -12,7 +12,7 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 		}
 	},
 	response?: { [shapeName: string]: ResponseShape },
-): Promise<Response<Shaped<ResponseShape>>> => {
+): Promise<Expand<Response<Shaped<ResponseShape>>>> => {
 	console.log('request', method, url, request?.body?.data)
 	let body
 
@@ -55,7 +55,7 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 }
 
 type Response<T> =
-	| { success: true; data: T }
+	| { success: true; data: Expand<T> }
 	| {
 			success: false
 			error: {

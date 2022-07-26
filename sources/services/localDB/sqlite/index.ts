@@ -44,9 +44,9 @@ export class Table<TableName extends ShapeName, Object = PersistentShaped<TableN
 
 	select = <
 		SelectedColumn extends keyof PersistentShaped<TableName>,
-		SelectedColumns extends (keyof PersistentShaped<TableName>)[],
+		AllColumns extends (keyof PersistentShaped<TableName>)[],
 	>(
-		...columns: SelectedColumns | SelectedColumn[]
+		...columns: SelectedColumn[] | AllColumns
 	) => new SelectQuery(this.name, columns as SelectedColumn[])
 
 	aggregate = <Columns extends AggregateItem<PersistentShaped<TableName>>[]>(...columns: Columns) =>

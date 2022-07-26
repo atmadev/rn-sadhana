@@ -1,19 +1,8 @@
-import { Shaped, Shape, FALSE } from 'shared/types/primitives'
+import { Shaped, Shape } from 'shared/types/primitives'
+import { store } from 'store'
 import { request, RequestMethod } from '.'
-import {
-	EntriesRequest,
-	LoginParams,
-	PostEntry,
-	EntryID,
-	RefreshTokenParams,
-	Tokens,
-	User,
-	UpdateEntry,
-	EntriesResponse,
-} from './vsShapes'
-
-const access_token = 'x7muk7kuwnwpmkw5usybqt5o6gcoaxnls2tko5yw'
-const refresh_token = 'l682l8taatpggfaxlgtbkvc4qs3cwuqbxbyvo9jz'
+// prettier-ignore
+import { EntriesRequest, LoginParams, PostEntry, EntryID, RefreshTokenParams, sTokens, User, UpdateEntry, EntriesResponse } from './vsShapes'
 
 export const login = async (username: string, password: string) => {
 	try {
@@ -26,14 +15,14 @@ export const login = async (username: string, password: string) => {
 					data: { username, password, grant_type: 'password', client_id, client_secret },
 				},
 			},
-			{ Tokens },
+			{ Tokens: sTokens },
 		)
 		console.log({ result })
 
 		return result
 	} catch (e) {
 		console.log('login error', e)
-		return { success: FALSE, error: { name: 'Error', message: 'Please, try again' } }
+		throw e
 	}
 }
 
@@ -49,7 +38,7 @@ export const vsRequest = async <ParamsShape extends Shape, ResponseShape extends
 	return request(
 		method,
 		'https://vaishnavaseva.net/vs-api/v2/sadhana/' + path,
-		{ body, headers: { Authorization: 'Bearer ' + access_token } },
+		{ body, headers: { Authorization: 'Bearer ' + store.tokens!.access_token } },
 		response,
 	)
 }
@@ -61,10 +50,11 @@ export const me = async () => {
 		return result
 	} catch (e) {
 		console.log('me error', e)
+		throw e
 	}
 }
 
-export const refreshToken = async () => {
+export const refreshTokens = async () => {
 	try {
 		const result = await request(
 			'POST',
@@ -74,20 +64,21 @@ export const refreshToken = async () => {
 					shape: { RefreshTokenParams },
 					data: {
 						grant_type: 'refresh_token',
-						refresh_token,
+						refresh_token: store.tokens!.refresh_token,
 						client_id,
 						client_secret,
 					},
 				},
 			},
 			{
-				Tokens,
+				sTokens,
 			},
 		)
 		console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('refreshToken error', e)
+		throw e
 	}
 }
 
@@ -103,6 +94,7 @@ export const entries = async (userId: string, data: Shaped<typeof EntriesRequest
 		return result
 	} catch (e) {
 		console.log('entries error', e)
+		throw e
 	}
 }
 
@@ -118,6 +110,7 @@ export const postEntry = async (userId: string, data: Shaped<typeof PostEntry>) 
 		return result
 	} catch (e) {
 		console.log('postEntry error', e)
+		throw e
 	}
 }
 
@@ -131,6 +124,7 @@ export const updateEntry = async (userId: string, data: Shaped<typeof UpdateEntr
 		return result
 	} catch (e) {
 		console.log('postEntry error', e)
+		throw e
 	}
 }
 
@@ -144,6 +138,7 @@ export const updateOptions = async (data: Shaped<typeof User>) => {
 		return result
 	} catch (e) {
 		console.log('updateUser error', e)
+		throw e
 	}
 }
 

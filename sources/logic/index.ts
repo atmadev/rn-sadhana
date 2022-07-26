@@ -1,8 +1,6 @@
 import * as SplashScreen from 'expo-splash-screen'
-import { initLocalDB, setObjectToLocalStore } from 'services/localDB'
+import { initLocalDB } from 'services/localDB'
 import { store } from 'store'
-import * as vs from 'services/network/vs'
-import { FALSE, TRUE } from 'shared/types/primitives'
 
 export const initApp = async () => {
 	try {
@@ -10,7 +8,7 @@ export const initApp = async () => {
 
 		// Load fonts
 		await Promise.all([initLocalDB()])
-
+		await store.loadFromDisk()
 		store.setInited()
 	} catch (e) {
 		// We might want to provide this error information to an error reporting service
@@ -18,14 +16,4 @@ export const initApp = async () => {
 	} finally {
 		SplashScreen.hideAsync()
 	}
-}
-
-export const login = async (username: string, password: string) => {
-	const result = await vs.login(username, password)
-	if (result.success) {
-		setObjectToLocalStore('tokens', result.data)
-		return { success: TRUE }
-	}
-
-	return { success: FALSE, message: result.error.message }
 }

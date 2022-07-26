@@ -40,7 +40,7 @@ export const Navigation = observer(() => {
 // TODO: change blank component to the splash
 export const MainStackContainer = () => (
 	<MainStack.Navigator screenOptions={{ headerShown: false }}>
-		{/* <MainStack.Screen name="Init" component={BlankComponent} /> */}
+		<MainStack.Screen name="Init" component={BlankComponent} />
 		<MainStack.Screen {...LoginScreen.Screen} />
 	</MainStack.Navigator>
 )
