@@ -1,5 +1,4 @@
 import { ExpandDeep, ShapedNamed } from './primitives'
 
-export type Profile = ExpandDeep<ShapedNamed<'Profile'>>
-export type ProfileConfig = ExpandDeep<ShapedNamed<'ProfileConfig'>>
+export type User = ExpandDeep<ShapedNamed<'User'>>
 export type Entry = ExpandDeep<ShapedNamed<'Entry'>>

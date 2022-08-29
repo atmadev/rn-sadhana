@@ -15,6 +15,7 @@ import { BlankComponent, setNavigation } from './utils'
 import { store } from 'store'
 import { observer } from 'mobx-react-lite'
 import { LoginScreen } from 'screens/LoginScreen'
+import { MyGraphScreen } from 'screens/graph/MyScreen'
 
 export const Navigation = observer(() => {
 	return (
@@ -42,6 +43,7 @@ export const MainStackContainer = () => (
 	<MainStack.Navigator screenOptions={{ headerShown: false }}>
 		<MainStack.Screen name="Init" component={BlankComponent} />
 		<MainStack.Screen {...LoginScreen.Screen} />
+		<MainStack.Screen {...MyGraphScreen.Screen} />
 	</MainStack.Navigator>
 )
 

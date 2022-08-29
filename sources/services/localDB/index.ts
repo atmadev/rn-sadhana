@@ -1,78 +1,57 @@
 import { sTokens } from 'services/network/vsShapes'
-import { Profile, ProfileConfig } from 'shared/types'
-import { PersistentShaped, Shaped, ShapeName } from 'shared/types/primitives'
+import { User, Entry } from 'shared/types'
+import { Shaped, ShapeName } from 'shared/types/primitives'
 import { shape } from 'shared/types/shapeTool'
 import { setupDB, SQLDB } from './sqlite'
 import { SQLSchema } from './sqlite/types'
 
 const useShapes = <SN extends ShapeName>(...names: SN[]) => names
 
-const usedShapeNames = useShapes('Entry', 'Profile', 'ProfileConfig', 'KeyValue')
+const usedShapeNames = useShapes('User', 'Entry', 'KeyValue')
 
 type UsedShapeNames = typeof usedShapeNames[number]
 
 const schema: SQLSchema<UsedShapeNames> = {
-	Profile: {},
-	ProfileConfig: {},
+	User: {},
 	Entry: {
-		unique: [['uid', 'd DESC']],
-		index: [['uid', 'dateSynced']],
+		unique: [['user_id', 'date']],
+		index: [['user_id', 'dateSynced']],
 	},
 	KeyValue: {},
 }
 
 let db: SQLDB<UsedShapeNames>
 
-type Entry = PersistentShaped<'Entry'>
-
 export const initLocalDB = async () => (db = await setupDB(schema))
 
-export const insertProfiles = (profiles: Profile[]) => db.table('Profile').insert(...profiles)
-export const importProfileConfigs = async (configs: ProfileConfig[]) => {
-	const mappedConfigs = (await db.table('Profile').select('uid').fetch()).map((value, index) => {
-		const config = configs[index]
-		config.uid = value.uid
-		return config
-	})
-
-	return db.table('ProfileConfig').insert(...mappedConfigs)
-}
-
-// prettier-ignore
-export const searchProfile = (searchString: string) =>
-	db.table('Profile')
-		.select('uid', 'firstName', 'lastName', 'spiritualName')
-		.search(searchString, 'firstName', 'lastName', 'spiritualName', 'bio')
-		.orderBy('spiritualName NULLS LAST', 'firstName', 'lastName')
-		.fetch(30)
+export const insertUsers = (...users: User[]) => db.table('User').insert(...users)
 
 export const insertEntries = (entries: Entry[]) => db.table('Entry').insert(...entries)
-export const importEntries = async (entries: Entry[]) => {
-	const mappedEntries = (await db.table('Profile').select('uid').fetch()).flatMap(
-		(value, index) => {
-			const tenEntries = entries.slice(index * 10, index * 10 + 9)
-			tenEntries.forEach((e) => (e.uid = value.uid))
-			return tenEntries
-		},
-	)
 
-	return db.table('Entry').insert(...mappedEntries)
-}
-
-export const updateEntry = (uid: string, d: number, entry: Partial<Omit<Entry, 'uid' | 'd'>>) =>
-	db.table('Entry').update(entry).match({ uid, d }).run()
+export const updateEntry = (
+	user_id: string,
+	date: string,
+	entry: Partial<Omit<Entry, 'user_id' | 'date' | 'dateSynced' | 'created_at'>>,
+) =>
+	db
+		.table('Entry')
+		// TODO: format current date
+		.update({ ...entry, updated_at: 'Current date' })
+		.match({ user_id, date })
+		.run()
 
 /*
 export const entries = (uid: string, month: string) =>
 	db.table('Entry').select().match({ uid }).where('d', '>', ).orderBy('d DESC').fetch()
 */
+
 // prettier-ignore
-export const entriesToSync = (uid: string) =>
+export const entriesToSync = (user_id: string) =>
 	db.table('Entry')
 		.select()
-		.match({ uid })
+		.match({ user_id })
 		.where('dateSynced', 'IS', 'NULL')
-		.or('dateSynced', '<', 'du', true)
+		.or('dateSynced', '<', 'updated_at', true)
 		.fetch()
 
 const LocalStoreShape = shape({
@@ -114,6 +93,10 @@ export const getObjectFromLocalStore = async <K extends keyof LocalStore, V exte
 ) => {
 	const [{ object }] = await db.table('KeyValue').select('object').match({ key }).fetch()
 	return (object ?? null) as V | null
+}
+
+export const removeItemFromLocalStore = async <K extends keyof LocalStore>(key: K) => {
+	return db.table('KeyValue').delete().where('key', '=', key).run()
 }
 
 export const clearLocalStore = () => db.table('KeyValue').delete().run()

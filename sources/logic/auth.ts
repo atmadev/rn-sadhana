@@ -1,25 +1,10 @@
 import * as vs from 'services/network/vs'
+import * as db from 'services/localDB'
 import { FALSE, TRUE } from 'shared/types/primitives'
-import { LoginScreen } from 'screens/LoginScreen'
 import { store } from 'store'
-
-export const onAppStart = async () => {
-	try {
-		if (!store.tokens) {
-			LoginScreen.navigate()
-			return
-		}
-
-		const success = await vs.refreshTokens()
-		if (success) {
-			// TODO: show sadhana
-		} else {
-			LoginScreen.navigate()
-		}
-	} catch (e) {
-		LoginScreen.navigate()
-	}
-}
+import { saveSecure } from 'services/secureStore'
+import { myGraphStore } from 'store/MyGraphStore'
+import { MyGraphScreen } from 'screens/graph/MyScreen'
 
 export const login = async (username: string, password: string) => {
 	try {
@@ -29,8 +14,28 @@ export const login = async (username: string, password: string) => {
 		}
 
 		store.setTokens(result.data)
+		saveSecure('username', username)
+		saveSecure('password', password)
 
-		// TODO: load sadhana
+		const myResult = await vs.me()
+		if (myResult.success === false) {
+			return { success: FALSE, message: myResult.error.message }
+		}
+
+		const me = myResult.data
+		await db.insertUsers(me)
+
+		const entriesResult = await vs.entries(me.userid, {})
+
+		if (entriesResult.success === false) {
+			return { success: FALSE, message: "Can't load entries" }
+		}
+
+		const { entries } = entriesResult.data
+		await db.insertEntries(entries)
+		myGraphStore.setEntries(entries)
+
+		MyGraphScreen.navigate()
 
 		return { success: TRUE }
 	} catch (e) {

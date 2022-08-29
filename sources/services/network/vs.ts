@@ -1,8 +1,9 @@
 import { Shaped, Shape } from 'shared/types/primitives'
+import { User } from 'shared/types/shapes'
 import { store } from 'store'
 import { request, RequestMethod } from '.'
 // prettier-ignore
-import { EntriesRequest, LoginParams, PostEntry, EntryID, RefreshTokenParams, sTokens, User, UpdateEntry, EntriesResponse } from './vsShapes'
+import { MonthEntriesRequest, LoginParams, PostEntry, EntryID, RefreshTokenParams, sTokens, UpdateEntry, EntriesResponse, EntriesRequest } from './vsShapes'
 
 export const login = async (username: string, password: string) => {
 	try {
@@ -87,13 +88,29 @@ export const entries = async (userId: string, data: Shaped<typeof EntriesRequest
 		const result = await vsRequest(
 			'POST',
 			'userSadhanaEntries/' + userId,
-			{ shape: { EntriesRequest }, data },
+			{ shape: { EntriesRequest: EntriesRequest }, data },
 			{ EntriesResponse },
 		)
 		console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('entries error', e)
+		throw e
+	}
+}
+
+export const monthEntries = async (userId: string, data: Shaped<typeof MonthEntriesRequest>) => {
+	try {
+		const result = await vsRequest(
+			'POST',
+			'userSadhanaEntries/' + userId,
+			{ shape: { MonthEntriesRequest: MonthEntriesRequest }, data },
+			{ EntriesResponse },
+		)
+		console.log('result', result)
+		return result
+	} catch (e) {
+		console.log('monthEntries error', e)
 		throw e
 	}
 }

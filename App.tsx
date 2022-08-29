@@ -9,7 +9,7 @@ import { StatusBar } from 'expo-status-bar'
 import { store } from 'store'
 import { Navigation } from 'navigation'
 import { initApp } from 'logic'
-import { onAppStart } from 'logic/auth'
+import { onAppStart } from 'logic'
 
 const App = observer(() => {
 	useEffect(() => {

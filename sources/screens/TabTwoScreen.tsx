@@ -4,7 +4,7 @@ import { Text, View } from 'components/primitives'
 import { store } from 'store'
 import { createScreen, createStyles } from './utils'
 import {
-	entries,
+	monthEntries,
 	login,
 	me,
 	postEntry,
@@ -20,7 +20,7 @@ export const TabTwo = createScreen('TabTwo', () => {
 	const refreshTokenCallback = React.useCallback(() => refreshTokens(), [])
 	const entriesCallback = React.useCallback(
 		() =>
-			entries('398', {
+			monthEntries('398', {
 				year: 2021,
 				month: 12,
 			}),
