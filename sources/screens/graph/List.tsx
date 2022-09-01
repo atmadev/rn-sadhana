@@ -4,7 +4,7 @@ import { SectionList, View, Text } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { Entry } from 'shared/types'
 import { calendarStore } from 'store/CalendarStore'
-import { utcDateStringFromDate } from 'shared/dateUtil'
+import { utcYmdStringFromDate } from 'shared/dateUtil'
 
 interface Props {
 	entries: { [date: string]: Entry }
@@ -16,11 +16,12 @@ export const GraphList: FC<Props> = observer(({ entries }) => {
 	}, [])
 
 	const renderItem = useCallback(({ item }: { item: Date }) => {
-		const entry = entries[utcDateStringFromDate(item)]
+		const entry = entries[utcYmdStringFromDate(item)]
 		return (
 			<View>
 				<Text>
-					{item.getDate()}: {entry ? (entry.jcount_730 ?? '0') + (entry.jcount_1000 ?? '0') : '-'}
+					{item.getUTCDate()}:{' '}
+					{entry ? (entry.jcount_730 ?? '0') + (entry.jcount_1000 ?? '0') : '-'}
 				</Text>
 			</View>
 		)

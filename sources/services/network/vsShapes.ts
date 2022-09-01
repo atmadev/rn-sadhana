@@ -20,13 +20,6 @@ export const LoginParams = shape({
 	client_secret: r(string),
 })
 
-export const RefreshTokenParams = shape({
-	grant_type: r(string),
-	refresh_token: r(string),
-	client_id: r(string),
-	client_secret: r(string),
-})
-
 export const EntriesRequest = shape({
 	modified_since: string,
 })

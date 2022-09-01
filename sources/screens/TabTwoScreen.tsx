@@ -3,21 +3,12 @@ import * as React from 'react'
 import { Text, View } from 'components/primitives'
 import { store } from 'store'
 import { createScreen, createStyles } from './utils'
-import {
-	monthEntries,
-	login,
-	me,
-	postEntry,
-	refreshTokens,
-	updateEntry,
-	updateOptions,
-} from 'services/network/vs'
+import { monthEntries, login, me, postEntry, updateEntry, updateOptions } from 'services/network/vs'
 import { Button } from 'react-native'
 
 export const TabTwo = createScreen('TabTwo', () => {
 	const loginCallback = React.useCallback(() => login('sanio91@ya.ru', 'Ale248Vai'), [])
 	const meCallback = React.useCallback(() => me(), [])
-	const refreshTokenCallback = React.useCallback(() => refreshTokens(), [])
 	const entriesCallback = React.useCallback(
 		() =>
 			monthEntries('398', {
@@ -52,7 +43,6 @@ export const TabTwo = createScreen('TabTwo', () => {
 			<View style={styles.separator} />
 			<Button title="Login" onPress={loginCallback} />
 			<Button title="Me" onPress={meCallback} />
-			<Button title="Refresh Token" onPress={refreshTokenCallback} />
 			<Button title="Entries" onPress={entriesCallback} />
 			<Button title="Post Entry" onPress={postEntryCallback} />
 			<Button title="Update Entry" onPress={updateEntryCallback} />

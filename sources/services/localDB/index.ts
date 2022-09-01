@@ -1,4 +1,3 @@
-import { sTokens } from 'services/network/vsShapes'
 import { User, Entry } from 'shared/types'
 import { Shaped, ShapeName } from 'shared/types/primitives'
 import { shape } from 'shared/types/shapeTool'
@@ -54,9 +53,7 @@ export const entriesToSync = (user_id: string) =>
 		.or('dateSynced', '<', 'updated_at', true)
 		.fetch()
 
-const LocalStoreShape = shape({
-	tokens: sTokens,
-})
+const LocalStoreShape = shape({})
 
 type LocalStore = Shaped<typeof LocalStoreShape>
 

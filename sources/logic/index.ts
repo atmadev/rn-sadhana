@@ -6,6 +6,9 @@ import { fetchSecure } from 'services/secureStore'
 import { login } from './auth'
 import * as vs from 'services/network/vs'
 import { MyGraphScreen } from 'screens/graph/MyScreen'
+import { FALSE } from 'shared/types/primitives'
+import { myGraphStore } from 'store/MyGraphStore'
+import * as db from 'services/localDB'
 
 export const initApp = async () => {
 	try {
@@ -25,35 +28,43 @@ export const initApp = async () => {
 
 export const onAppStart = async () => {
 	try {
-		if (!store.tokens) {
-			console.log('1')
-			const [username, password] = await Promise.all([
-				fetchSecure('username'),
-				fetchSecure('password'),
-			])
+		const [username, password] = await Promise.all([
+			fetchSecure('username'),
+			fetchSecure('password'),
+		])
 
-			if (username && password) {
-				const result = await login(username, password)
+		if (username && password) {
+			const result = await login(username, password)
 
-				if (result.success === true) {
-					MyGraphScreen.navigate()
-					return
-				}
+			if (result.success === true) {
+				await fetchInitialData()
+				MyGraphScreen.navigate()
+				return
 			}
-
-			LoginScreen.navigate()
-			return
 		}
 
-		const refreshResult = await vs.refreshTokens()
-
-		if (refreshResult.success) {
-			MyGraphScreen.navigate()
-		} else {
-			store.setTokens(null)
-			LoginScreen.navigate()
-		}
+		LoginScreen.navigate()
 	} catch (e) {
 		LoginScreen.navigate()
 	}
+}
+
+export const fetchInitialData = async () => {
+	const myResult = await vs.me()
+	if (myResult.success === false) {
+		return { success: FALSE, message: myResult.error.message }
+	}
+
+	const me = myResult.data
+	await db.insertUsers(me)
+
+	const entriesResult = await vs.entries(me.userid, {})
+
+	if (entriesResult.success === false) {
+		return { success: FALSE, message: "Can't load entries" }
+	}
+
+	const { entries } = entriesResult.data
+	await db.insertEntries(entries)
+	myGraphStore.setEntries(entries)
 }

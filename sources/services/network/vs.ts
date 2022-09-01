@@ -1,9 +1,10 @@
 import { Shaped, Shape } from 'shared/types/primitives'
 import { User } from 'shared/types/shapes'
-import { store } from 'store'
 import { request, RequestMethod } from '.'
 // prettier-ignore
-import { MonthEntriesRequest, LoginParams, PostEntry, EntryID, RefreshTokenParams, sTokens, UpdateEntry, EntriesResponse, EntriesRequest } from './vsShapes'
+import { MonthEntriesRequest, LoginParams, PostEntry, EntryID, sTokens, UpdateEntry, EntriesResponse, EntriesRequest, Tokens } from './vsShapes'
+
+let tokens: Tokens | null = null
 
 export const login = async (username: string, password: string) => {
 	try {
@@ -20,6 +21,8 @@ export const login = async (username: string, password: string) => {
 		)
 		console.log({ result })
 
+		if (result.success) tokens = result.data
+
 		return result
 	} catch (e) {
 		console.log('login error', e)
@@ -27,7 +30,7 @@ export const login = async (username: string, password: string) => {
 	}
 }
 
-export const vsRequest = async <ParamsShape extends Shape, ResponseShape extends Shape>(
+export const vsAuthorizedRequest = async <ParamsShape extends Shape, ResponseShape extends Shape>(
 	method: RequestMethod,
 	path: string,
 	body?: {
@@ -36,17 +39,19 @@ export const vsRequest = async <ParamsShape extends Shape, ResponseShape extends
 	},
 	response?: { [shapeName: string]: ResponseShape },
 ) => {
+	if (!tokens) throw new Error('Trying make VS request without tokens!')
+
 	return request(
 		method,
 		'https://vaishnavaseva.net/vs-api/v2/sadhana/' + path,
-		{ body, headers: { Authorization: 'Bearer ' + store.tokens!.access_token } },
+		{ body, headers: { Authorization: 'Bearer ' + tokens!.access_token } },
 		response,
 	)
 }
 
 export const me = async () => {
 	try {
-		const result = await vsRequest('GET', 'me', undefined, { User })
+		const result = await vsAuthorizedRequest('GET', 'me', undefined, { User })
 		console.log('result', result)
 		return result
 	} catch (e) {
@@ -55,37 +60,9 @@ export const me = async () => {
 	}
 }
 
-export const refreshTokens = async () => {
-	try {
-		const result = await request(
-			'POST',
-			'https://vaishnavaseva.net?oauth=token',
-			{
-				body: {
-					shape: { RefreshTokenParams },
-					data: {
-						grant_type: 'refresh_token',
-						refresh_token: store.tokens!.refresh_token,
-						client_id,
-						client_secret,
-					},
-				},
-			},
-			{
-				sTokens,
-			},
-		)
-		console.log('result', result)
-		return result
-	} catch (e) {
-		console.log('refreshToken error', e)
-		throw e
-	}
-}
-
 export const entries = async (userId: string, data: Shaped<typeof EntriesRequest>) => {
 	try {
-		const result = await vsRequest(
+		const result = await vsAuthorizedRequest(
 			'POST',
 			'userSadhanaEntries/' + userId,
 			{ shape: { EntriesRequest: EntriesRequest }, data },
@@ -101,7 +78,7 @@ export const entries = async (userId: string, data: Shaped<typeof EntriesRequest
 
 export const monthEntries = async (userId: string, data: Shaped<typeof MonthEntriesRequest>) => {
 	try {
-		const result = await vsRequest(
+		const result = await vsAuthorizedRequest(
 			'POST',
 			'userSadhanaEntries/' + userId,
 			{ shape: { MonthEntriesRequest: MonthEntriesRequest }, data },
@@ -117,7 +94,7 @@ export const monthEntries = async (userId: string, data: Shaped<typeof MonthEntr
 
 export const postEntry = async (userId: string, data: Shaped<typeof PostEntry>) => {
 	try {
-		const result = await vsRequest(
+		const result = await vsAuthorizedRequest(
 			'POST',
 			'sadhanaEntry/' + userId,
 			{ shape: { PostEntry }, data },
@@ -133,7 +110,7 @@ export const postEntry = async (userId: string, data: Shaped<typeof PostEntry>) 
 
 export const updateEntry = async (userId: string, data: Shaped<typeof UpdateEntry>) => {
 	try {
-		const result = await vsRequest('PUT', 'sadhanaEntry/' + userId, {
+		const result = await vsAuthorizedRequest('PUT', 'sadhanaEntry/' + userId, {
 			shape: { UpdateEntry },
 			data,
 		})
@@ -147,7 +124,7 @@ export const updateEntry = async (userId: string, data: Shaped<typeof UpdateEntr
 
 export const updateOptions = async (data: Shaped<typeof User>) => {
 	try {
-		const result = await vsRequest('POST', 'options/' + data.userid, {
+		const result = await vsAuthorizedRequest('POST', 'options/' + data.userid, {
 			shape: { User },
 			data,
 		})

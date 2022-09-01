@@ -1,7 +1,6 @@
 import { colors } from 'constants/Colors'
 import { makeAutoObservable } from 'mobx'
 import { ColorSchemeName } from 'react-native'
-import { fetchLocalStore, removeItemFromLocalStore, setObjectToLocalStore } from 'services/localDB'
 import { Tokens } from 'services/network/vsShapes'
 
 class Store {
@@ -20,15 +19,10 @@ class Store {
 	}
 
 	tokens: Tokens | null = null
-	setTokens = (tokens: Tokens | null) => {
-		this.tokens = tokens
-		if (tokens) setObjectToLocalStore('tokens', tokens)
-		else removeItemFromLocalStore('tokens')
-	}
+	setTokens = (tokens: Tokens | null) => (this.tokens = tokens)
 
 	loadFromDisk = async () => {
-		const localStore = await fetchLocalStore()
-		this.tokens = localStore.tokens ?? null
+		// const localStore = await fetchLocalStore()
 	}
 }
 
