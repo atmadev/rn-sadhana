@@ -32,6 +32,7 @@ class CalendarStore {
 
 			do {
 				dates.push(date)
+				console.log('add', date)
 				date = new Date(date)
 				date.setDate(date.getDate() - 1)
 			} while (date.getMonth() === month)

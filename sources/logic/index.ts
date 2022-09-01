@@ -66,5 +66,7 @@ export const fetchInitialData = async () => {
 
 	const { entries } = entriesResult.data
 	await db.insertEntries(entries)
-	myGraphStore.setEntries(entries)
+
+	const allEntries = await db.entries(me.userid)
+	myGraphStore.setEntries(allEntries)
 }

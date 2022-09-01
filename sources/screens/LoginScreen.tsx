@@ -89,12 +89,12 @@ export const LoginScreen = createScreen('Login', () => {
 		setError(null)
 	}, [setInputValid, setError])
 
-	const onEmailChange = useCallback((text) => {
+	const onEmailChange = useCallback((text: string) => {
 		email = text
 		validate()
 	}, [])
 
-	const onPasswordChange = useCallback((text) => {
+	const onPasswordChange = useCallback((text: string) => {
 		password = text
 		validate()
 	}, [])

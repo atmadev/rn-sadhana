@@ -4,7 +4,7 @@ import { SectionList, View, Text } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { Entry } from 'shared/types'
 import { calendarStore } from 'store/CalendarStore'
-import { utcYmdStringFromDate } from 'shared/dateUtil'
+import { ymdStringFromDate } from 'shared/dateUtil'
 
 interface Props {
 	entries: { [date: string]: Entry }
@@ -16,12 +16,22 @@ export const GraphList: FC<Props> = observer(({ entries }) => {
 	}, [])
 
 	const renderItem = useCallback(({ item }: { item: Date }) => {
-		const entry = entries[utcYmdStringFromDate(item)]
+		const ymd = ymdStringFromDate(item)
+		const entry = entries[ymdStringFromDate(item)]
+		console.log({ ymd, entry, item })
 		return (
-			<View>
+			<View style={{ padding: 5 }}>
 				<Text>
-					{item.getUTCDate()}:{' '}
-					{entry ? (entry.jcount_730 ?? '0') + (entry.jcount_1000 ?? '0') : '-'}
+					{item.getDate() + ':\t'}
+					{entry
+						? (entry.jcount_730 ?? '0') +
+						  '\t' +
+						  (entry.jcount_1000 ?? '0') +
+						  '\t' +
+						  (entry.jcount_1800 ?? '0') +
+						  '\t' +
+						  (entry.jcount_after ?? '0')
+						: '-'}
 				</Text>
 			</View>
 		)
@@ -42,6 +52,7 @@ export const GraphList: FC<Props> = observer(({ entries }) => {
 			renderSectionHeader={renderSectionHeader}
 			getItemLayout={getItemLayout}
 			keyExtractor={keyExtractor}
+			style={{ padding: 10 }}
 		/>
 	)
 })

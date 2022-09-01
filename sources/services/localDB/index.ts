@@ -1,3 +1,4 @@
+import { utcStringFromDate } from 'shared/dateUtil'
 import { User, Entry } from 'shared/types'
 import { Shaped, ShapeName } from 'shared/types/primitives'
 import { shape } from 'shared/types/shapeTool'
@@ -34,15 +35,12 @@ export const updateEntry = (
 ) =>
 	db
 		.table('Entry')
-		// TODO: format current date
-		.update({ ...entry, updated_at: 'Current date' })
+		.update({ ...entry, updated_at: utcStringFromDate(new Date()) })
 		.match({ user_id, date })
 		.run()
 
-/*
-export const entries = (uid: string, month: string) =>
-	db.table('Entry').select().match({ uid }).where('d', '>', ).orderBy('d DESC').fetch()
-*/
+export const entries = (user_id: string) =>
+	db.table('Entry').select().match({ user_id }).orderBy('date DESC').fetch()
 
 // prettier-ignore
 export const entriesToSync = (user_id: string) =>

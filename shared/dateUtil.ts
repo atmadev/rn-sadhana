@@ -9,21 +9,21 @@ export const isTheSameDay = (date1: Date, date2: Date) => {
 }
 
 export const ymdStringFromDate = (date: Date) => {
-	return `${date.getFullYear()}-${pad(date.getMonth(), 2)}-${pad(date.getDate(), 2)}`
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1, 2)}-${pad(date.getDate(), 2)}`
 }
 
 export const utcYmdStringFromDate = (date: Date) => {
-	return `${date.getUTCFullYear()}-${pad(date.getUTCMonth(), 2)}-${pad(date.getUTCDate(), 2)}`
+	return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1, 2)}-${pad(date.getUTCDate(), 2)}`
 }
 
-export const dateStringFromDate = (date: Date) => {
+export const stringFromDate = (date: Date) => {
 	return `${ymdStringFromDate(date)} ${pad(date.getHours(), 2)}:${pad(date.getMinutes(), 2)}:${pad(
 		date.getSeconds(),
 		2,
 	)}`
 }
 
-export const utcDateStringFromDate = (date: Date) => {
+export const utcStringFromDate = (date: Date) => {
 	return `${utcYmdStringFromDate(date)} ${pad(date.getUTCHours(), 2)}:${pad(
 		date.getUTCMinutes(),
 		2,

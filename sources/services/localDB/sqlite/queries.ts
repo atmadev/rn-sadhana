@@ -183,6 +183,7 @@ export class UpdateQuery<
 		const args: any[] = []
 		// prettier-ignore
 		const sql = 'UPDATE ' + this.table + ' SET ' +
+		// @ts-ignore
 			Object.entries(this.object).map(([k, v]) => {
 				let valueSymbol
 				if (v) {
@@ -237,6 +238,7 @@ export class UpdateMultipleQuery<
 		return this.objects.map((object) => {
 			const args = []
 			const sql = 'UPDATE ' + this.table +' SET ' +
+			// @ts-ignore
 				Object.entries(object).filter(([k]) => allowedKeys.has(k)).map(([k, v]) => {
 					let valueSymbol
 					if (v) {

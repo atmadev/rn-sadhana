@@ -22,6 +22,7 @@ export const User = shape({
 	opt_lections: boolean,
 	opt_sleep: boolean,
 	avatar_url: string,
+	entriesDate: _(string, 'local'),
 })
 
 export const EntryInputFields = shape({
