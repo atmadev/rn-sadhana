@@ -228,7 +228,7 @@ const handleSQLiteVersionResult = (result: any[]) => {
 	const [major, minor] = string.split('.')
 
 	SQLiteVersion = parseFloat(major + '.' + minor)
-	console.log('SQLiteVersion', SQLiteVersion)
+	// console.log('SQLiteVersion', SQLiteVersion)
 }
 
 interface DBConfigItem {

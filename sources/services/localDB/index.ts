@@ -1,13 +1,15 @@
 import { utcStringFromDate } from 'shared/dateUtil'
 import { User, Entry } from 'shared/types'
-import { Shaped, ShapeName } from 'shared/types/primitives'
+import { Shaped, ShapeName, primitiveTypes } from 'shared/types/primitives'
 import { shape } from 'shared/types/shapeTool'
 import { setupDB, SQLDB } from './sqlite'
 import { SQLSchema } from './sqlite/types'
 
+const { string } = primitiveTypes
+
 const useShapes = <SN extends ShapeName>(...names: SN[]) => names
 
-const usedShapeNames = useShapes('User', 'Entry', 'KeyValue')
+const usedShapeNames = useShapes('User', 'Entry', 'KeyValue', 'EntryUpdatedDates')
 
 type UsedShapeNames = typeof usedShapeNames[number]
 
@@ -18,6 +20,7 @@ const schema: SQLSchema<UsedShapeNames> = {
 		index: [['user_id', 'dateSynced']],
 	},
 	KeyValue: {},
+	EntryUpdatedDates: {},
 }
 
 let db: SQLDB<UsedShapeNames>
@@ -51,7 +54,15 @@ export const entriesToSync = (user_id: string) =>
 		.or('dateSynced', '<', 'updated_at', true)
 		.fetch()
 
-const LocalStoreShape = shape({})
+export const setEntryUpdatedDateForUser = async (userID: string, date: string) =>
+	db.table('EntryUpdatedDates').insert({ userID, date })
+
+export const entryUpdatedDateForUser = async (userID: string) => {
+	const result = await db.table('EntryUpdatedDates').select('date').match({ userID }).fetch()
+	return result[0]?.date
+}
+
+const LocalStoreShape = shape({ myID: string })
 
 type LocalStore = Shaped<typeof LocalStoreShape>
 

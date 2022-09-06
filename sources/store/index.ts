@@ -20,10 +20,6 @@ class Store {
 
 	tokens: Tokens | null = null
 	setTokens = (tokens: Tokens | null) => (this.tokens = tokens)
-
-	loadFromDisk = async () => {
-		// const localStore = await fetchLocalStore()
-	}
 }
 
 export const store = new Store()

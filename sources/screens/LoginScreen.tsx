@@ -26,12 +26,14 @@ import {
 import * as Haptics from 'expo-haptics'
 import { createScreen } from 'screens/utils'
 import { login } from 'logic/auth'
+import { MyGraphScreen } from './graph/MyScreen'
 
 let keyboardMarginBottom = 0
 const formHorizontalOffset = new Animated.Value(0)
 
-let email = ''
-let password = ''
+// TODO: remove after test
+let email = 'sanio91@ya.ru'
+let password = 'Ale248Vai'
 
 export const LoginScreen = createScreen('Login', () => {
 	const [isKeyboardVisible, setKeyboardVisible] = useState(false)
@@ -65,8 +67,8 @@ export const LoginScreen = createScreen('Login', () => {
 			.then((result) => {
 				if (result.success) {
 					Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+					MyGraphScreen.navigate()
 					// TODO:
-					// loading sadhana here
 					// add login store to change message text reactively
 				} else {
 					Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
@@ -105,6 +107,8 @@ export const LoginScreen = createScreen('Login', () => {
 	}, [])
 
 	const focusPassword = useCallback(() => passwordInput.current?.focus(), [passwordInput])
+
+	useEffect(validate, [])
 
 	const buttonDisabled = isLoading || !isInputValid
 

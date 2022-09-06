@@ -1,8 +1,9 @@
 import * as vs from 'services/network/vs'
-import { FALSE, TRUE } from 'shared/types/primitives'
+import { FALSE } from 'shared/types/primitives'
 import { saveSecure } from 'services/secureStore'
-import { MyGraphScreen } from 'screens/graph/MyScreen'
-import { fetchInitialData } from 'logic'
+import { userStore } from 'store/UserStore'
+import * as db from 'services/localDB'
+import { fetchMyRecentEntries } from './entries'
 
 export const login = async (username: string, password: string) => {
 	try {
@@ -14,12 +15,33 @@ export const login = async (username: string, password: string) => {
 		saveSecure('username', username)
 		saveSecure('password', password)
 
-		await fetchInitialData()
-		MyGraphScreen.navigate()
-
-		return { success: TRUE }
+		return await fetchInitialData()
 	} catch (e) {
 		console.log('logic/login error', e)
 		return { success: FALSE, message: 'Please, try again' }
+	}
+}
+
+export const fetchInitialData = async () => {
+	try {
+		const myResult = await vs.me()
+		if (myResult.success === false) {
+			return { success: FALSE, message: myResult.error.message }
+		}
+
+		const me = myResult.data
+		userStore.setMe(me)
+		await db.insertUsers(me)
+		await db.setValueToLocalStore('myID', me.userid)
+
+		const success = await fetchMyRecentEntries()
+
+		if (success) return { success }
+		else return { success, message: "Can't load entries" }
+	} catch (e) {
+		console.log('fetchInitialData', e)
+		// TODO: handle exceptions / errors
+		// @ts-ignore
+		return { success: FALSE, message: e.message }
 	}
 }

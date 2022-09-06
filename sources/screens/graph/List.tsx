@@ -16,9 +16,7 @@ export const GraphList: FC<Props> = observer(({ entries }) => {
 	}, [])
 
 	const renderItem = useCallback(({ item }: { item: Date }) => {
-		const ymd = ymdStringFromDate(item)
 		const entry = entries[ymdStringFromDate(item)]
-		console.log({ ymd, entry, item })
 		return (
 			<View style={{ padding: 5 }}>
 				<Text>

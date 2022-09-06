@@ -68,7 +68,7 @@ export const entries = async (userId: string, data: Shaped<typeof EntriesRequest
 			{ shape: { EntriesRequest: EntriesRequest }, data },
 			{ EntriesResponse },
 		)
-		console.log('result', result)
+		console.log('entries result', result)
 		return result
 	} catch (e) {
 		console.log('entries error', e)

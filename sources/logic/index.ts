@@ -4,11 +4,13 @@ import { store } from 'store'
 import { LoginScreen } from 'screens/LoginScreen'
 import { fetchSecure } from 'services/secureStore'
 import { login } from './auth'
-import * as vs from 'services/network/vs'
-import { MyGraphScreen } from 'screens/graph/MyScreen'
-import { FALSE } from 'shared/types/primitives'
-import { myGraphStore } from 'store/MyGraphStore'
 import * as db from 'services/localDB'
+import { graphStore } from 'store/GraphStore'
+import { MyGraphScreen } from 'screens/graph/MyScreen'
+import { userStore } from 'store/UserStore'
+
+// TODO: think about offline mode
+// TODO: think how to show the my graph ASAP
 
 export const initApp = async () => {
 	try {
@@ -16,7 +18,6 @@ export const initApp = async () => {
 
 		// Load fonts
 		await Promise.all([initLocalDB()])
-		await store.loadFromDisk()
 		store.setInited()
 	} catch (e) {
 		// We might want to provide this error information to an error reporting service
@@ -28,45 +29,25 @@ export const initApp = async () => {
 
 export const onAppStart = async () => {
 	try {
-		const [username, password] = await Promise.all([
+		const [username, password, myID] = await Promise.all([
 			fetchSecure('username'),
 			fetchSecure('password'),
+			db.getValueFromLocalStore('myID'),
 		])
 
-		if (username && password) {
-			const result = await login(username, password)
+		if (username && password && myID) {
+			userStore.setMyID(myID)
+			const localEntries = await db.entries(myID)
+			graphStore.setEntries(localEntries, myID)
+			MyGraphScreen.navigate()
 
-			if (result.success === true) {
-				await fetchInitialData()
-				MyGraphScreen.navigate()
-				return
-			}
+			const result = await login(username, password)
+			// TODO: check network error. Don't logout user on network error. Only on Invalid Credentials
+			if (result.success === true) return
 		}
 
 		LoginScreen.navigate()
 	} catch (e) {
 		LoginScreen.navigate()
 	}
-}
-
-export const fetchInitialData = async () => {
-	const myResult = await vs.me()
-	if (myResult.success === false) {
-		return { success: FALSE, message: myResult.error.message }
-	}
-
-	const me = myResult.data
-	await db.insertUsers(me)
-
-	const entriesResult = await vs.entries(me.userid, {})
-
-	if (entriesResult.success === false) {
-		return { success: FALSE, message: "Can't load entries" }
-	}
-
-	const { entries } = entriesResult.data
-	await db.insertEntries(entries)
-
-	const allEntries = await db.entries(me.userid)
-	myGraphStore.setEntries(allEntries)
 }

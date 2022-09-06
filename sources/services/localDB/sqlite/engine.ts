@@ -16,15 +16,15 @@ const wrapTansaction = (tx: SQLTransaction) => ({
 		success?: (result: any[]) => void,
 		error?: (error: SQLError) => void,
 	) {
-		console.log(
-			query.length > 200 ? query.substr(0, 200) + '...' : query,
-			args && args.length > 0 ? '[ ' + args.slice(0, 50).join(', ') : '',
-			args && args.length > 0
-				? args.length > 50
-					? ', ... more ' + (args.length - 50) + ' args ]'
-					: ']'
-				: '',
-		)
+		// console.log(
+		// 	query.length > 200 ? query.substr(0, 200) + '...' : query,
+		// 	args && args.length > 0 ? '[ ' + args.slice(0, 50).join(', ') : '',
+		// 	args && args.length > 0
+		// 		? args.length > 50
+		// 			? ', ... more ' + (args.length - 50) + ' args ]'
+		// 			: ']'
+		// 		: '',
+		// )
 		// const start = Date.now()
 		tx.executeSql(
 			query,

@@ -3,7 +3,7 @@ import { View, Text } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createScreen } from 'screens/utils'
 import { GraphList } from './List'
-import { myGraphStore } from 'store/MyGraphStore'
+import { graphStore } from 'store/GraphStore'
 
 export const MyGraphScreen = createScreen(
 	'MyGraph',
@@ -11,7 +11,7 @@ export const MyGraphScreen = createScreen(
 		return (
 			<View style={{ paddingTop: 44 }}>
 				<Text style={{ marginLeft: 10 }}>My Graph Screen</Text>
-				<GraphList entries={myGraphStore.entriesByDate} />
+				<GraphList entries={graphStore.my?.entriesByDate || {}} />
 			</View>
 		)
 	}),

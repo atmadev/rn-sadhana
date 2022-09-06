@@ -1,3 +1,4 @@
 {
-	"javascript.inlayHints.parameterNames.enabled": "none"
+	"javascript.inlayHints.parameterNames.enabled": "none",
+	"workbench.panel.defaultLocation": "right"
 }

@@ -2,9 +2,12 @@ import { makeAutoObservable } from 'mobx'
 import { Entry } from 'shared/types'
 import { recordFromArray } from 'shared/utils'
 
-class MyGraphStore {
-	constructor() {
-		makeAutoObservable(this)
+export class MXGraph {
+	userID: string
+
+	constructor(userID: string) {
+		this.userID = userID
+		makeAutoObservable(this, { userID: false })
 	}
 
 	entries = new Map<string, Entry>()
@@ -16,5 +19,3 @@ class MyGraphStore {
 		return recordFromArray(Array.from(this.entries.values()), 'date')
 	}
 }
-
-export const myGraphStore = new MyGraphStore()

@@ -56,3 +56,8 @@ export const KeyValue = shape({
 	value: any,
 	object: {},
 })
+
+export const EntryUpdatedDates = shape({
+	userID: p(string),
+	date: string,
+})

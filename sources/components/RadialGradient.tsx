@@ -16,6 +16,7 @@ export const RadialGradient: FC<{
 	return (
 		<Svg style={{ ...containerStyle, backgroundColor: colors[1] }} width={width} height={height}>
 			<Defs>
+				{/* @ts-ignore - SVG lib should be updated to have a fix for react 18 types, BUT new lib is not compatible with the expo 45 */}
 				<SVGRadialGradient
 					id="grad"
 					cx={cx}
