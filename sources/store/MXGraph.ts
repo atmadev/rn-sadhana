@@ -18,4 +18,7 @@ export class MXGraph {
 	get entriesByDate() {
 		return recordFromArray(Array.from(this.entries.values()), 'date')
 	}
+
+	refreshing = false
+	setRefreshing = (r: boolean) => (this.refreshing = r)
 }

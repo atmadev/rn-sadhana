@@ -23,6 +23,11 @@ class UserStore {
 	setUser = (user: User) => {
 		this.map.set(user.userid, user)
 	}
+
+	clear = () => {
+		this.map.clear()
+		this.myID = null
+	}
 }
 
 export const userStore = new UserStore()

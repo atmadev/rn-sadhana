@@ -1,7 +1,7 @@
 import React, { FC, memo } from 'react'
 import { ViewStyle } from 'react-native'
 import { Svg, Defs, RadialGradient as SVGRadialGradient, Stop, Ellipse } from 'react-native-svg'
-import { Device } from '../constants'
+import { Device } from '../const'
 
 export const RadialGradient: FC<{
 	containerStyle: ViewStyle

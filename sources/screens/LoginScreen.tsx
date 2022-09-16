@@ -22,11 +22,12 @@ import {
 	ORANGE_LIGHT,
 	WHITE,
 	doNothing,
-} from 'constants/index'
+} from 'const/index'
 import * as Haptics from 'expo-haptics'
 import { createScreen } from 'screens/utils'
 import { login } from 'logic/auth'
 import { MyGraphScreen } from './graph/MyScreen'
+import { loginStore } from 'store/LoginStore'
 
 let keyboardMarginBottom = 0
 const formHorizontalOffset = new Animated.Value(0)
@@ -177,7 +178,10 @@ export const LoginScreen = createScreen('Login', () => {
 							</TouchableHighlight>
 						</Card>
 					</Animated.View>
-					{error && <Text style={styles.error}>⚠️ {error}</Text>}
+					{error ? <Text style={styles.error}>⚠️ {error}</Text> : null}
+					{loginStore.status.length > 0 ? (
+						<Text style={styles.error}>{loginStore.status}</Text>
+					) : null}
 				</View>
 				<View style={styles.registrationContainer}>
 					<TouchableOpacity

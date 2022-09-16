@@ -1,4 +1,4 @@
-import { colors } from 'constants/Colors'
+import { colors } from 'const/Colors'
 import { makeAutoObservable } from 'mobx'
 import { ColorSchemeName } from 'react-native'
 import { Tokens } from 'services/network/vsShapes'
@@ -20,6 +20,10 @@ class Store {
 
 	tokens: Tokens | null = null
 	setTokens = (tokens: Tokens | null) => (this.tokens = tokens)
+
+	clear = () => {
+		this.tokens = null
+	}
 }
 
 export const store = new Store()

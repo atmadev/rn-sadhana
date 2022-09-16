@@ -8,9 +8,11 @@ import { ymdStringFromDate } from 'shared/dateUtil'
 
 interface Props {
 	entries: { [date: string]: Entry }
+	refreshing: boolean
+	onRefresh: () => void
 }
 
-export const GraphList: FC<Props> = observer(({ entries }) => {
+export const GraphList: FC<Props> = observer(({ entries, refreshing, onRefresh }) => {
 	useLayoutEffect(() => {
 		calendarStore.upDateIfNeeded()
 	}, [])
@@ -46,6 +48,8 @@ export const GraphList: FC<Props> = observer(({ entries }) => {
 
 	return (
 		<SectionList
+			refreshing={refreshing}
+			onRefresh={onRefresh}
 			sections={sections}
 			renderSectionHeader={renderSectionHeader}
 			getItemLayout={getItemLayout}

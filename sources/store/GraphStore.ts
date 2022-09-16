@@ -11,13 +11,22 @@ class GraphStore {
 	map = new Map<string, MXGraph>()
 
 	get my() {
-		return userStore.myID ? this.map.get(userStore.myID) ?? null : null
+		if (!userStore.myID) return null
+		if (!this.map.has(userStore.myID)) {
+			this.setEntries([], userStore.myID)
+		}
+
+		return this.map.get(userStore.myID)
 	}
 
 	setEntries = (entries: Entry[], userID: string) => {
 		const graph = this.map.get(userID) ?? new MXGraph(userID)
 		graph.setEntries(entries)
 		this.map.set(userID, graph)
+	}
+
+	clear = () => {
+		this.map.clear()
 	}
 }
 

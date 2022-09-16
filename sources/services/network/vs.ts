@@ -1,6 +1,6 @@
 import { Shaped, Shape } from 'shared/types/primitives'
 import { User } from 'shared/types/shapes'
-import { request, RequestMethod } from '.'
+import { request, RequestMethod, VSResponse } from '.'
 // prettier-ignore
 import { MonthEntriesRequest, LoginParams, PostEntry, EntryID, sTokens, UpdateEntry, EntriesResponse, EntriesRequest, Tokens } from './vsShapes'
 
@@ -39,7 +39,7 @@ export const vsAuthorizedRequest = async <ParamsShape extends Shape, ResponseSha
 	},
 	response?: { [shapeName: string]: ResponseShape },
 ) => {
-	if (!tokens) throw new Error('Trying make VS request without tokens!')
+	if (!tokens) throw new Error('Trying to make VS request without tokens!')
 
 	return request(
 		method,
@@ -60,7 +60,10 @@ export const me = async () => {
 	}
 }
 
-export const entries = async (userId: string, data: Shaped<typeof EntriesRequest>) => {
+export const entries = async (
+	userId: string,
+	data: Shaped<typeof EntriesRequest>,
+): Promise<VSResponse<Shaped<typeof EntriesResponse>>> => {
 	try {
 		const result = await vsAuthorizedRequest(
 			'POST',

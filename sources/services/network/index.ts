@@ -12,7 +12,7 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 		}
 	},
 	response?: { [shapeName: string]: ResponseShape },
-): Promise<Expand<Response<Shaped<ResponseShape>>>> => {
+): Promise<Expand<VSResponse<Shaped<ResponseShape>>>> => {
 	console.log('request', method, url, request?.body?.data)
 	let body
 
@@ -54,7 +54,7 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 	}
 }
 
-type Response<T> =
+export type VSResponse<T> =
 	| { success: true; data: Expand<T> }
 	| {
 			success: false
@@ -64,6 +64,13 @@ type Response<T> =
 			}
 	  }
 
-type ErrorName = 'unsupported_grant_type'
+type ErrorName =
+	| 'json_not_logged_in'
+	| 'rest_forbidden'
+	| 'unsupported_grant_type'
+	| 'invalid_grant'
+	| 'sadhana_entry_exists'
+	| 'entry_not_found'
+	| 'user_not_found'
 
 export type RequestMethod = 'GET' | 'POST' | 'PUT'

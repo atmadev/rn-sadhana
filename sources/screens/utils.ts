@@ -16,6 +16,8 @@ export const createScreen = <Props = void>(name: string, rawComponent: FC<Props>
 		},
 	},
 	navigate: (props: Props) => navigation!.navigate(name, props),
+	// @ts-ignore
+	reset: (props: Props) => navigation!.reset({ index: 0, routes: [{ name, params: props }] }),
 })
 
 export type Style = ViewStyle | TextStyle | ImageStyle

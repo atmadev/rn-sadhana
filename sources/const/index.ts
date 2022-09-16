@@ -14,6 +14,7 @@ export const Device = {
 	height: Dimensions.get('window').height,
 	width: Dimensions.get('window').width,
 	majorIOSVersion: Number.parseInt(Platform.Version as string),
+	safeTopInset: initialWindowMetrics?.insets.top ?? 0,
 	statusBarHeight: getStatusBarHeight(),
 	safeBottomInset: initialWindowMetrics?.insets.bottom ?? 0,
 	small: Dimensions.get('window').height < 600,
