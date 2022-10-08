@@ -16,6 +16,7 @@ import { store } from 'store'
 import { observer } from 'mobx-react-lite'
 import { LoginScreen } from 'screens/LoginScreen'
 import { MyGraphScreen } from 'screens/graph/MyScreen'
+import { SettingsScreen } from 'screens/settings'
 
 export const Navigation = observer(() => {
 	return (
@@ -23,7 +24,10 @@ export const Navigation = observer(() => {
 			ref={setNavigation}
 			theme={store.colorScheme === 'dark' ? DarkTheme : DefaultTheme}
 		>
-			<RootStack.Navigator screenOptions={{ headerShown: false }}>
+			<RootStack.Navigator>
+				<RootStack.Screen {...LoginScreen.Screen} />
+				<RootStack.Screen {...MyGraphScreen.Screen} />
+				<RootStack.Screen {...SettingsScreen.Screen} />
 				<RootStack.Screen name="MainStack" component={MainStackContainer} />
 				<RootStack.Screen
 					name="Root"
@@ -40,10 +44,8 @@ export const Navigation = observer(() => {
 
 // TODO: change blank component to the splash
 export const MainStackContainer = () => (
-	<MainStack.Navigator screenOptions={{ headerShown: false }}>
+	<MainStack.Navigator screenOptions={{ headerShown: true }}>
 		<MainStack.Screen name="Init" component={BlankComponent} />
-		<MainStack.Screen {...LoginScreen.Screen} />
-		<MainStack.Screen {...MyGraphScreen.Screen} />
 	</MainStack.Navigator>
 )
 

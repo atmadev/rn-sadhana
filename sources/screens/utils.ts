@@ -5,14 +5,20 @@ import { navigation } from 'navigation/utils'
 import { computed } from 'mobx'
 import { ViewStyle, TextStyle, ImageStyle } from 'react-native'
 import { store } from 'store'
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
 
-export const createScreen = <Props = void>(name: string, rawComponent: FC<Props>) => ({
+export const createScreen = <Props = void>(
+	name: string,
+	rawComponent: FC<Props>,
+	options?: NativeStackNavigationOptions,
+) => ({
 	Screen: {
 		name,
 		get component() {
 			// @ts-ignore
 			return ({ route: { params } }) => createElement(rawComponent, params)
 		},
+		options,
 	},
 	navigate: (props: Props) => navigation!.navigate(name, props),
 	// @ts-ignore

@@ -32,9 +32,6 @@ export const initApp = async () => {
 
 export const onAppStart = async () => {
 	try {
-		const count = await db.allEntriesCount()
-		console.log('entries count', count)
-
 		const [username, password, myID] = await Promise.all([
 			fetchSecure('username'),
 			fetchSecure('password'),
@@ -45,7 +42,7 @@ export const onAppStart = async () => {
 			userStore.setMyID(myID)
 			// Prefetch only local entries from the DB
 			await fetchLocalEntries()
-			MyGraphScreen.navigate()
+			MyGraphScreen.reset()
 
 			try {
 				const result = await login(username, password)
@@ -60,8 +57,7 @@ export const onAppStart = async () => {
 				if (isNetworkError(e)) return
 				throw e
 			}
-		}
-		LoginScreen.navigate()
+		} else LoginScreen.navigate()
 	} catch (e) {
 		LoginScreen.navigate()
 	}

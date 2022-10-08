@@ -76,7 +76,7 @@ export const LoginScreen = createScreen(
 						await fetchInitialData()
 						await fetchLocalEntries()
 
-						MyGraphScreen.navigate()
+						MyGraphScreen.reset()
 						// TODO:
 						// add login store to change message text reactively
 					} else {
@@ -211,6 +211,7 @@ export const LoginScreen = createScreen(
 			</FlingGestureHandler>
 		)
 	}),
+	{ headerShown: false },
 )
 
 const hitSlop = { top: 16, bottom: 16 }
