@@ -34,3 +34,8 @@ export const fetchMyRecentEntries = async () => {
 		graphStore.my!.setRefreshing(false)
 	}
 }
+
+export const fetchLocalEntries = async () => {
+	const localEntries = await db.entries(userStore.myID!)
+	graphStore.setEntries(localEntries, userStore.myID!)
+}

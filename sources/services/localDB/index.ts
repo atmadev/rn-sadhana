@@ -2,7 +2,7 @@ import { utcStringFromDate } from 'shared/dateUtil'
 import { User, Entry } from 'shared/types'
 import { Shaped, ShapeName, primitiveTypes } from 'shared/types/primitives'
 import { shape } from 'shared/types/shapeTool'
-import { setupDB, SQLDB } from './sqlite'
+import { setupDB, SQLDB, Table } from './sqlite'
 import { SQLSchema } from './sqlite/types'
 
 const { string } = primitiveTypes
@@ -25,7 +25,12 @@ const schema: SQLSchema<UsedShapeNames> = {
 
 let db: SQLDB<UsedShapeNames>
 
-export const initLocalDB = async () => (db = await setupDB(schema))
+let entriesTable: Table<'Entry'>
+
+export const initLocalDB = async () => {
+	db = await setupDB(schema)
+	entriesTable = db.table('Entry')
+}
 
 export const insertUsers = (...users: User[]) => db.table('User').insert(...users)
 
@@ -45,6 +50,7 @@ export const updateEntry = (
 export const entries = (user_id: string) =>
 	db.table('Entry').select().match({ user_id }).orderBy('date DESC').fetch()
 
+export const allEntriesCount = () => entriesTable.aggregate('COUNT(*)').fetch()
 // prettier-ignore
 export const entriesToSync = (user_id: string) =>
 	db.table('Entry')

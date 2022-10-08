@@ -1,5 +1,5 @@
 import * as vs from 'services/network/vs'
-import { FALSE } from 'shared/types/primitives'
+import { FALSE, TRUE } from 'shared/types/primitives'
 import { saveSecure } from 'services/secureStore'
 import { userStore } from 'store/UserStore'
 import * as db from 'services/localDB'
@@ -16,7 +16,7 @@ export const login = async (username: string, password: string) => {
 		saveSecure('username', username)
 		saveSecure('password', password)
 
-		return await fetchInitialData()
+		return { success: TRUE }
 	} catch (e) {
 		console.log('logic/login error', e)
 		return { success: FALSE, message: 'Please, try again' }
@@ -44,6 +44,7 @@ export const fetchInitialData = async () => {
 	} catch (e) {
 		console.log('fetchInitialData', e)
 		// TODO: handle exceptions / errors
+		// TODO: handle auth error
 		// @ts-ignore
 		return { success: FALSE, message: e.message }
 	}

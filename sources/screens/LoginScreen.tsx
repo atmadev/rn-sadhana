@@ -25,9 +25,11 @@ import {
 } from 'const/index'
 import * as Haptics from 'expo-haptics'
 import { createScreen } from 'screens/utils'
-import { login } from 'logic/auth'
+import { fetchInitialData, login } from 'logic/auth'
 import { MyGraphScreen } from './graph/MyScreen'
-import { loginStore } from 'store/LoginStore'
+import { userStore } from 'store/UserStore'
+import { observer } from 'mobx-react-lite'
+import { fetchLocalEntries } from 'logic/entries'
 
 let keyboardMarginBottom = 0
 const formHorizontalOffset = new Animated.Value(0)
@@ -36,167 +38,182 @@ const formHorizontalOffset = new Animated.Value(0)
 let email = 'sanio91@ya.ru'
 let password = 'Ale248Vai'
 
-export const LoginScreen = createScreen('Login', () => {
-	const [isKeyboardVisible, setKeyboardVisible] = useState(false)
-	const [isLoading, setLoading] = useState(false)
-	const [isInputValid, setInputValid] = useState(false)
-	const [error, setError] = useState<string | null>(null)
+export const LoginScreen = createScreen(
+	'Login',
+	observer(() => {
+		const [isKeyboardVisible, setKeyboardVisible] = useState(false)
+		const [isLoading, setLoading] = useState(false)
+		const [isInputValid, setInputValid] = useState(false)
+		const [error, setError] = useState<string | null>(null)
 
-	const emailInput = useRef<TextInput>(null)
-	const passwordInput = useRef<TextInput>(null)
+		const emailInput = useRef<TextInput>(null)
+		const passwordInput = useRef<TextInput>(null)
 
-	useEffect(() => {
-		const listener = Keyboard.addListener('keyboardWillChangeFrame', (e) => {
-			const keyboardVisible = e.endCoordinates.screenY < Device.height
-			if (keyboardVisible === isKeyboardVisible) return
+		useEffect(() => {
+			const listener = Keyboard.addListener('keyboardWillChangeFrame', (e) => {
+				const keyboardVisible = e.endCoordinates.screenY < Device.height
+				if (keyboardVisible === isKeyboardVisible) return
 
-			setKeyboardVisible(() => {
-				keyboardMarginBottom = Device.height - e.endCoordinates.screenY
-				configureLayoutAnimationFromKeyboardEvent(e)
-				return keyboardVisible
+				setKeyboardVisible(() => {
+					keyboardMarginBottom = Device.height - e.endCoordinates.screenY
+					configureLayoutAnimationFromKeyboardEvent(e)
+					return keyboardVisible
+				})
 			})
-		})
-		return () => listener.remove()
-	}, [isKeyboardVisible])
+			return () => listener.remove()
+		}, [isKeyboardVisible])
 
-	const loginCallback = useCallback(() => {
-		if (!isInputValid) return
-		setLoading(true)
-		setError(null)
+		const loginCallback = useCallback(() => {
+			if (!isInputValid) return
+			setLoading(true)
+			setError(null)
 
-		login(email, password)
-			.then((result) => {
-				if (result.success) {
-					Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-					MyGraphScreen.navigate()
-					// TODO:
-					// add login store to change message text reactively
-				} else {
-					Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-					Animated.timing(formHorizontalOffset, {
-						toValue: 1,
-						useNativeDriver: true,
-						duration: 600,
-						easing: Easing.linear,
-					}).start(() => formHorizontalOffset.setValue(0))
+			login(email, password)
+				.then(async (result) => {
+					if (result.success) {
+						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
 
-					setError(result.message)
-				}
-			})
-			.finally(() => setLoading(false))
-	}, [isInputValid, setLoading, setError])
+						await fetchInitialData()
+						await fetchLocalEntries()
 
-	const validate = useCallback(() => {
-		const state = email.length > 0 && password.length > 0
-		setInputValid(state)
-		setError(null)
-	}, [setInputValid, setError])
+						MyGraphScreen.navigate()
+						// TODO:
+						// add login store to change message text reactively
+					} else {
+						Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+						Animated.timing(formHorizontalOffset, {
+							toValue: 1,
+							useNativeDriver: true,
+							duration: 600,
+							easing: Easing.linear,
+						}).start(() => formHorizontalOffset.setValue(0))
 
-	const onEmailChange = useCallback((text: string) => {
-		email = text
-		validate()
-	}, [])
+						setError(result.message)
+					}
+				})
+				.finally(() => setLoading(false))
+		}, [isInputValid, setLoading, setError])
 
-	const onPasswordChange = useCallback((text: string) => {
-		password = text
-		validate()
-	}, [])
+		const validate = useCallback(() => {
+			const state = email.length > 0 && password.length > 0
+			setInputValid(state)
+			setError(null)
+		}, [setInputValid, setError])
 
-	const onTap = useCallback(({ nativeEvent }: TapGestureHandlerStateChangeEvent) => {
-		if (nativeEvent.state !== State.ACTIVE) return
-		Keyboard.dismiss()
-	}, [])
+		const onEmailChange = useCallback((text: string) => {
+			email = text
+			validate()
+		}, [])
 
-	const focusPassword = useCallback(() => passwordInput.current?.focus(), [passwordInput])
+		const onPasswordChange = useCallback((text: string) => {
+			password = text
+			validate()
+		}, [])
 
-	useEffect(validate, [])
+		const onTap = useCallback(({ nativeEvent }: TapGestureHandlerStateChangeEvent) => {
+			if (nativeEvent.state !== State.ACTIVE) return
+			Keyboard.dismiss()
+		}, [])
 
-	const buttonDisabled = isLoading || !isInputValid
+		const focusPassword = useCallback(() => passwordInput.current?.focus(), [passwordInput])
 
-	return (
-		<FlingGestureHandler
-			direction={Directions.DOWN}
-			onHandlerStateChange={onTap}
-			enabled={isKeyboardVisible}
-		>
-			<View style={styles.container} pointerEvents={isLoading ? 'none' : 'box-none'}>
-				<StatusBar style="light" />
-				<RadialGradient
-					containerStyle={styles.gradient}
-					width={Device.width}
-					height={Device.height}
-					colors={gradientColors}
-				/>
-				<Image source={prabhupada} style={styles.prabhupada} />
-				<Image source={vaishnavaseva} style={styles.vaishnavaseva} />
-				{isKeyboardVisible && <View style={styles.dim} />}
+		useEffect(validate, [])
 
-				<View style={{ ...styles.content, marginBottom: keyboardMarginBottom }}>
-					<Image source={beadsLight} style={styles.beads} />
-					<Text style={styles.title}>Садхана</Text>
-					{/* TODO: Localize */}
+		const buttonDisabled = isLoading || !isInputValid
 
-					<Animated.View style={cardContainerStyle}>
-						<Card style={styles.card} contentStyle={styles.cardContent}>
-							<TextInput
-								ref={emailInput}
-								placeholder="Логин или e-mail" /* TODO: Localize */
-								style={styles.input}
-								keyboardAppearance="dark"
-								returnKeyType="next"
-								enablesReturnKeyAutomatically
-								onSubmitEditing={focusPassword}
-								onChangeText={onEmailChange}
-							/>
-							<View style={styles.separator} />
-							<TextInput
-								ref={passwordInput}
-								placeholder="Пароль" /* TODO: Localize */
-								style={styles.input}
-								secureTextEntry
-								keyboardAppearance="dark"
-								returnKeyType="done"
-								enablesReturnKeyAutomatically
-								onSubmitEditing={loginCallback}
-								onChangeText={onPasswordChange}
-							/>
-							<TouchableHighlight
-								style={{ ...styles.button, backgroundColor: buttonDisabled ? GRAY_LIGHT : ORANGE }}
-								underlayColor={ORANGE_LIGHT}
-								activeOpacity={1}
-								onPress={loginCallback}
-								disabled={buttonDisabled}
-							>
-								{isLoading ? (
-									<ActivityIndicator color={WHITE} />
-								) : (
-									<Text style={styles.buttonText}>
-										{'Войти  ' /* TODO: Localize */}
-										<Image source={arrowRightWhite} style={styles.arrow} />
-									</Text>
-								)}
-							</TouchableHighlight>
-						</Card>
-					</Animated.View>
-					{error ? <Text style={styles.error}>⚠️ {error}</Text> : null}
-					{loginStore.status.length > 0 ? (
-						<Text style={styles.error}>{loginStore.status}</Text>
-					) : null}
-				</View>
-				<View style={styles.registrationContainer}>
-					<TouchableOpacity
-						style={styles.registrationButton}
-						onPress={doNothing}
-						hitSlop={{ top: 16, bottom: 16 }}
-					>
-						<Text style={styles.registrationText}>Регистрация</Text>
+		return (
+			<FlingGestureHandler
+				direction={Directions.DOWN}
+				onHandlerStateChange={onTap}
+				enabled={isKeyboardVisible}
+			>
+				<View style={styles.container} pointerEvents={isLoading ? 'none' : 'box-none'}>
+					<StatusBar style="light" />
+					<RadialGradient
+						containerStyle={styles.gradient}
+						width={Device.width}
+						height={Device.height}
+						colors={gradientColors}
+					/>
+					<Image source={prabhupada} style={styles.prabhupada} />
+					<Image source={vaishnavaseva} style={styles.vaishnavaseva} />
+					{isKeyboardVisible && <View style={styles.dim} />}
+
+					<View style={{ ...styles.content, marginBottom: keyboardMarginBottom }}>
+						<Image source={beadsLight} style={styles.beads} />
+						<Text style={styles.title}>Садхана</Text>
 						{/* TODO: Localize */}
-					</TouchableOpacity>
+
+						<Animated.View style={cardContainerStyle}>
+							<Card style={styles.card} contentStyle={styles.cardContent}>
+								<TextInput
+									ref={emailInput}
+									placeholder="Логін або e-mail" /* TODO: Localize */
+									style={styles.input}
+									keyboardAppearance="dark"
+									returnKeyType="next"
+									enablesReturnKeyAutomatically
+									onSubmitEditing={focusPassword}
+									onChangeText={onEmailChange}
+								/>
+								<View style={styles.separator} />
+								<TextInput
+									ref={passwordInput}
+									placeholder="Пароль" /* TODO: Localize */
+									style={styles.input}
+									secureTextEntry
+									keyboardAppearance="dark"
+									returnKeyType="done"
+									enablesReturnKeyAutomatically
+									onSubmitEditing={loginCallback}
+									onChangeText={onPasswordChange}
+								/>
+								<TouchableHighlight
+									style={{
+										...styles.button,
+										backgroundColor: buttonDisabled ? GRAY_LIGHT : ORANGE,
+									}}
+									underlayColor={ORANGE_LIGHT}
+									activeOpacity={1}
+									onPress={loginCallback}
+									disabled={buttonDisabled}
+								>
+									{isLoading ? (
+										<ActivityIndicator color={WHITE} />
+									) : (
+										<Text style={styles.buttonText}>
+											{'Войти  ' /* TODO: Localize */}
+											<Image source={arrowRightWhite} style={styles.arrow} />
+										</Text>
+									)}
+								</TouchableHighlight>
+							</Card>
+						</Animated.View>
+						{error ? <Text style={styles.error}>⚠️ {error}</Text> : null}
+						{userStore.me ? (
+							<Text style={styles.error}>
+								Харе Кришна, {userStore.me!.user_name ?? userStore.me!.user_nicename} Завантажуємо
+								Вашу садхану...
+							</Text>
+						) : null}
+					</View>
+					<View style={styles.registrationContainer}>
+						<TouchableOpacity
+							style={styles.registrationButton}
+							onPress={doNothing}
+							hitSlop={hitSlop}
+						>
+							<Text style={styles.registrationText}>Реєстрація</Text>
+							{/* TODO: Localize */}
+						</TouchableOpacity>
+					</View>
 				</View>
-			</View>
-		</FlingGestureHandler>
-	)
-})
+			</FlingGestureHandler>
+		)
+	}),
+)
+
+const hitSlop = { top: 16, bottom: 16 }
 
 const styles = StyleSheet.create({
 	container: { flex: 1, alignItems: 'stretch', justifyContent: 'center' },

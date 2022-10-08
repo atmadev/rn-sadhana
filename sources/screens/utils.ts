@@ -1,6 +1,5 @@
 import { FC, createElement } from 'react'
 
-import { observer } from 'mobx-react-lite'
 import { navigation } from 'navigation/utils'
 
 import { computed } from 'mobx'
@@ -12,7 +11,7 @@ export const createScreen = <Props = void>(name: string, rawComponent: FC<Props>
 		name,
 		get component() {
 			// @ts-ignore
-			return observer(({ route: { params } }) => createElement(rawComponent, params))
+			return ({ route: { params } }) => createElement(rawComponent, params)
 		},
 	},
 	navigate: (props: Props) => navigation!.navigate(name, props),
