@@ -44,7 +44,7 @@ export const Entry = shape({
 	created_at: r(string),
 	updated_at: r(string),
 	user_id: r(string),
-	date: r(string),
+	date: r(string), // YMD
 	day: r(string),
 	...EntryInputFields,
 

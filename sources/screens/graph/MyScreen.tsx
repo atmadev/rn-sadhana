@@ -14,7 +14,7 @@ export const MyGraphScreen = createScreen(
 		return (
 			<View>
 				<GraphList
-					entries={graphStore.my!.entriesByDate}
+					entries={graphStore.my!.entriesByYMD}
 					refreshing={graphStore.my!.refreshing}
 					onRefresh={fetchMyRecentEntries}
 				/>

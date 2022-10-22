@@ -43,7 +43,7 @@ export const GraphList: FC<Props> = observer(({ entries, refreshing, onRefresh }
 			renderSectionHeader={renderSectionHeader}
 			getItemLayout={getItemLayout}
 			keyExtractor={keyExtractor}
-			SectionSeparatorComponent={<Spacer height={10} />}
+			SectionSeparatorComponent={Separator}
 		/>
 	)
 })
@@ -64,6 +64,8 @@ const getItemLayout = (_: any, index: number) => ({
 })
 
 const keyExtractor = (item: Date) => item.toISOString()
+
+const Separator: FC = () => <Spacer height={10} />
 
 const ITEM_HEIGHT = 44
 
