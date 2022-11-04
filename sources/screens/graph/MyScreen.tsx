@@ -8,8 +8,8 @@ import { GraphList } from './List'
 import { graphStore } from 'store/GraphStore'
 import { fetchMyRecentEntries } from 'logic/entries'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { SettingsScreen } from 'screens/settings'
 import { store } from 'store'
+import { navigate } from 'navigation'
 
 export const MyGraphScreen = createScreen(
 	'MyGraph',
@@ -29,7 +29,7 @@ export const MyGraphScreen = createScreen(
 	},
 )
 
-export const openSettings = () => SettingsScreen.navigate()
+export const openSettings = () => navigate('Settings')
 
 const styles = createStyles({
 	container: () => ({

@@ -13,7 +13,7 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 	},
 	response?: { [shapeName: string]: ResponseShape },
 ): Promise<Expand<VSResponse<Shaped<ResponseShape>>>> => {
-	console.log('request', method, url, request?.body?.data)
+	// console.log('request', method, url, request?.body?.data)
 	let body
 
 	if (request?.body) {
@@ -35,7 +35,7 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 	// const text = await result.text()
 	// console.log('result', text)
 	const data = await result.json()
-	console.log('response', method, url, data)
+	// console.log('response', method, url, data)
 
 	if (result.ok) {
 		// TODO: validate response code

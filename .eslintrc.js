@@ -22,7 +22,7 @@ module.exports = {
 		'@typescript-eslint/no-var-requires': 0,
 		'@typescript-eslint/ban-types': 0,
 		'@typescript-eslint/ban-ts-comment': 0,
-		'no-unused-vars': 1,
+		'no-unused-vars': 0,
 		'no-use-before-define': 0,
 		'no-undef': 0,
 		'array-callback-return': 0,

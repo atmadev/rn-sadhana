@@ -1,15 +1,14 @@
 import { FC, createElement } from 'react'
 
-import { navigation } from 'navigation/utils'
-
 import { computed } from 'mobx'
 import { ViewStyle, TextStyle, ImageStyle } from 'react-native'
 import { store } from 'store'
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
+import { ScreenList } from 'navigation/ScreenList'
 
-export const createScreen = <Props = void>(
-	name: string,
-	rawComponent: FC<Props>,
+export const createScreen = <Name extends keyof ScreenList>(
+	name: Name,
+	rawComponent: FC<ScreenList[Name]>,
 	options?: NativeStackNavigationOptions,
 ) => ({
 	Screen: {
@@ -20,9 +19,6 @@ export const createScreen = <Props = void>(
 		},
 		options,
 	},
-	navigate: (props: Props) => navigation!.navigate(name, props),
-	// @ts-ignore
-	reset: (props: Props) => navigation!.reset({ index: 0, routes: [{ name, params: props }] }),
 })
 
 export type Style = ViewStyle | TextStyle | ImageStyle

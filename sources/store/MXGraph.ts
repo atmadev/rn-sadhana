@@ -18,14 +18,13 @@ export class MXGraph {
 	mxEntries = new Map<YMD, MXEntry>()
 	getMXEntry = (ymd: YMD) => {
 		if (this.mxEntries.has(ymd)) {
-			console.log('return', this.mxEntries.get(ymd)!.uuid)
 			return this.mxEntries.get(ymd)!
 		}
 
 		const mxEntry = new MXEntry(this.entries.get(ymd))
 		this.mxEntries.set(ymd, mxEntry)
 
-		console.log('return', mxEntry.uuid)
+		// console.log(ymd, 'created')
 		return mxEntry
 	}
 

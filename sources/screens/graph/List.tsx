@@ -3,7 +3,7 @@ import { SectionList, StyleSheet } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 import { View, Text } from 'components/primitives'
-import { Entry } from 'shared/types'
+import { Entry, YMD } from 'shared/types'
 import { calendarStore } from 'store/CalendarStore'
 import { EntryItem } from './EntryItem'
 import { createStyles } from 'screens/utils'
@@ -24,8 +24,8 @@ export const GraphList: FC<Props> = observer(({ graph, onRefresh }) => {
 
 	const { entries, refreshing } = graph
 
-	const renderItem = useCallback(({ item }: { item: Date }) => {
-		return <EntryItem date={item} userId={userStore.myID!} />
+	const renderItem = useCallback(({ item }: { item: YMD }) => {
+		return <EntryItem ymd={item} userId={userStore.myID!} />
 	}, [])
 
 	const sections = useMemo(() => {
@@ -50,11 +50,11 @@ export const GraphList: FC<Props> = observer(({ graph, onRefresh }) => {
 	)
 })
 
-const renderSectionHeader = ({ section: { data } }: { section: { data: Date[] } }) => {
-	const d = data[0]
+const renderSectionHeader = ({ section: { data } }: { section: { data: YMD[] } }) => {
+	const ymd = data[0]
 	return (
 		<View style={styles.sectionHeader}>
-			<Text style={styles.sectionHeaderText}>{d.toDateString()}</Text>
+			<Text style={styles.sectionHeaderText}>{ymd}</Text>
 		</View>
 	)
 }
@@ -65,7 +65,7 @@ const getItemLayout = (_: any, index: number) => ({
 	index,
 })
 
-const keyExtractor = (item: Date) => item.toISOString()
+const keyExtractor = (ymd: YMD) => ymd
 
 const Separator: FC = () => <Spacer height={10} />
 

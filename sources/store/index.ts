@@ -14,7 +14,7 @@ class Store {
 	colorScheme: ColorSchemeName = null
 	setColorScheme = (scheme: ColorSchemeName) => {
 		this.colorScheme = scheme
-		console.log('sheme', scheme)
+		// console.log('sheme', scheme)
 	}
 
 	get theme() {

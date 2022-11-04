@@ -7,7 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
 
 import { store } from 'store'
-import { Navigation } from 'navigation'
+import { Navigation } from 'navigation/tree'
 import { initApp } from 'logic'
 import { onAppStart } from 'logic'
 import { keyboardStore } from 'store/KeyboardStore'

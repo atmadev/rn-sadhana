@@ -1,3 +1,4 @@
+import { YMD } from './types'
 import { pad } from './utils'
 
 export const isTheSameDay = (date1: Date, date2: Date) => {
@@ -8,11 +9,11 @@ export const isTheSameDay = (date1: Date, date2: Date) => {
 	)
 }
 
-export const ymdStringFromDate = (date: Date = new Date()) => {
+export const ymdStringFromDate = (date: Date = new Date()): YMD => {
 	return `${date.getFullYear()}-${pad(date.getMonth() + 1, 2)}-${pad(date.getDate(), 2)}`
 }
 
-export const utcYmdStringFromDate = (date: Date = new Date()) => {
+export const utcYmdStringFromDate = (date: Date = new Date()): YMD => {
 	return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1, 2)}-${pad(date.getUTCDate(), 2)}`
 }
 

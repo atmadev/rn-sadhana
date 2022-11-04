@@ -6,15 +6,15 @@ import { Image } from 'react-native'
 import { Spacer } from 'components/Spacer'
 import { Device } from 'const'
 import { TouchableHighlight } from 'react-native-gesture-handler'
-import { GraphEditingScreen } from 'screens/editing/GraphEditingScreen'
 import { graphStore } from 'store/GraphStore'
-import { ymdStringFromDate } from 'shared/dateUtil'
 import { BLUE, ORANGE, RED, YELLOW } from 'const/Colors'
 import { store } from 'store'
+import { navigate } from 'navigation'
+import { YMD } from 'shared/types'
 
-export const EntryItem: FC<{ date: Date; userId: string }> = observer(({ date, userId }) => {
+export const EntryItem: FC<{ ymd: YMD; userId: string }> = observer(({ ymd, userId }) => {
 	const graph = graphStore.map.get(userId)!
-	const ymd = ymdStringFromDate(date)
+	const date = new Date(ymd)
 	const entry = graph.entries.get(ymd)
 
 	const roundsBefore730 = parseInt(entry?.jcount_730 ?? '0')
@@ -24,7 +24,7 @@ export const EntryItem: FC<{ date: Date; userId: string }> = observer(({ date, u
 	const allRounds = roundsBefore730 + roundsBefore10 + roundsBefore18 + roundsAfter
 
 	const onPress = useCallback(() => {
-		GraphEditingScreen.navigate({ ymd })
+		navigate('GraphEditing', { ymd })
 	}, [ymd])
 
 	return (

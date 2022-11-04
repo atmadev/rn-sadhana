@@ -1,17 +1,16 @@
 import * as SplashScreen from 'expo-splash-screen'
 import { initLocalDB } from 'services/localDB'
 import { store } from 'store'
-import { LoginScreen } from 'screens/LoginScreen'
 import { deleteSecure, fetchSecure } from 'services/secureStore'
 import { fetchInitialData, login } from './auth'
 import * as db from 'services/localDB'
 import { graphStore } from 'store/GraphStore'
-import { MyGraphScreen } from 'screens/graph/MyScreen'
 import { userStore } from 'store/UserStore'
 import { isNetworkError } from 'utils'
 import { InteractionManager } from 'react-native'
 import { loginStore } from 'store/LoginStore'
 import { fetchLocalEntries } from './entries'
+import { navigate, reset } from 'navigation'
 
 // TODO: think about offline mode
 // TODO: think how to show the my graph ASAP
@@ -42,7 +41,7 @@ export const onAppStart = async () => {
 			userStore.setMyID(myID)
 			// Prefetch only local entries from the DB
 			await fetchLocalEntries()
-			MyGraphScreen.reset()
+			reset('MyGraph')
 
 			try {
 				const result = await login(username, password)
@@ -57,14 +56,14 @@ export const onAppStart = async () => {
 				if (isNetworkError(e)) return
 				throw e
 			}
-		} else LoginScreen.navigate()
+		} else navigate('Login')
 	} catch (e) {
-		LoginScreen.navigate()
+		navigate('Login')
 	}
 }
 
 export const signOut = async () => {
-	LoginScreen.reset()
+	reset('Login')
 	InteractionManager.runAfterInteractions(async () => {
 		await Promise.all([
 			deleteSecure('username'),

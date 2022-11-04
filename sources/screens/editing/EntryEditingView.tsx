@@ -11,6 +11,7 @@ import { SwitcherCell } from './SwitcherCell'
 import { BLUE, ORANGE, RED, YELLOW } from 'const/Colors'
 import { store } from 'store'
 import { graphStore } from 'store/GraphStore'
+import { Device } from 'const'
 
 export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 	const entry = graphStore.my!.getMXEntry(ymd)
@@ -93,7 +94,7 @@ export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 })
 
 const styles = createStyles({
-	container: () => ({ flex: 1, backgroundColor: store.theme.background }),
+	container: () => ({ flex: 1, backgroundColor: store.theme.background, width: Device.width }),
 	contentContainer: { alignItems: 'stretch' },
 	title: (): TextStyle => ({
 		fontSize: 15,

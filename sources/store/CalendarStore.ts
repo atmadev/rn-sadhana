@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx'
-import { isTheSameDay } from 'shared/dateUtil'
+import { isTheSameDay, ymdStringFromDate } from 'shared/dateUtil'
+import { YMD } from 'shared/types'
 
 class CalendarStore {
 	constructor() {
@@ -14,10 +15,10 @@ class CalendarStore {
 	}
 
 	get lastYearMonths() {
-		const months = [] as Date[][]
+		const months = [] as YMD[][]
 
 		for (let index = 0; index < 12; index++) {
-			const dates = [] as Date[]
+			const dates = [] as YMD[]
 			// enumerate dates of this month
 			let date = new Date(this.currentDate)
 			date.setMonth(this.currentDate.getMonth() - index)
@@ -31,7 +32,7 @@ class CalendarStore {
 			}
 
 			do {
-				dates.push(date)
+				dates.push(ymdStringFromDate(date))
 				date = new Date(date)
 				date.setDate(date.getDate() - 1)
 			} while (date.getMonth() === month)
@@ -40,6 +41,10 @@ class CalendarStore {
 		}
 
 		return months
+	}
+
+	get lastYearDays() {
+		return this.lastYearMonths.flatMap((m) => m)
 	}
 }
 

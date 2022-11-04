@@ -15,7 +15,7 @@ export const BLUE = '#007AFF'
 export const colors = {
 	light: {
 		text: '#000',
-		text2: '#444',
+		text2: '#777',
 		background: '#fff',
 		background2: '#eee',
 		tint: tintColorLight,
@@ -26,7 +26,7 @@ export const colors = {
 	},
 	dark: {
 		text: '#fff',
-		text2: '#bbb',
+		text2: '#888',
 		background: '#171717',
 		background2: '#000',
 		tint: tintColorDark,

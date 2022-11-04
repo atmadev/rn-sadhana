@@ -7,17 +7,16 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as React from 'react'
-import { Pressable, Text } from 'react-native'
 
-import { ModalExample } from 'screens/ModalExample'
 import { TabTwo } from 'screens/TabTwoScreen'
-import { BlankComponent, setNavigation } from './utils'
+import { BlankComponent } from './utils'
 import { store } from 'store'
 import { observer } from 'mobx-react-lite'
 import { LoginScreen } from 'screens/LoginScreen'
 import { MyGraphScreen } from 'screens/graph/MyScreen'
 import { SettingsScreen } from 'screens/settings'
 import { GraphEditingScreen } from 'screens/editing/GraphEditingScreen'
+import { setNavigation } from 'navigation'
 
 export const Navigation = observer(() => {
 	return (
@@ -36,9 +35,9 @@ export const Navigation = observer(() => {
 					component={BottomTabNavigator}
 					options={{ headerShown: false }}
 				/>
-				<RootStack.Group screenOptions={{ presentation: 'modal' }}>
+				{/* <RootStack.Group screenOptions={{ presentation: 'modal' }}>
 					<RootStack.Screen {...ModalExample.Screen} />
-				</RootStack.Group>
+				</RootStack.Group> */}
 			</RootStack.Navigator>
 		</NavigationContainer>
 	)
@@ -67,16 +66,14 @@ const BottomTab = createBottomTabNavigator()
 
 const BottomTabNavigator = () => {
 	const options = React.useCallback(() => {
-		const navigateModal = React.useCallback(() => ModalExample.navigate(), [])
-
 		return {
 			title: 'SQLite Test Lab',
 			// tabBarIcon: ({ color }: { color: string }) => <TabBarIcon name="database" color={color} />,
-			headerRight: () => (
-				<Pressable onPress={navigateModal} style={pressedStyle}>
-					<Text>i</Text>
-				</Pressable>
-			),
+			// headerRight: () => (
+			// 	<Pressable onPress={navigateModal} style={pressedStyle}>
+			// 		<Text>i</Text>
+			// 	</Pressable>
+			// ),
 		}
 	}, [])
 
@@ -99,7 +96,3 @@ const BottomTabNavigator = () => {
 		</BottomTab.Navigator>
 	)
 }
-
-const pressedStyle = ({ pressed }: { pressed: boolean }) => ({
-	opacity: pressed ? 0.5 : 1,
-})

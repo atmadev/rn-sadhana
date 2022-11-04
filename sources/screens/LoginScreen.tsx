@@ -18,11 +18,11 @@ import { configureLayoutAnimationFromKeyboardEvent, Device, doNothing } from 'co
 import * as Haptics from 'expo-haptics'
 import { createScreen } from 'screens/utils'
 import { fetchInitialData, login } from 'logic/auth'
-import { MyGraphScreen } from './graph/MyScreen'
 import { userStore } from 'store/UserStore'
 import { observer } from 'mobx-react-lite'
 import { fetchLocalEntries } from 'logic/entries'
 import { GRAY_LIGHT, ORANGE, ORANGE_LIGHT, WHITE } from 'const/Colors'
+import { reset } from 'navigation'
 
 let keyboardMarginBottom = 0
 const formHorizontalOffset = new Animated.Value(0)
@@ -69,7 +69,7 @@ export const LoginScreen = createScreen(
 						await fetchInitialData()
 						await fetchLocalEntries()
 
-						MyGraphScreen.reset()
+						reset('MyGraph')
 						// TODO:
 						// add login store to change message text reactively
 					} else {
