@@ -6,6 +6,8 @@ import * as db from 'services/localDB'
 import { fetchMyRecentEntries } from './entries'
 import { loginStore } from 'store/LoginStore'
 
+// TODO: don't logout on network error
+
 export const login = async (username: string, password: string) => {
 	try {
 		const result = await vs.login(username, password)

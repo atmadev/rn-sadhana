@@ -44,5 +44,6 @@ module.exports = {
 		],
 		'react/no-unused-prop-types': 0,
 		camelcase: 0,
+		'lines-between-class-members': 1,
 	},
 }

@@ -12,7 +12,10 @@ class Store {
 	setInited = () => (this.inited = true)
 
 	colorScheme: ColorSchemeName = null
-	setColorScheme = (scheme: ColorSchemeName) => (this.colorScheme = scheme)
+	setColorScheme = (scheme: ColorSchemeName) => {
+		this.colorScheme = scheme
+		console.log('sheme', scheme)
+	}
 
 	get theme() {
 		return this.colorScheme === 'dark' ? colors.dark : colors.light

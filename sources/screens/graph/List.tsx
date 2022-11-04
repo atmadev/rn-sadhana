@@ -5,25 +5,27 @@ import { observer } from 'mobx-react-lite'
 import { View, Text } from 'components/primitives'
 import { Entry } from 'shared/types'
 import { calendarStore } from 'store/CalendarStore'
-import { ymdStringFromDate } from 'shared/dateUtil'
 import { EntryItem } from './EntryItem'
 import { createStyles } from 'screens/utils'
 import { Spacer } from 'components/Spacer'
+import { MXGraph } from 'store/MXGraph'
+import { userStore } from 'store/UserStore'
+import { store } from 'store'
 
 interface Props {
-	entries: { [date: string]: Entry }
-	refreshing: boolean
+	graph: MXGraph
 	onRefresh: () => void
 }
 
-export const GraphList: FC<Props> = observer(({ entries, refreshing, onRefresh }) => {
+export const GraphList: FC<Props> = observer(({ graph, onRefresh }) => {
 	useLayoutEffect(() => {
 		calendarStore.upDateIfNeeded()
 	}, [])
 
+	const { entries, refreshing } = graph
+
 	const renderItem = useCallback(({ item }: { item: Date }) => {
-		const entry = entries[ymdStringFromDate(item)]
-		return <EntryItem date={item} entry={entry} />
+		return <EntryItem date={item} userId={userStore.myID!} />
 	}, [])
 
 	const sections = useMemo(() => {
@@ -75,13 +77,13 @@ export interface Month {
 }
 
 const styles = createStyles({
-	sectionHeader: {
-		backgroundColor: 'white',
+	sectionHeader: () => ({
+		backgroundColor: store.theme.background,
 		height: 28,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderBottomColor: '#bbb',
+		borderBottomColor: store.theme.separator,
 		borderBottomWidth: StyleSheet.hairlineWidth,
-	},
-	sectionHeaderText: {},
+	}),
+	sectionHeaderText: () => ({ color: store.theme.text2 }),
 })

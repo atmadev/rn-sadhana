@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { useColorScheme } from 'react-native'
+import { LayoutChangeEvent, useColorScheme } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -10,6 +10,7 @@ import { store } from 'store'
 import { Navigation } from 'navigation'
 import { initApp } from 'logic'
 import { onAppStart } from 'logic'
+import { keyboardStore } from 'store/KeyboardStore'
 
 const App = observer(() => {
 	useEffect(() => {
@@ -17,9 +18,9 @@ const App = observer(() => {
 	}, [])
 
 	return store.inited ? (
-		<SafeAreaProvider>
-			<Navigation />
+		<SafeAreaProvider style={flex1} onLayout={onLayout}>
 			<StatusBar />
+			<Navigation />
 			<Hooks />
 		</SafeAreaProvider>
 	) : null
@@ -29,14 +30,19 @@ const Hooks: FC = () => {
 	const colorScheme = useColorScheme()
 
 	useEffect(() => {
-		onAppStart()
-	}, [])
-
-	useEffect(() => {
 		store.setColorScheme(colorScheme)
 	}, [colorScheme])
 
+	useEffect(() => {
+		onAppStart()
+	}, [])
+
 	return null
 }
+
+const flex1 = { flex: 1 }
+
+const onLayout = (e: LayoutChangeEvent) =>
+	keyboardStore.setRootViewHeight(e.nativeEvent.layout.height)
 
 export default App

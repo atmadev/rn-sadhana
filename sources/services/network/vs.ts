@@ -19,7 +19,7 @@ export const login = async (username: string, password: string) => {
 			},
 			{ Tokens: sTokens },
 		)
-		console.log({ result })
+		// console.log({ result })
 
 		if (result.success) tokens = result.data
 
@@ -52,7 +52,7 @@ export const vsAuthorizedRequest = async <ParamsShape extends Shape, ResponseSha
 export const me = async () => {
 	try {
 		const result = await vsAuthorizedRequest('GET', 'me', undefined, { User })
-		console.log('result', result)
+		// console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('me error', e)
@@ -71,7 +71,7 @@ export const entries = async (
 			{ shape: { EntriesRequest: EntriesRequest }, data },
 			{ EntriesResponse },
 		)
-		console.log('entries result', result)
+		// console.log('entries result', result)
 		return result
 	} catch (e) {
 		console.log('entries error', e)
@@ -87,7 +87,7 @@ export const monthEntries = async (userId: string, data: Shaped<typeof MonthEntr
 			{ shape: { MonthEntriesRequest: MonthEntriesRequest }, data },
 			{ EntriesResponse },
 		)
-		console.log('result', result)
+		// console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('monthEntries error', e)
@@ -103,7 +103,7 @@ export const postEntry = async (userId: string, data: Shaped<typeof PostEntry>) 
 			{ shape: { PostEntry }, data },
 			{ EntryID },
 		)
-		console.log('result', result)
+		// console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('postEntry error', e)
@@ -117,7 +117,7 @@ export const updateEntry = async (userId: string, data: Shaped<typeof UpdateEntr
 			shape: { UpdateEntry },
 			data,
 		})
-		console.log('result', result)
+		// console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('postEntry error', e)
@@ -131,7 +131,7 @@ export const updateOptions = async (data: Shaped<typeof User>) => {
 			shape: { User },
 			data,
 		})
-		console.log('result', result)
+		// console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('updateUser error', e)

@@ -1,58 +1,130 @@
 import React, { FC } from 'react'
-import { TextStyle } from 'react-native'
-import { View, TextInput, Text } from 'components/primitives'
+import { TextStyle, StyleSheet } from 'react-native'
+import { View, Text, ScrollView } from 'components/primitives'
 
 import { observer } from 'mobx-react-lite'
-import { MXEntry, Time } from 'store/MXEntry'
 import { createStyles } from 'screens/utils'
+import { YMD } from 'shared/types'
+import { HoursInput, MinutesInput } from './TimeInput'
+import { JapaInput } from './JapaInput'
+import { SwitcherCell } from './SwitcherCell'
+import { BLUE, ORANGE, RED, YELLOW } from 'const/Colors'
+import { store } from 'store'
+import { graphStore } from 'store/GraphStore'
 
-export const EntryEditingView: FC<{ entry: MXEntry }> = observer(({ entry }) => {
-	return (
-		<View style={styles.container}>
-			<TimeInput title="sleep" time={entry.sleep} />
-		</View>
-	)
-})
+export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
+	const entry = graphStore.my!.getMXEntry(ymd)
+	const refs = entry.refs
 
-const TimeInput: FC<{ title: string; time: Time }> = observer(({ title, time }) => {
+	let currentRefIndex = 0
+
+	const currentRefs = () => ({
+		ref: refs[currentRefIndex],
+		nextRef: currentRefIndex < refs.length - 1 ? refs[++currentRefIndex] : undefined,
+	})
+
 	return (
-		<View>
-			<Text style={styles.title}>{title}</Text>
+		<ScrollView
+			style={styles.container}
+			contentContainerStyle={styles.contentContainer}
+			keyboardDismissMode="on-drag"
+		>
+			<Text style={styles.title}>Wake Up</Text>
 			<View style={styles.row}>
-				<SubtitledTextInput
-					subtitle="hours"
-					value={time.hoursString}
-					setValue={time.setHoursString}
+				<HoursInput time={entry.wakeUp} {...currentRefs()} />
+				<View style={styles.verticalSeparator} />
+				<MinutesInput time={entry.wakeUp} {...currentRefs()} />
+			</View>
+			<Text style={styles.title}>Japa rounds</Text>
+			<View style={styles.row}>
+				<JapaInput
+					style={styles.japa7}
+					title="before 7:30"
+					value={entry.japa7}
+					onChangeText={entry.setJapa7}
+					{...currentRefs()}
 				/>
-				<SubtitledTextInput
-					subtitle="minutes"
-					value={time.minutesString}
-					setValue={time.setMinutesString}
+				<View style={styles.verticalSeparator} />
+				<JapaInput
+					style={styles.japa10}
+					title="before 10:00"
+					value={entry.japa10}
+					onChangeText={entry.setJapa10}
+					{...currentRefs()}
+				/>
+				<View style={styles.verticalSeparator} />
+				<JapaInput
+					style={styles.japa18}
+					title="before 18:00"
+					value={entry.japa18}
+					onChangeText={entry.setJapa18}
+					{...currentRefs()}
+				/>
+				<View style={styles.verticalSeparator} />
+				<JapaInput
+					style={styles.japa24}
+					title="after 18:00"
+					value={entry.japa24}
+					onChangeText={entry.setJapa24}
+					{...currentRefs()}
 				/>
 			</View>
-		</View>
-	)
-})
 
-const SubtitledTextInput: FC<{
-	subtitle: string
-	value: string
-	setValue: (value: string) => void
-}> = observer(({ subtitle, value, setValue }) => {
-	return (
-		<View>
-			<TextInput value={value} onChangeText={setValue} />
-			<Text>{subtitle}</Text>
-		</View>
+			<Text style={styles.title}>Reading books</Text>
+			<View style={styles.row}>
+				<HoursInput time={entry.reading} {...currentRefs()} />
+				<View style={styles.verticalSeparator} />
+				<MinutesInput time={entry.reading} {...currentRefs()} />
+			</View>
+
+			<SwitcherCell title="Kirtan" value={entry.kirtan} setValue={entry.setKirtan} />
+			<SwitcherCell title="Service" value={entry.service} setValue={entry.setService} />
+			<SwitcherCell title="Yoga" value={entry.yoga} setValue={entry.setYoga} />
+			<SwitcherCell title="Lections" value={entry.lections} setValue={entry.setLections} />
+
+			<Text style={styles.title}>Sleep</Text>
+			<View style={styles.row}>
+				<HoursInput time={entry.sleep} {...currentRefs()} />
+				<View style={styles.verticalSeparator} />
+				<MinutesInput time={entry.sleep} {...currentRefs()} />
+			</View>
+		</ScrollView>
 	)
 })
 
 const styles = createStyles({
-	container: {},
+	container: () => ({ flex: 1, backgroundColor: store.theme.background }),
+	contentContainer: { alignItems: 'stretch' },
 	title: (): TextStyle => ({
-		fontSize: 20,
+		fontSize: 15,
+		textAlign: 'center',
+		marginTop: 8,
+		color: store.theme.text,
 	}),
-	row: {
+	row: () => ({
 		flexDirection: 'row',
+		justifyContent: 'space-evenly',
+		paddingTop: 8,
+		padding: 13,
+		borderBottomColor: store.theme.separator,
+		borderBottomWidth: StyleSheet.hairlineWidth,
+	}),
+
+	verticalSeparator: () => ({
+		width: StyleSheet.hairlineWidth,
+		backgroundColor: store.theme.separator,
+		paddingVertical: 12,
+	}),
+	japa7: {
+		color: YELLOW,
+	},
+	japa10: {
+		color: ORANGE,
+	},
+	japa18: {
+		color: RED,
+	},
+	japa24: {
+		color: BLUE,
 	},
 })

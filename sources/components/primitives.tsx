@@ -8,16 +8,30 @@ import {
 	ViewProps,
 	TextInput as RNTextInput,
 	TextInputProps,
+	ScrollView as RNScrollView,
+	ScrollViewProps,
 } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 import { Dynamic } from 'screens/utils'
+import { forwardRef } from 'react'
 
 export const View: FC<MakeDynamicStyle<ViewProps>> = observer((props) => {
 	const { style, ...restProps } = props
 	const finalStyle = style instanceof Function ? style() : style
 
 	return <RNView style={finalStyle} {...restProps} />
+})
+
+export const ScrollView: FC<MakeDynamicStyle<ScrollViewProps>> = observer((props) => {
+	const { style, contentContainerStyle, ...restProps } = props
+	const finalStyle = style instanceof Function ? style() : style
+	const finalContentStyle =
+		contentContainerStyle instanceof Function ? contentContainerStyle() : contentContainerStyle
+
+	return (
+		<RNScrollView style={finalStyle} contentContainerStyle={finalContentStyle} {...restProps} />
+	)
 })
 
 export const Text: FC<MakeDynamicStyle<TextProps>> = observer((props) => {
@@ -34,13 +48,15 @@ export const Image: FC<MakeDynamicStyle<ImageProps>> = observer((props) => {
 	return <RNImage style={finalStyle} {...restProps} />
 })
 
-export const TextInput: FC<MakeDynamicStyle<TextInputProps>> = observer((props) => {
-	const { style, ...restProps } = props
-	const finalStyle = style instanceof Function ? style() : style
+export const TextInput = observer(
+	forwardRef<RNTextInput, MakeDynamicStyle<TextInputProps>>((props, ref) => {
+		const { style, ...restProps } = props
+		const finalStyle = style instanceof Function ? style() : style
 
-	return <RNTextInput style={finalStyle} {...restProps} />
-})
+		return <RNTextInput style={finalStyle} {...restProps} ref={ref} />
+	}),
+)
 
 type MakeDynamicStyle<T> = {
-	[K in keyof T]: K extends 'style' ? Dynamic<T[K]> : T[K]
+	[K in keyof T]: K extends 'style' | 'contentContainerStyle' ? Dynamic<T[K]> : T[K]
 }

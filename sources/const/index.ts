@@ -20,17 +20,6 @@ export const Device = {
 	small: Dimensions.get('window').height < 600,
 }
 
-export const WHITE = 'white'
-export const BLACK = 'black'
-export const GRAY = '#686868'
-export const GRAY_LIGHT = '#CACACA'
-export const GRAY_ULTRALIGHT = '#F2F4F5'
-export const ORANGE = '#FF8C00'
-export const ORANGE_LIGHT = '#FFBD56'
-export const YELLOW = '#FFDB00'
-export const RED = '#FF0048'
-export const BLUE = '#007AFF'
-
 export const configureLayoutAnimationFromKeyboardEvent = (e: KeyboardEvent) =>
 	LayoutAnimation.configureNext(LayoutAnimationKeyboardConfig(e.duration, e.easing))
 

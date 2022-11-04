@@ -14,15 +14,7 @@ import { StatusBar } from 'expo-status-bar'
 import { arrowRightWhite, beadsLight, prabhupada, vaishnavaseva } from 'assets/index'
 import { Card } from 'components/Card'
 import { RadialGradient } from 'components/RadialGradient'
-import {
-	configureLayoutAnimationFromKeyboardEvent,
-	Device,
-	GRAY_LIGHT,
-	ORANGE,
-	ORANGE_LIGHT,
-	WHITE,
-	doNothing,
-} from 'const/index'
+import { configureLayoutAnimationFromKeyboardEvent, Device, doNothing } from 'const/index'
 import * as Haptics from 'expo-haptics'
 import { createScreen } from 'screens/utils'
 import { fetchInitialData, login } from 'logic/auth'
@@ -30,6 +22,7 @@ import { MyGraphScreen } from './graph/MyScreen'
 import { userStore } from 'store/UserStore'
 import { observer } from 'mobx-react-lite'
 import { fetchLocalEntries } from 'logic/entries'
+import { GRAY_LIGHT, ORANGE, ORANGE_LIGHT, WHITE } from 'const/Colors'
 
 let keyboardMarginBottom = 0
 const formHorizontalOffset = new Animated.Value(0)

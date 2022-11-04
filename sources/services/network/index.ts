@@ -31,7 +31,9 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 		body,
 	})
 
-	console.log('result', result.ok, result.status, result.statusText, result.type)
+	// console.log('result', result.ok, result.status, result.statusText, result.type, result.)
+	// const text = await result.text()
+	// console.log('result', text)
 	const data = await result.json()
 	console.log('response', method, url, data)
 

@@ -17,6 +17,7 @@ import { observer } from 'mobx-react-lite'
 import { LoginScreen } from 'screens/LoginScreen'
 import { MyGraphScreen } from 'screens/graph/MyScreen'
 import { SettingsScreen } from 'screens/settings'
+import { GraphEditingScreen } from 'screens/editing/GraphEditingScreen'
 
 export const Navigation = observer(() => {
 	return (
@@ -28,6 +29,7 @@ export const Navigation = observer(() => {
 				<RootStack.Screen {...LoginScreen.Screen} />
 				<RootStack.Screen {...MyGraphScreen.Screen} />
 				<RootStack.Screen {...SettingsScreen.Screen} />
+				<RootStack.Screen {...GraphEditingScreen.Screen} />
 				<RootStack.Screen name="MainStack" component={MainStackContainer} />
 				<RootStack.Screen
 					name="Root"

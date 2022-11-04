@@ -1,8 +1,39 @@
 import { makeAutoObservable } from 'mobx'
+import { createRef, RefObject } from 'react'
+import { TextInput } from 'react-native'
 import { EntryInputFields } from 'shared/types'
-import { pad } from 'shared/utils'
+import { MXTime } from './MXTime'
+
+// TODO: check will server eat empty string as japa counts
 
 export class MXEntry {
+	constructor(entry?: EntryInputFields) {
+		this.japa7 = parseJapaCount(entry?.jcount_730)
+		this.japa10 = parseJapaCount(entry?.jcount_1000)
+		this.japa18 = parseJapaCount(entry?.jcount_1800)
+		this.japa24 = parseJapaCount(entry?.jcount_after)
+
+		this.reading = new MXTime(parseInt(entry?.reading ?? '0'))
+
+		this.wakeUp = new MXTime(entry?.opt_wake_up ?? undefined)
+
+		this.kirtan = entry?.kirtan === '1'
+		this.yoga = entry?.opt_exercise === '1'
+		this.service = entry?.opt_service === '1'
+		this.lections = entry?.opt_lections === '1'
+
+		this.sleep = new MXTime(entry?.opt_sleep ?? undefined)
+
+		const refsCount = 10
+		for (let i = 0; i < refsCount; i++) {
+			this.refs.push(createRef<TextInput | null>())
+		}
+
+		makeAutoObservable(this)
+	}
+
+	uuid = Date.now()
+
 	japa7: string
 	setJapa7 = (j: string) => (this.japa7 = j)
 
@@ -15,45 +46,50 @@ export class MXEntry {
 	japa24: string
 	setJapa24 = (j: string) => (this.japa24 = j)
 
-	reading: number
-	kirtan: boolean
+	reading: MXTime
 
-	sleep: Time
-	wakeUp: Time
+	sleep: MXTime
+	wakeUp: MXTime
+
+	kirtan: boolean
+	setKirtan = (kirtan: boolean) => (this.kirtan = kirtan)
+
+	service: boolean
+	setService = (service: boolean) => (this.service = service)
 
 	yoga: boolean
-	service: boolean
+	setYoga = (yoga: boolean) => (this.yoga = yoga)
+
 	lections: boolean
+	setLections = (lections: boolean) => (this.lections = lections)
 
-	constructor(entry?: EntryInputFields) {
-		makeAutoObservable(this)
+	refs: RefObject<TextInput | null>[] = []
 
-		this.japa7 = entry?.jcount_730 ?? '0'
-		this.japa10 = entry?.jcount_1000 ?? '0'
-		this.japa18 = entry?.jcount_1800 ?? '0'
-		this.japa24 = entry?.jcount_after ?? '0'
-
-		this.reading = parseInt(entry?.reading ?? '0')
-		this.kirtan = !!entry?.kirtan
-
-		this.sleep = new Time(entry?.opt_sleep ?? undefined)
-		this.wakeUp = new Time(entry?.opt_wake_up ?? undefined)
-
-		this.yoga = !!entry?.opt_exercise
-		this.service = !!entry?.opt_service
-		this.lections = !!entry?.opt_lections
+	private go = (forward: boolean) => {
+		let i = 0
+		for (const r of this.refs) {
+			if (r.current?.isFocused()) {
+				const newIndex = i + (forward ? 1 : -1)
+				if (newIndex >= 0 && newIndex < this.refs.length) this.refs[newIndex].current?.focus()
+				return
+			}
+			i++
+		}
 	}
+
+	goBack = () => this.go(false)
+	goNext = () => this.go(true)
 
 	get entryInputFields(): EntryInputFields {
 		return {
-			jcount_730: this.japa7,
-			jcount_1000: this.japa10,
-			jcount_1800: this.japa18,
-			jcount_after: this.japa24,
-			reading: this.reading.toString(),
+			jcount_730: this.japa7.length === 0 ? '0' : this.japa7,
+			jcount_1000: this.japa10.length === 0 ? '0' : this.japa10,
+			jcount_1800: this.japa18.length === 0 ? '0' : this.japa18,
+			jcount_after: this.japa24.length === 0 ? '0' : this.japa24,
+			reading: this.reading.allInMinutesString,
+			opt_sleep: !this.sleep.empty ? this.sleep.string : null,
+			opt_wake_up: !this.wakeUp.empty ? this.wakeUp.string : null,
 			kirtan: this.kirtan ? '1' : '0',
-			opt_sleep: this.sleep ? this.sleep.string : null,
-			opt_wake_up: this.wakeUp ? this.wakeUp.string : null,
 			opt_exercise: this.yoga ? '1' : '0',
 			opt_service: this.service ? '1' : '0',
 			opt_lections: this.lections ? '1' : '0',
@@ -61,47 +97,4 @@ export class MXEntry {
 	}
 }
 
-export class Time {
-	hours: number
-	get hoursString() {
-		return this.hoursChanged ? this.hours.toString() : ''
-	}
-
-	setHoursString = (hs: string) => {
-		const h = parseInt(hs)
-		if (h >= 0 && h < 24) {
-			this.hours = h
-			this.hoursChanged = true
-		}
-	}
-
-	hoursChanged = false
-
-	minutes: number
-	get minutesString() {
-		return this.minutesChanged ? this.minutes.toString() : ''
-	}
-
-	setMinutesString = (ms: string) => {
-		const m = parseInt(ms)
-		if (m >= 0 && m < 60) {
-			this.minutes = m
-			this.minutesChanged = true
-		}
-	}
-
-	minutesChanged = false
-	get changed() {
-		return this.hoursChanged || this.minutesChanged
-	}
-
-	constructor(string?: string) {
-		const [hoursString, minutesString] = string?.split(':') ?? ['0', '0']
-		this.hours = parseInt(hoursString)
-		this.minutes = parseInt(minutesString)
-	}
-
-	get string() {
-		return pad(this.hours, 2) + ':' + pad(this.minutes, 2)
-	}
-}
+const parseJapaCount = (j?: string | null) => (!j || parseInt(j) === 0 ? '' : j)

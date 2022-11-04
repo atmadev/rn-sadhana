@@ -1,6 +1,5 @@
 import { makeAutoObservable } from 'mobx'
 import { Entry, YMD } from 'shared/types'
-import { recordFromArray } from 'shared/utils'
 import { MXEntry } from './MXEntry'
 
 export class MXGraph {
@@ -11,24 +10,26 @@ export class MXGraph {
 		makeAutoObservable(this, { userID: false })
 	}
 
-	entries = new Map<string, Entry>()
+	entries = new Map<YMD, Entry>()
 	setEntries = (es: Entry[]) => {
-		es.forEach((e) => this.entries.set(e.id, e))
+		es.forEach((e) => this.entries.set(e.date, e))
 	}
 
-	mxEntriesByYMD = new Map<YMD, MXEntry>()
+	mxEntries = new Map<YMD, MXEntry>()
 	getMXEntry = (ymd: YMD) => {
-		if (this.mxEntriesByYMD.has(ymd)) return this.mxEntriesByYMD.get(ymd)!
+		if (this.mxEntries.has(ymd)) {
+			console.log('return', this.mxEntries.get(ymd)!.uuid)
+			return this.mxEntries.get(ymd)!
+		}
 
-		const mxEntry = new MXEntry(this.entriesByYMD[ymd])
-		this.mxEntriesByYMD.set(ymd, mxEntry)
+		const mxEntry = new MXEntry(this.entries.get(ymd))
+		this.mxEntries.set(ymd, mxEntry)
 
+		console.log('return', mxEntry.uuid)
 		return mxEntry
 	}
 
-	get entriesByYMD() {
-		return recordFromArray(Array.from(this.entries.values()), 'date')
-	}
+	clearMXEntries = () => this.mxEntries.clear()
 
 	refreshing = false
 	setRefreshing = (r: boolean) => (this.refreshing = r)
