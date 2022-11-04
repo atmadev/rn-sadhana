@@ -5,4 +5,4 @@ export const flatLog = (result: any[]) => {
 }
 
 export const indexName = (table: string, columns: string[]) =>
-	table + '__' + columns.sort().join('__').replaceAll(' ', '_')
+	table + '__' + columns.sort().join('__').split(' ').join('_')

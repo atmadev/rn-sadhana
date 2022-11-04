@@ -5,6 +5,7 @@ import {
 	NativeScrollEvent,
 	NativeSyntheticEvent,
 	Animated,
+	Button,
 } from 'react-native'
 import { View, Text } from 'components/primitives'
 
@@ -17,13 +18,14 @@ import { Device, configureLayoutAnimationFromKeyboardEvent } from 'const'
 
 import { keyboardStore } from 'store/KeyboardStore'
 import { graphStore } from 'store/GraphStore'
-// import { saveEditing } from 'logic/entries'
+import { saveEditing } from 'logic/entries'
 import { ymdStringFromDate } from 'shared/dateUtil'
 import { ORANGE } from 'const/Colors'
 import { store } from 'store'
 import { calendarStore } from 'store/CalendarStore'
 import { DateList } from './DateList'
 import { YMD } from 'shared/types'
+import { Spacer } from 'components/Spacer'
 
 export const GraphEditingScreen = createScreen(
 	'GraphEditing',
@@ -78,14 +80,14 @@ export const GraphEditingScreen = createScreen(
 					inverted
 				/>
 
-				{/* <View style={styles.bottomBar}>
-					<Button title="Back" onPress={entry.goBack} />
-					<Button title="Next" onPress={entry.goNext} />
+				<View style={styles.bottomBar}>
+					{/* <Button title="Back" onPress={entry.goBack} /> */}
+					{/* <Button title="Next" onPress={entry.goNext} /> */}
 					<Button title="Save" onPress={onSave} />
-				</View> */}
-				{/* <Spacer
+				</View>
+				<Spacer
 					height={keyboardStore.isVisible ? keyboardStore.keyboardHeight : Device.safeBottomInset}
-				/> */}
+				/>
 			</View>
 		)
 	}),
@@ -115,10 +117,10 @@ const onCancel = () => {
 	InteractionManager.runAfterInteractions(graphStore.my!.clearMXEntries)
 }
 
-// const onSave = () => {
-// 	goBack()
-// 	saveEditing()
-// }
+const onSave = () => {
+	goBack()
+	saveEditing()
+}
 
 const styles = createStyles({
 	container: () => ({ flex: 1, backgroundColor: store.theme.background }),

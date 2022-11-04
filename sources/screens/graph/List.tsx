@@ -1,89 +1,81 @@
 import React, { FC, useCallback, useLayoutEffect, useMemo } from 'react'
-import { SectionList, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
+import { FlashList } from '@shopify/flash-list'
 import { View, Text } from 'components/primitives'
-import { Entry, YMD } from 'shared/types'
+import { YMD } from 'shared/types'
 import { calendarStore } from 'store/CalendarStore'
 import { EntryItem } from './EntryItem'
 import { createStyles } from 'screens/utils'
-import { Spacer } from 'components/Spacer'
-import { MXGraph } from 'store/MXGraph'
-import { userStore } from 'store/UserStore'
 import { store } from 'store'
+import { graphStore } from 'store/GraphStore'
 
 interface Props {
-	graph: MXGraph
+	userID: string
 	onRefresh: () => void
 }
 
-export const GraphList: FC<Props> = observer(({ graph, onRefresh }) => {
+export const GraphList: FC<Props> = observer(({ userID, onRefresh }) => {
 	useLayoutEffect(() => {
 		calendarStore.upDateIfNeeded()
 	}, [])
 
-	const { entries, refreshing } = graph
+	const { refreshing } = graphStore.map.get(userID)!
 
-	const renderItem = useCallback(({ item }: { item: YMD }) => {
-		return <EntryItem ymd={item} userId={userStore.myID!} />
-	}, [])
+	const { data, headerIndexes, lastItemIndexes } = calendarStore.lastYearDaysWithMonths
 
-	const sections = useMemo(() => {
-		return calendarStore.lastYearMonths.map((data) => {
-			return {
-				data,
-				renderItem,
+	const renderItem = useCallback(
+		({ item, index }: { item: string; index: number }) => {
+			if (headerIndexes.has(index)) {
+				return (
+					<View style={styles.sectionHeader}>
+						<Text style={styles.sectionHeaderText}>{item}</Text>
+					</View>
+				)
 			}
-		})
-	}, [calendarStore.lastYearMonths, entries])
+
+			return <EntryItem ymd={item} userID={userID} isLast={lastItemIndexes.has(index)} />
+		},
+		[userID, headerIndexes],
+	)
+
+	const stickyHeaderIndices = useMemo(() => Array.from(headerIndexes), [headerIndexes])
 
 	return (
-		<SectionList
+		<FlashList
+			data={data}
 			refreshing={refreshing}
 			onRefresh={onRefresh}
-			sections={sections}
-			renderSectionHeader={renderSectionHeader}
-			getItemLayout={getItemLayout}
+			renderItem={renderItem}
+			getItemType={getItemType}
+			stickyHeaderIndices={stickyHeaderIndices}
 			keyExtractor={keyExtractor}
-			SectionSeparatorComponent={Separator}
+			estimatedItemSize={50}
+			scrollIndicatorInsets={scrollIndicatorInsets}
 		/>
 	)
 })
 
-const renderSectionHeader = ({ section: { data } }: { section: { data: YMD[] } }) => {
-	const ymd = data[0]
-	return (
-		<View style={styles.sectionHeader}>
-			<Text style={styles.sectionHeaderText}>{ymd}</Text>
-		</View>
-	)
+const getItemType = (_: any, index: number) => {
+	const { headerIndexes } = calendarStore.lastYearDaysWithMonths
+	return headerIndexes.has(index) ? 'header' : 'entry'
 }
-
-const getItemLayout = (_: any, index: number) => ({
-	length: ITEM_HEIGHT,
-	offset: ITEM_HEIGHT * index,
-	index,
-})
 
 const keyExtractor = (ymd: YMD) => ymd
 
-const Separator: FC = () => <Spacer height={10} />
-
-const ITEM_HEIGHT = 44
-
-export interface Month {
-	date: string
-	data: Entry[]
-}
+const headerHeight = 28
+const scrollIndicatorInsets = { top: headerHeight }
 
 const styles = createStyles({
 	sectionHeader: () => ({
 		backgroundColor: store.theme.background,
-		height: 28,
+		height: headerHeight,
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderBottomColor: store.theme.separator,
 		borderBottomWidth: StyleSheet.hairlineWidth,
+		marginBottom: 6,
 	}),
 	sectionHeaderText: () => ({ color: store.theme.text2 }),
 })

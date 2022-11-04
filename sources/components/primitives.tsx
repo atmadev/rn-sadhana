@@ -10,11 +10,14 @@ import {
 	TextInputProps,
 	ScrollView as RNScrollView,
 	ScrollViewProps,
+	TouchableHighlight as RNTouchableHighlight,
 } from 'react-native'
 
+import { TouchableHighlight as GHTouchableHighlight } from 'react-native-gesture-handler'
 import { observer } from 'mobx-react-lite'
 import { Dynamic } from 'screens/utils'
 import { forwardRef } from 'react'
+import { Device } from 'const'
 
 export const View: FC<MakeDynamicStyle<ViewProps>> = observer((props) => {
 	const { style, ...restProps } = props
@@ -60,3 +63,5 @@ export const TextInput = observer(
 type MakeDynamicStyle<T> = {
 	[K in keyof T]: K extends 'style' | 'contentContainerStyle' ? Dynamic<T[K]> : T[K]
 }
+
+export const TouchableHighlight = Device.ios ? GHTouchableHighlight : RNTouchableHighlight

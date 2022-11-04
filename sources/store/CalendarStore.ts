@@ -46,6 +46,22 @@ class CalendarStore {
 	get lastYearDays() {
 		return this.lastYearMonths.flatMap((m) => m)
 	}
+
+	get lastYearDaysWithMonths() {
+		const headerIndexes = new Set<number>()
+		const lastItemIndexes = new Set<number>()
+		let lastIndex = 0
+		const data = this.lastYearMonths.flatMap((month) => {
+			const headerIndex = lastIndex
+			headerIndexes.add(headerIndex)
+			lastItemIndexes.add(headerIndex + month.length)
+
+			lastIndex += month.length + 1
+
+			return [month[0].slice(0, 7), ...month]
+		})
+		return { data, headerIndexes, lastItemIndexes }
+	}
 }
 
 export const calendarStore = new CalendarStore()
