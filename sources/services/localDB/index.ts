@@ -5,7 +5,7 @@ import { shape } from 'shared/types/shapeTool'
 import { setupDB, SQLDB, Table } from './sqlite'
 import { SQLSchema } from './sqlite/types'
 
-const { string } = primitiveTypes
+const { string, boolean } = primitiveTypes
 
 const useShapes = <SN extends ShapeName>(...names: SN[]) => names
 
@@ -68,7 +68,14 @@ export const entryUpdatedDateForUser = async (userID: string) => {
 	return result[0]?.date
 }
 
-const LocalStoreShape = shape({ myID: string })
+const LocalStoreShape = shape({
+	myID: string,
+	wakeUpEnabled: boolean,
+	serviceEnabled: boolean,
+	yogaEnabled: boolean,
+	lectionsEnabled: boolean,
+	bedEnabled: boolean,
+})
 
 type LocalStore = Shaped<typeof LocalStoreShape>
 
@@ -91,8 +98,8 @@ export const setValueToLocalStore = <K extends keyof LocalStore, V extends Local
 export const getValueFromLocalStore = async <K extends keyof LocalStore, V extends LocalStore[K]>(
 	key: K,
 ): Promise<V | null> => {
-	const [{ value }] = await db.table('KeyValue').select('value').match({ key }).fetch()
-	return value ?? null
+	const [row] = await db.table('KeyValue').select('value').match({ key }).fetch()
+	return row?.value ?? null
 }
 
 export const setObjectToLocalStore = <K extends keyof LocalStore, V extends LocalStore[K]>(
@@ -103,8 +110,8 @@ export const setObjectToLocalStore = <K extends keyof LocalStore, V extends Loca
 export const getObjectFromLocalStore = async <K extends keyof LocalStore, V extends LocalStore[K]>(
 	key: K,
 ) => {
-	const [{ object }] = await db.table('KeyValue').select('object').match({ key }).fetch()
-	return (object ?? null) as V | null
+	const [row] = await db.table('KeyValue').select('object').match({ key }).fetch()
+	return (row?.object ?? null) as V | null
 }
 
 export const removeItemFromLocalStore = async <K extends keyof LocalStore>(key: K) => {

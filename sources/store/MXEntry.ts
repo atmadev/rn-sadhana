@@ -3,6 +3,7 @@ import { createRef, RefObject } from 'react'
 import { TextInput } from 'react-native'
 import { EntryInputFields, YMD } from 'shared/types'
 import { MXTime } from './MXTime'
+import { settingsStore } from './SettingsStore'
 
 // TODO: check will server eat empty string as japa counts
 
@@ -26,7 +27,7 @@ export class MXEntry {
 
 		this.sleep = new MXTime(entry?.opt_sleep ?? undefined)
 
-		const refsCount = 10
+		const refsCount = 5 + settingsStore.enabledOptionsCount
 		for (let i = 0; i < refsCount; i++) {
 			this.refs.push(createRef<TextInput | null>())
 		}

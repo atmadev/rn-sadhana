@@ -12,6 +12,7 @@ import { BLUE, ORANGE, RED, YELLOW } from 'const/Colors'
 import { store } from 'store'
 import { graphStore } from 'store/GraphStore'
 import { Device } from 'const'
+import { settingsStore } from 'store/SettingsStore'
 
 export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 	const entry = graphStore.my!.getMXEntry(ymd)
@@ -30,12 +31,16 @@ export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 			contentContainerStyle={styles.contentContainer}
 			keyboardDismissMode="on-drag"
 		>
-			<Text style={styles.title}>Wake Up</Text>
-			<View style={styles.row}>
-				<HoursInput time={entry.wakeUp} {...currentRefs()} />
-				<View style={styles.verticalSeparator} />
-				<MinutesInput time={entry.wakeUp} {...currentRefs()} />
-			</View>
+			{settingsStore.wakeUpEnabled ? (
+				<>
+					<Text style={styles.title}>Wake Up</Text>
+					<View style={styles.row}>
+						<HoursInput time={entry.wakeUp} {...currentRefs()} />
+						<View style={styles.verticalSeparator} />
+						<MinutesInput time={entry.wakeUp} {...currentRefs()} />
+					</View>
+				</>
+			) : null}
 			<Text style={styles.title}>Japa rounds</Text>
 			<View style={styles.row}>
 				<JapaInput
@@ -79,16 +84,26 @@ export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 			</View>
 
 			<SwitcherCell title="Kirtan" value={entry.kirtan} setValue={entry.setKirtan} />
-			<SwitcherCell title="Service" value={entry.service} setValue={entry.setService} />
-			<SwitcherCell title="Yoga" value={entry.yoga} setValue={entry.setYoga} />
-			<SwitcherCell title="Lections" value={entry.lections} setValue={entry.setLections} />
+			{settingsStore.serviceEnabled ? (
+				<SwitcherCell title="Service" value={entry.service} setValue={entry.setService} />
+			) : null}
+			{settingsStore.yogaEnabled ? (
+				<SwitcherCell title="Yoga" value={entry.yoga} setValue={entry.setYoga} />
+			) : null}
+			{settingsStore.lectionsEnabled ? (
+				<SwitcherCell title="Lections" value={entry.lections} setValue={entry.setLections} />
+			) : null}
 
-			<Text style={styles.title}>Sleep</Text>
-			<View style={styles.row}>
-				<HoursInput time={entry.sleep} {...currentRefs()} />
-				<View style={styles.verticalSeparator} />
-				<MinutesInput time={entry.sleep} {...currentRefs()} />
-			</View>
+			{settingsStore.bedEnabled ? (
+				<>
+					<Text style={styles.title}>Sleep</Text>
+					<View style={styles.row}>
+						<HoursInput time={entry.sleep} {...currentRefs()} />
+						<View style={styles.verticalSeparator} />
+						<MinutesInput time={entry.sleep} {...currentRefs()} />
+					</View>
+				</>
+			) : null}
 		</ScrollView>
 	)
 })

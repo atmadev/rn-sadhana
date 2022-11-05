@@ -1,31 +1,28 @@
 import React from 'react'
-import { ScrollView, Button, StyleSheet } from 'react-native'
 import { observer } from 'mobx-react-lite'
-import { createScreen, createStyles } from 'screens/utils'
-import { Spacer } from 'components/Spacer'
+import { createScreen } from 'screens/utils'
 import { signOut } from 'logic'
+import { List } from 'components/List'
+import { RED } from 'const/Colors'
+import { navigate } from 'navigation'
 
 export const SettingsScreen = createScreen(
 	'Settings',
 	observer(() => {
 		return (
-			<ScrollView style={styles.container}>
-				<Spacer
-					backgroundColor="white"
-					marginVertical={16}
-					borderTopColor="gray"
-					borderTopWidth={StyleSheet.hairlineWidth}
-					borderBottomColor="gray"
-					borderBottomWidth={StyleSheet.hairlineWidth}
-				>
-					<Button title="Sign out" onPress={signOut} />
-				</Spacer>
-			</ScrollView>
+			<List.Scroll>
+				<List.Section title="Title">
+					<List.Row title="My Graph" arrow onPress={openMyGraphSetting} />
+					<List.Button title="Export CSV" onPress={exportCSV} />
+				</List.Section>
+				<List.Section>
+					<List.Button title="Sign out" color={RED} onPress={signOut} />
+				</List.Section>
+			</List.Scroll>
 		)
 	}),
 	{},
 )
 
-const styles = createStyles({
-	container: {},
-})
+const openMyGraphSetting = () => navigate('MyGraphSettings')
+const exportCSV = () => {}

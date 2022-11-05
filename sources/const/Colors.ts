@@ -15,13 +15,14 @@ export const BLUE = '#007AFF'
 export const colors = {
 	light: {
 		text: '#000',
-		text2: '#777',
+		text2: '#6D6D72',
 		background: '#fff',
 		background2: '#eee',
 		tint: tintColorLight,
 		tabIconDefault: '#ccc',
 		tabIconSelected: tintColorLight,
 		separator: '#bbbbbb',
+		separator2: '#F2F4F5',
 		placeholder: '#CED2D5',
 	},
 	dark: {
@@ -33,6 +34,7 @@ export const colors = {
 		tabIconDefault: '#ccc',
 		tabIconSelected: tintColorDark,
 		separator: '#4a4a4a',
+		separator2: '#bbbbbb',
 		placeholder: '#888',
 	},
 }

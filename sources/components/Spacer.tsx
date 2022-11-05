@@ -1,5 +1,7 @@
+import { observer } from 'mobx-react-lite'
 import React, { FC, PropsWithChildren, memo, Attributes } from 'react'
-import { View, ViewStyle, TextStyle, Text, ViewProps } from 'react-native'
+import { View, ViewStyle, TextStyle, Text, ViewProps, StyleSheet } from 'react-native'
+import { store } from 'store'
 
 export const Spacer: FC<
 	PropsWithChildren<ViewStyle> & Pick<ViewProps, 'pointerEvents'> & Pick<Attributes, 'key'>
@@ -17,4 +19,8 @@ export const Spacer: FC<
 
 export const FastText: FC<PropsWithChildren<TextStyle>> = memo(({ children, ...style }) => {
 	return <Text children={children} style={style} />
+})
+
+export const Separator = observer(() => {
+	return <Spacer height={StyleSheet.hairlineWidth} backgroundColor={store.theme.separator} />
 })

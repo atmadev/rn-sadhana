@@ -11,6 +11,7 @@ import { InteractionManager } from 'react-native'
 import { loginStore } from 'store/LoginStore'
 import { fetchLocalEntries } from './entries'
 import { navigate, reset } from 'navigation'
+import { settingsStore } from 'store/SettingsStore'
 
 // TODO: think about offline mode
 // TODO: think how to show the my graph ASAP
@@ -19,7 +20,8 @@ export const initApp = async () => {
 	try {
 		SplashScreen.preventAutoHideAsync()
 
-		await Promise.all([initLocalDB()])
+		await initLocalDB()
+		await settingsStore.loadFromDisk()
 		store.setInited()
 	} catch (e) {
 		// We might want to provide this error information to an error reporting service

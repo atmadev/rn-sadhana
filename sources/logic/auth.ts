@@ -5,6 +5,7 @@ import { userStore } from 'store/UserStore'
 import * as db from 'services/localDB'
 import { fetchMyRecentEntries } from './entries'
 import { loginStore } from 'store/LoginStore'
+import { settingsStore } from 'store/SettingsStore'
 
 // TODO: don't logout on network error
 
@@ -36,6 +37,7 @@ export const fetchInitialData = async () => {
 		loginStore.setStatus(`Hey, ${me.user_name ?? 'user'}! Downloading your sadhana...`)
 
 		userStore.setMe(me)
+		settingsStore.mapFromUser(me)
 		await db.insertUsers(me)
 		await db.setValueToLocalStore('myID', me.userid)
 
