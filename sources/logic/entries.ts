@@ -54,6 +54,8 @@ export const saveEditing = async () => {
 	const graph = graphStore.my!
 
 	graph.mxEntries.forEach((mxEntry, ymd) => {
+		if (!mxEntry.isChanged) return
+
 		// if exists, update (merge)
 		const existingEntry = graph.entries.get(ymd)
 		if (existingEntry && existingEntry.id) {
@@ -90,9 +92,30 @@ export const saveEditing = async () => {
 		}
 	})
 
+	if (editedEntries.length === 0) return
+
 	graph.setEntries(editedEntries)
+	db.insertEntries(editedEntries)
 
 	InteractionManager.runAfterInteractions(graph.clearMXEntries)
 
-	// TODO: Upload at VS
+	try {
+		for await (const entry of dataToPost) {
+			const result = await vsRunSafe(() => vs.postEntry(userStore.myID!, entry))
+			console.log('Posting entry result', result)
+		}
+	} catch (e) {
+		// TODO: capture on sentry
+		console.log('Posting entry exception', e)
+	}
+
+	try {
+		for await (const entry of dataToUpdate) {
+			const result = await vsRunSafe(() => vs.updateEntry(userStore.myID!, entry))
+			console.log('Updating entry result', result)
+		}
+	} catch (e) {
+		// TODO: capture on sentry
+		console.log('Updating entry exception', e)
+	}
 }

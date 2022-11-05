@@ -1,13 +1,15 @@
 import { makeAutoObservable } from 'mobx'
 import { createRef, RefObject } from 'react'
 import { TextInput } from 'react-native'
-import { EntryInputFields } from 'shared/types'
+import { EntryInputFields, YMD } from 'shared/types'
 import { MXTime } from './MXTime'
 
 // TODO: check will server eat empty string as japa counts
 
 export class MXEntry {
-	constructor(entry?: EntryInputFields) {
+	constructor(ymd: YMD, entry?: EntryInputFields) {
+		this.ymd = ymd
+
 		this.japa7 = parseJapaCount(entry?.jcount_730)
 		this.japa10 = parseJapaCount(entry?.jcount_1000)
 		this.japa18 = parseJapaCount(entry?.jcount_1800)
@@ -29,10 +31,12 @@ export class MXEntry {
 			this.refs.push(createRef<TextInput | null>())
 		}
 
-		makeAutoObservable(this)
+		this.initialHash = this.hash
+
+		makeAutoObservable(this, { initialHash: false, ymd: false })
 	}
 
-	uuid = Date.now()
+	ymd: string
 
 	japa7: string
 	setJapa7 = (j: string) => (this.japa7 = j)
@@ -94,6 +98,19 @@ export class MXEntry {
 			opt_service: this.service ? '1' : '0',
 			opt_lections: this.lections ? '1' : '0',
 		}
+	}
+
+	initialHash: string
+
+	get hash() {
+		return Object.entries(this.entryInputFields)
+			.filter(([, value]) => value !== null && value !== undefined && value !== '0' && value !== '')
+			.map((entry) => entry.join(':'))
+			.join(',')
+	}
+
+	get isChanged() {
+		return this.hash !== this.initialHash
 	}
 }
 

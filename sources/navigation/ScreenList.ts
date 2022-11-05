@@ -1,9 +1,7 @@
-import { YMD } from 'shared/types'
-
 export interface ScreenList {
 	Login: undefined
 	MyGraph: undefined
-	GraphEditing: { ymd?: YMD }
+	GraphEditing: undefined
 	Settings: undefined
 	TabOne: undefined
 	TabTwo: undefined

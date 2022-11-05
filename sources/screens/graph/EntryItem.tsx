@@ -13,12 +13,13 @@ import { store } from 'store'
 import { navigate } from 'navigation'
 import { YMD } from 'shared/types'
 import { MONTH_MS } from 'shared/dateUtil'
+import { graphEditingStore } from 'store/GraphEditingStore'
 
 export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = observer(
 	({ ymd, userID, isLast }) => {
 		const graph = graphStore.map.get(userID)!
-		const date = new Date(ymd)
 		const entry = graph.entries.get(ymd)
+		const date = new Date(ymd)
 
 		const roundsBefore730 = entry?.jcount_730 ? parseInt(entry?.jcount_730) : 0
 		const roundsBefore10 = entry?.jcount_1000 ? parseInt(entry?.jcount_1000) : 0
@@ -27,7 +28,8 @@ export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = obse
 		const allRounds = roundsBefore730 + roundsBefore10 + roundsBefore18 + roundsAfter
 
 		const onPress = useCallback(() => {
-			navigate('GraphEditing', { ymd })
+			graphEditingStore.selectYMD(ymd)
+			navigate('GraphEditing')
 		}, [ymd])
 
 		const content = (
@@ -52,8 +54,10 @@ export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = obse
 
 						{/* READING */}
 						<View style={styles.dataItem}>
-							<Image source={entry?.reading === '1' ? readingActiveIcon : readingIcon} />
-							{entry?.reading === '1' ? (
+							<Image
+								source={entry?.reading && entry.reading !== '0' ? readingActiveIcon : readingIcon}
+							/>
+							{entry?.reading && entry.reading !== '0' ? (
 								<>
 									<Spacer width={10} />
 									<Text style={styles.dataText}>{entry.reading}</Text>

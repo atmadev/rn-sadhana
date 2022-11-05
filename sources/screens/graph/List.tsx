@@ -20,7 +20,8 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh }) => {
 		calendarStore.upDateIfNeeded()
 	}, [])
 
-	const { refreshing } = graphStore.map.get(userID)!
+	const graph = graphStore.map.get(userID)!
+	const { refreshing } = graph
 
 	const { data, headerIndexes, lastItemIndexes } = calendarStore.lastYearDaysWithMonths
 

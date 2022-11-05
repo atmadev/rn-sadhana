@@ -21,7 +21,7 @@ export class MXGraph {
 			return this.mxEntries.get(ymd)!
 		}
 
-		const mxEntry = new MXEntry(this.entries.get(ymd))
+		const mxEntry = new MXEntry(ymd, this.entries.get(ymd))
 		this.mxEntries.set(ymd, mxEntry)
 
 		// console.log(ymd, 'created')

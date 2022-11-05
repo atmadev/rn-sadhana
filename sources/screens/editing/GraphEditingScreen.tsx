@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect } from 'react'
 import {
+	View,
+	Text,
 	InteractionManager,
 	ListRenderItemInfo,
-	NativeScrollEvent,
-	NativeSyntheticEvent,
 	Animated,
 	Button,
+	StyleSheet,
 } from 'react-native'
-import { View, Text } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 import { goBack } from 'navigation'
@@ -19,59 +19,35 @@ import { Device, configureLayoutAnimationFromKeyboardEvent } from 'const'
 import { keyboardStore } from 'store/KeyboardStore'
 import { graphStore } from 'store/GraphStore'
 import { saveEditing } from 'logic/entries'
-import { ymdStringFromDate } from 'shared/dateUtil'
 import { ORANGE } from 'const/Colors'
 import { store } from 'store'
 import { calendarStore } from 'store/CalendarStore'
 import { DateList } from './DateList'
 import { YMD } from 'shared/types'
 import { Spacer } from 'components/Spacer'
+import { graphEditingStore } from 'store/GraphEditingStore'
 
 export const GraphEditingScreen = createScreen(
 	'GraphEditing',
-	observer(({ ymd = ymdStringFromDate() }) => {
+	observer(() => {
 		if (Device.ios)
 			useEffect(() => {
 				const e = keyboardStore.lastKeyboardEvent
 				if (e) configureLayoutAnimationFromKeyboardEvent(e)
 			}, [keyboardStore.lastKeyboardEvent])
 
-		// const graph = graphStore.my!
-		// const entry = graph.getMXEntry(ymd)
-		const initialIndex = calendarStore.lastYearDays.indexOf(ymd)
-		const initialOffset = initialIndex * Device.width
-
-		const x = useMemo(() => new Animated.Value(initialOffset), [initialOffset])
-
-		const onScroll = useMemo(
-			() =>
-				Animated.event([{ nativeEvent: { contentOffset: { x } } }], {
-					useNativeDriver: true,
-				}),
-			[x],
-		)
-
-		const [currentIndex, setCurrentIndex] = useState(initialIndex)
-
-		const onScrollEnd = useCallback(
-			(event: NativeSyntheticEvent<NativeScrollEvent>) => {
-				setCurrentIndex(event.nativeEvent.contentOffset.x / Device.width)
-			},
-			[setCurrentIndex],
-		)
-
 		return (
 			<View style={styles.container}>
-				<DateList scrollX={x} currentIndex={currentIndex} />
+				<DateList />
 				<Animated.FlatList
-					contentOffset={{ x: currentIndex * Device.width, y: 0 }}
+					contentOffset={graphEditingStore.flatListContentOffset}
 					data={calendarStore.lastYearDays}
 					renderItem={renderItem}
 					getItemLayout={getItemLayout}
-					onScroll={onScroll}
-					onMomentumScrollEnd={onScrollEnd}
-					scrollEventThrottle={16}
+					onScroll={graphEditingStore.onScroll}
+					onMomentumScrollEnd={graphEditingStore.onScrollEnd}
 					showsHorizontalScrollIndicator={false}
+					scrollEventThrottle={16}
 					maxToRenderPerBatch={3}
 					initialNumToRender={3}
 					windowSize={4}
@@ -81,8 +57,8 @@ export const GraphEditingScreen = createScreen(
 				/>
 
 				<View style={styles.bottomBar}>
-					{/* <Button title="Back" onPress={entry.goBack} /> */}
-					{/* <Button title="Next" onPress={entry.goNext} /> */}
+					<Button title="Back" onPress={graphEditingStore.currentEntry.goBack} />
+					<Button title="Next" onPress={graphEditingStore.currentEntry.goNext} />
 					<Button title="Save" onPress={onSave} />
 				</View>
 				<Spacer
@@ -103,7 +79,7 @@ export const GraphEditingScreen = createScreen(
 )
 
 const renderItem = ({ item }: ListRenderItemInfo<YMD>) => {
-	return <EntryEditingView ymd={item} />
+	return <EntryEditingView ymd={item} key={item} />
 }
 
 const getItemLayout = (_: any, index: number) => ({
@@ -126,8 +102,8 @@ const styles = createStyles({
 	container: () => ({ flex: 1, backgroundColor: store.theme.background }),
 	bottomBar: () => ({
 		height: 44,
-		// borderTopColor: store.theme.separator,
-		// borderTopWidth: 1,
+		borderTopColor: store.theme.separator,
+		borderTopWidth: StyleSheet.hairlineWidth,
 		flexDirection: 'row',
 	}),
 	cancelText: () => ({ color: ORANGE, fontSize: 16 }),
