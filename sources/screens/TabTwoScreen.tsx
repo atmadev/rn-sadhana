@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Text, View } from 'components/primitives'
+import { Text, View } from 'react-native'
 import { store } from 'store'
 import { createScreen, createStyles } from './utils'
 import { monthEntries, login, me, postEntry, updateEntry, updateOptions } from 'services/network/vs'

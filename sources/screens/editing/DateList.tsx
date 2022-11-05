@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react'
 import { Animated, ViewStyle } from 'react-native'
-import { View } from 'components/primitives'
+import { View } from 'react-native'
 
 import { calendarStore } from 'store/CalendarStore'
 import { FastText } from 'components/Spacer'

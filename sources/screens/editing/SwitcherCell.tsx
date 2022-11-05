@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Switch, StyleSheet } from 'react-native'
-import { View, Text } from 'components/primitives'
+import { View, Text } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createStyles } from 'screens/utils'
 import { Spacer } from 'components/Spacer'

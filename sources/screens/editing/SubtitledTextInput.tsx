@@ -1,7 +1,7 @@
 import React, { forwardRef, useMemo } from 'react'
 import { TextInput as RNTextInput, TextInputProps } from 'react-native'
 import { observer } from 'mobx-react-lite'
-import { View, Text, TextInput } from 'components/primitives'
+import { View, Text, TextInput } from 'react-native'
 import { createStyles } from 'screens/utils'
 import { ORANGE } from 'const/Colors'
 import { store } from 'store'
@@ -13,7 +13,7 @@ export const SubtitledTextInput = observer(
 			subtitle: string
 		} & TextInputProps
 	>(({ subtitle, style, ...textInputProps }, ref) => {
-		const mergedStyle = useMemo(() => [styles.input(), style], [style, styles.input()])
+		const mergedStyle = useMemo(() => [styles.input, style], [style, styles.input])
 
 		return (
 			<View style={styles.container}>

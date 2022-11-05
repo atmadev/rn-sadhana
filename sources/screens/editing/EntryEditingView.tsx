@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { TextStyle, StyleSheet } from 'react-native'
-import { View, Text, ScrollView } from 'components/primitives'
+import { View, Text, ScrollView } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 import { createStyles } from 'screens/utils'

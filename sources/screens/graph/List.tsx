@@ -3,8 +3,7 @@ import { StyleSheet } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 import { FlashList } from '@shopify/flash-list'
-import { View, Text } from 'components/primitives'
-import { YMD } from 'shared/types'
+import { View, Text } from 'react-native'
 import { calendarStore } from 'store/CalendarStore'
 import { EntryItem } from './EntryItem'
 import { createStyles } from 'screens/utils'
@@ -50,7 +49,6 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh }) => {
 			renderItem={renderItem}
 			getItemType={getItemType}
 			stickyHeaderIndices={stickyHeaderIndices}
-			keyExtractor={keyExtractor}
 			estimatedItemSize={50}
 			scrollIndicatorInsets={scrollIndicatorInsets}
 		/>
@@ -61,8 +59,6 @@ const getItemType = (_: any, index: number) => {
 	const { headerIndexes } = calendarStore.lastYearDaysWithMonths
 	return headerIndexes.has(index) ? 'header' : 'entry'
 }
-
-const keyExtractor = (ymd: YMD) => ymd
 
 const headerHeight = 28
 const scrollIndicatorInsets = { top: headerHeight }

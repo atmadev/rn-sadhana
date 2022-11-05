@@ -7,7 +7,7 @@ import {
 	Animated,
 	Button,
 } from 'react-native'
-import { View, Text } from 'components/primitives'
+import { View, Text } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 import { goBack } from 'navigation'
