@@ -11,7 +11,7 @@ export const SettingsScreen = createScreen(
 	observer(() => {
 		return (
 			<List.Scroll>
-				<List.Section title="Title">
+				<List.Section>
 					<List.Row title="My Graph" arrow onPress={openMyGraphSetting} />
 					<List.Button title="Export CSV" onPress={exportCSV} />
 				</List.Section>

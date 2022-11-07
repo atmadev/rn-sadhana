@@ -1,5 +1,5 @@
 import React, { FC, PropsWithChildren } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { View, Text } from 'react-native'
 
 import { Separator } from 'components/Spacer'
 import { observer } from 'mobx-react-lite'
@@ -27,15 +27,13 @@ export const Section: FC<PropsWithChildren<{ title?: string }>> = observer(
 )
 
 const styles = createStyles({
-	title: () => ({ marginLeft: 14, marginBottom: 8, fontSize: 13, color: store.theme.text2 }),
+	title: () => ({ marginLeft: 32, marginBottom: 8, fontSize: 13, color: store.theme.text2 }),
 	container: () => ({
 		marginVertical: 12,
 	}),
 	content: () => ({
 		backgroundColor: store.theme.background,
-		borderTopColor: store.theme.separator,
-		borderTopWidth: StyleSheet.hairlineWidth,
-		borderBottomColor: store.theme.separator,
-		borderBottomWidth: StyleSheet.hairlineWidth,
+		borderRadius: 10,
+		marginHorizontal: 16,
 	}),
 })
