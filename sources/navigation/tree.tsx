@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-import { BlankComponent } from './utils'
 import { store } from 'store'
 import { LoginScreen } from 'screens/LoginScreen'
 import { MyGraphScreen } from 'screens/graph/MyScreen'
@@ -13,6 +12,7 @@ import { setNavigation } from 'navigation'
 import { MyGraphSettingsScreen } from 'screens/settings/MyGraph'
 import { renderTabBar } from './TabBar'
 import { observer } from 'mobx-react-lite'
+import { OtherGraphsScreen } from 'screens/otherGraphs'
 
 const RootStack = createNativeStackNavigator()
 
@@ -44,7 +44,7 @@ const LeftStackNavigator = () => (
 
 const RightStackNavigator = () => (
 	<RightStack.Navigator>
-		<RightStack.Screen name="Blank" component={BlankComponent} />
+		<RightStack.Screen {...OtherGraphsScreen.Screen} />
 	</RightStack.Navigator>
 )
 

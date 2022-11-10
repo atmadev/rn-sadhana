@@ -17,8 +17,10 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 	let body
 
 	if (request?.body) {
-		const [bodyShapeName, bodyShape] = Object.entries(request.body.shape)[0]
-		validateObjectWithShape(request.body.data, bodyShape, bodyShapeName, 'Invalid Request Body')
+		if (request.body?.shape) {
+			const [bodyShapeName, bodyShape] = Object.entries(request.body.shape)[0]
+			validateObjectWithShape(request.body.data, bodyShape, bodyShapeName, 'Invalid Request Body')
+		}
 		body = JSON.stringify(request.body.data)
 	}
 

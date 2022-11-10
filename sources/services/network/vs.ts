@@ -1,3 +1,4 @@
+import { OtherGraphItem } from 'shared/types'
 import { Shaped, Shape } from 'shared/types/primitives'
 import { User } from 'shared/types/shapes'
 import { request, RequestMethod, VSResponse } from '.'
@@ -30,7 +31,9 @@ export const login = async (username: string, password: string) => {
 	}
 }
 
-export const vsAuthorizedRequest = async <ParamsShape extends Shape, ResponseShape extends Shape>(
+const apiPath = 'https://vaishnavaseva.net/vs-api/v2/sadhana/'
+
+const vsAuthorizedRequest = async <ParamsShape extends Shape, ResponseShape extends Shape>(
 	method: RequestMethod,
 	path: string,
 	body?: {
@@ -47,6 +50,10 @@ export const vsAuthorizedRequest = async <ParamsShape extends Shape, ResponseSha
 		{ body, headers: { Authorization: 'Bearer ' + tokens!.access_token } },
 		response,
 	)
+}
+
+const vsRequest = async (method: RequestMethod, path: string, body?: any) => {
+	return request(method, apiPath + path, { body })
 }
 
 export const me = async () => {
@@ -137,6 +144,27 @@ export const updateOptions = async (data: Shaped<typeof User>) => {
 		console.log('updateUser error', e)
 		throw e
 	}
+}
+
+export const allEntries = async (body: {
+	country: string
+	city: string
+	search_term: string
+	page_num: number
+	items_per_page: number
+}) => {
+	return vsRequest('POST', 'allSadhanaEntries', body) as Promise<
+		| {
+				success: true
+				data: {
+					entries: OtherGraphItem[]
+					total: number
+					page: number
+					pageSize: number
+				}
+		  }
+		| { success: false; error: { name: string; message: string } }
+	>
 }
 
 const client_id = 'IXndKqmEoXPTwu46f7nmTcoJ2CfIS6'

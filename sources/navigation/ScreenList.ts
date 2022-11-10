@@ -4,6 +4,5 @@ export interface ScreenList {
 	GraphEditing: undefined
 	Settings: undefined
 	MyGraphSettings: undefined
-	TabOne: undefined
-	TabTwo: undefined
+	OtherGraphs: undefined
 }

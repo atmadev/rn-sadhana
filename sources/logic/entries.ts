@@ -7,6 +7,7 @@ import { utcStringFromDate } from 'shared/dateUtil'
 import { Entry } from 'shared/types'
 import { Shaped } from 'shared/types/primitives'
 import { graphStore } from 'store/GraphStore'
+import { otherGraphsStore } from 'store/OtherGraphsStore'
 import { userStore } from 'store/UserStore'
 import { vsRunSafe } from './vs'
 
@@ -117,5 +118,26 @@ export const saveEditing = async () => {
 	} catch (e) {
 		// TODO: capture on sentry
 		console.log('Updating entry exception', e)
+	}
+}
+
+export const fetchOtherGraphs = async () => {
+	try {
+		const result = await vs.allEntries({
+			country: otherGraphsStore.country,
+			city: otherGraphsStore.city,
+			search_term: otherGraphsStore.searchString,
+			page_num: otherGraphsStore.pageNumber,
+			items_per_page: 5,
+		})
+		if (result.success) {
+			const { entries, page } = result.data
+			otherGraphsStore.addItems(entries)
+			otherGraphsStore.setPageNumber(page)
+		} else {
+			// TODO: show error
+		}
+	} catch (e) {
+		// TODO: capture exception
 	}
 }

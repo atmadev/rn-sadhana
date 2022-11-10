@@ -67,7 +67,9 @@ const TabBarItem: FC<
 					<IconComponent color={color} />
 				</View>
 				<Spacer height={30}>
-					<FastText color={focused ? ORANGE : GRAY}>{options.title}</FastText>
+					<FastText color={focused ? ORANGE : GRAY} fontSize={10}>
+						{options.title}
+					</FastText>
 				</Spacer>
 			</View>
 		</TouchableOpacity>
@@ -77,13 +79,13 @@ const TabBarItem: FC<
 const onPressPlus = () => navigate('GraphEditing')
 
 const styles = createStyles({
-	tabBar: {
+	tabBar: () => ({
 		flexDirection: 'row',
 		height: 50 + Device.safeBottomInset,
 		borderTopWidth: StyleSheet.hairlineWidth,
 		borderTopColor: store.theme.separator,
 		backgroundColor: store.theme.background,
-	},
+	}),
 	iconContainer: {
 		width: 34,
 		height: 34,
@@ -91,6 +93,6 @@ const styles = createStyles({
 		justifyContent: 'center',
 	},
 	plusContainer: {
-		paddingTop: 4,
+		paddingTop: 5,
 	},
 })
