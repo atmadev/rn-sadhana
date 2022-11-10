@@ -15,3 +15,6 @@ export const reset = <Name extends keyof ScreenList>(
 	props?: ScreenList[Name],
 	// @ts-ignore
 ) => navigation?.reset({ index: 0, routes: [{ name, params: props }] })
+
+export const resetToMyGraph = () =>
+	navigation?.reset({ index: 0, routes: [{ name: 'Tab', params: { screen: 'LeftTab' } }] })

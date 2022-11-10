@@ -10,7 +10,7 @@ import { isNetworkError } from 'utils'
 import { InteractionManager } from 'react-native'
 import { loginStore } from 'store/LoginStore'
 import { fetchLocalEntries } from './entries'
-import { navigate, reset } from 'navigation'
+import { navigate, reset, resetToMyGraph } from 'navigation'
 import { settingsStore } from 'store/SettingsStore'
 
 // TODO: think about offline mode
@@ -43,7 +43,7 @@ export const onAppStart = async () => {
 			userStore.setMyID(myID)
 			// Prefetch only local entries from the DB
 			await fetchLocalEntries()
-			reset('MyGraph')
+			resetToMyGraph()
 
 			try {
 				const result = await login(username, password)

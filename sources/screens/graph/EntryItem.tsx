@@ -34,70 +34,69 @@ export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = obse
 
 		const content = (
 			<View style={isLast ? styles.containerLast : styles.container}>
-				<Text style={styles.day}>{date.getUTCDate()}</Text>
-				<Text style={styles.weekday}>{date.getUTCDay()}</Text>
 				<View style={styles.content}>
-					<View style={styles.data}>
-						{/* GET UP */}
-						<View style={styles.dataItem}>
-							<Image source={getUpIcon} />
-							{entry?.opt_wake_up ? (
-								<>
-									<Spacer width={10} />
-									<Text style={styles.dataText}>{entry.opt_wake_up}</Text>
-								</>
-							) : null}
-						</View>
-
-						{/* KIRTAN */}
-						<Image source={entry?.kirtan === '1' ? kirtanActiveIcon : kirtanIcon} />
-
-						{/* READING */}
-						<View style={styles.dataItem}>
-							<Image
-								source={entry?.reading && entry.reading !== '0' ? readingActiveIcon : readingIcon}
-							/>
-							{entry?.reading && entry.reading !== '0' ? (
-								<>
-									<Spacer width={10} />
-									<Text style={styles.dataText}>{entry.reading}</Text>
-								</>
-							) : null}
-						</View>
-
-						{/* BED */}
-						<View style={styles.dataItem}>
-							<Image source={bedIcon} />
-							{entry?.opt_sleep ? (
-								<>
-									<Spacer width={10} />
-									<Text style={styles.dataText}>{entry.opt_sleep}</Text>
-								</>
-							) : null}
-						</View>
+					<View style={styles.date}>
+						<Text style={styles.day}>{date.getUTCDate()}</Text>
+						<Text style={styles.weekday}>{date.getUTCDay()}</Text>
 					</View>
-					<View style={styles.japa}>
-						<View style={styles.japaLine}>
-							{allRounds > 0 ? (
-								<>
-									{roundsBefore730 > 0 ? (
-										<Spacer backgroundColor={YELLOW} flex={roundsBefore730 / allRounds} />
-									) : null}
-									{roundsBefore10 > 0 ? (
-										<Spacer backgroundColor={ORANGE} flex={roundsBefore10 / allRounds} />
-									) : null}
-									{roundsBefore18 > 0 ? (
-										<Spacer backgroundColor={RED} flex={roundsBefore18 / allRounds} />
-									) : null}
-									{roundsAfter > 0 ? (
-										<Spacer backgroundColor={BLUE} flex={roundsAfter / allRounds} />
-									) : null}
-								</>
-							) : null}
-						</View>
-						<Text style={styles.dataText}>{allRounds}</Text>
+					{/* GET UP */}
+					<View style={styles.dataItem}>
+						<Image source={getUpIcon} />
+						{entry?.opt_wake_up ? (
+							<>
+								<Spacer width={10} />
+								<Text style={styles.dataText}>{entry.opt_wake_up}</Text>
+							</>
+						) : null}
 					</View>
+
+					{/* KIRTAN */}
+					<Image
+						style={styles.kirtan}
+						source={entry?.kirtan === '1' ? kirtanActiveIcon : kirtanIcon}
+					/>
+
+					{/* READING */}
+					<View style={styles.dataItem}>
+						<Image
+							source={entry?.reading && entry.reading !== '0' ? readingActiveIcon : readingIcon}
+						/>
+						{entry?.reading && entry.reading !== '0' ? (
+							<>
+								<Spacer width={10} />
+								<Text style={styles.dataText}>{entry.reading}</Text>
+							</>
+						) : null}
+					</View>
+
+					{/* BED */}
+					<View style={styles.dataItem}>
+						<Image source={bedIcon} />
+						{entry?.opt_sleep ? (
+							<>
+								<Spacer width={10} />
+								<Text style={styles.dataText}>{entry.opt_sleep}</Text>
+							</>
+						) : null}
+					</View>
+					<Text style={styles.dataText}>{allRounds}</Text>
 				</View>
+				{allRounds > 0 ? (
+					<View style={styles.japaLine}>
+						{roundsBefore730 > 0 ? (
+							<Spacer backgroundColor={YELLOW} flex={roundsBefore730 / allRounds} />
+						) : null}
+						{roundsBefore10 > 0 ? (
+							<Spacer backgroundColor={ORANGE} flex={roundsBefore10 / allRounds} />
+						) : null}
+						{roundsBefore18 > 0 ? (
+							<Spacer backgroundColor={RED} flex={roundsBefore18 / allRounds} />
+						) : null}
+						{roundsAfter > 0 ? (
+							<Spacer backgroundColor={BLUE} flex={roundsAfter / allRounds} />
+						) : null}
+					</View>
+				) : null}
 			</View>
 		)
 
@@ -121,11 +120,9 @@ const bedIcon = require('assets/images/moon-active.png')
 const containerBasicStyle: ViewStyle = {
 	marginHorizontal: 10,
 	marginVertical: 4,
-	flexDirection: 'row',
-	alignItems: 'center',
 	height: 50,
-	borderRadius: 5,
-	paddingHorizontal: 8,
+	borderRadius: 6,
+	overflow: 'hidden',
 }
 
 const styles = createStyles({
@@ -138,20 +135,33 @@ const styles = createStyles({
 		backgroundColor: store.theme.background,
 		marginBottom: 11,
 	}),
+	content: {
+		flex: 1,
+		marginTop: 4,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		marginHorizontal: 10,
+	},
+	date: { flexDirection: 'row', alignItems: 'center', width: 30, marginRight: 20 },
 	day: () => ({ fontSize: 22, fontWeight: '300', color: store.theme.text }),
-	weekday: { fontSize: 10, fontWeight: 'bold', color: '#CED2D5', margin: 4, marginRight: 10 },
-	content: { flex: 1, marginTop: 4 },
+	weekday: {
+		fontSize: 10,
+		fontWeight: 'bold',
+		color: '#CED2D5',
+		margin: 4,
+		marginRight: 10,
+		marginLeft: 6,
+	},
+	kirtan: { marginHorizontal: 16 },
 	data: { flexDirection: 'row', justifyContent: 'space-between', marginRight: Device.width / 8 },
-	dataItem: { flexDirection: 'row', width: Device.width / 10 },
+	dataItem: { flexDirection: 'row', flex: 1 },
 	dataText: () => ({ color: store.theme.text }),
 	japa: { flexDirection: 'row', alignItems: 'center' },
 	japaLine: {
-		height: 7,
-		borderRadius: 3.5,
+		height: 6,
+		right: 0,
 		flexDirection: 'row',
 		overflow: 'hidden',
-		flex: 1,
-		marginRight: 6,
-		backgroundColor: '#F2F4F5',
 	},
 })

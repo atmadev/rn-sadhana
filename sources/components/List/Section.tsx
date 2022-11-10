@@ -35,5 +35,6 @@ const styles = createStyles({
 		backgroundColor: store.theme.background,
 		borderRadius: 10,
 		marginHorizontal: 16,
+		overflow: 'hidden',
 	}),
 })

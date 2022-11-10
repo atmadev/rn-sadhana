@@ -7,6 +7,7 @@ import { Section } from './Section'
 import { Row } from './Row'
 import { Button } from './Button'
 import { Switch } from './Switch'
+import { store } from 'store'
 
 export const List = {
 	Scroll: observer(({ children }) => {
@@ -23,6 +24,6 @@ export const List = {
 }
 
 const styles = createStyles({
-	container: {},
+	container: () => ({ backgroundColor: store.theme.background2 }),
 	contentContainer: { paddingVertical: 10 },
 })

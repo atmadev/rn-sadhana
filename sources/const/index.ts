@@ -4,6 +4,7 @@ import {
 	LayoutAnimation,
 	KeyboardEventEasing,
 	KeyboardEvent,
+	StyleSheet,
 } from 'react-native'
 import { initialWindowMetrics } from 'react-native-safe-area-context'
 import { getStatusBarHeight } from 'react-native-status-bar-height'
@@ -19,6 +20,15 @@ export const Device = {
 	safeBottomInset: initialWindowMetrics?.insets.bottom ?? 0,
 	small: Dimensions.get('window').height < 600,
 }
+
+export const gloablStyles = StyleSheet.create({
+	flex1: {
+		flex: 1,
+	},
+	alignCenter: {
+		alignItems: 'center',
+	},
+})
 
 export const configureLayoutAnimationFromKeyboardEvent = (e: KeyboardEvent) =>
 	LayoutAnimation.configureNext(LayoutAnimationKeyboardConfig(e.duration, e.easing))
