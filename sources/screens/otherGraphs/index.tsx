@@ -12,7 +12,7 @@ import { store } from 'store'
 import { EntryDataItem, JapaLine, parseRounds } from 'screens/graph/EntryItem'
 import { Spacer } from 'components/Spacer'
 import debounce from 'lodash/debounce'
-import { SearchIcon } from 'assets/svg/Icons'
+import { SearchIcon } from 'components/Icons'
 import { GRAY_SYSTEM } from 'const/Colors'
 
 // TODO: graph list
