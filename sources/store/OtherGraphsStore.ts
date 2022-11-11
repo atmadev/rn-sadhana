@@ -7,20 +7,32 @@ class OtherGraphsStore {
 	}
 
 	country = 'all'
-	setCountry = (c: string) => (this.country = c)
+	setCountry = (_: string) => (this.country = _)
 
 	city = ''
-	setCity = (c: string) => (this.city = c)
+	setCity = (_: string) => (this.city = _)
 
 	searchString = ''
-	setSearchString = (s: string) => (this.searchString = s)
+	setSearchString = (_: string) => (this.searchString = _)
 
 	pageNumber = 0
-	setPageNumber = (n: number) => (this.pageNumber = n)
+	setPageNumber = (_: number) => (this.pageNumber = _)
 
-	items: OtherGraphItem[] = []
-	addItems = (i: OtherGraphItem[]) => this.items.push(...i)
-	resetItems = (i: OtherGraphItem[]) => (this.items = i)
+	private _items: OtherGraphItem[] = []
+	private searchItems: OtherGraphItem[] = []
+	get items() {
+		return this.searchString.length > 0 ? this.searchItems : this._items
+	}
+
+	addItems = (_: OtherGraphItem[], reset?: true) => (this._items = reset ? _ : this.items.concat(_))
+	addSearchItems = (_: OtherGraphItem[]) => (this.searchItems = _)
+
+	loading = false
+	setLoading = (_: boolean) => (this.loading = _)
+
+	get refreshing() {
+		return this.loading && this.pageNumber === 0 && this.searchString.length === 0
+	}
 }
 
 export const otherGraphsStore = new OtherGraphsStore()

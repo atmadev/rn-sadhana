@@ -53,7 +53,8 @@ const vsAuthorizedRequest = async <ParamsShape extends Shape, ResponseShape exte
 }
 
 const vsRequest = async (method: RequestMethod, path: string, body?: any) => {
-	return request(method, apiPath + path, { body })
+	// @ts-ignore
+	return request(method, apiPath + path, { body: { data: body } })
 }
 
 export const me = async () => {
@@ -147,11 +148,11 @@ export const updateOptions = async (data: Shaped<typeof User>) => {
 }
 
 export const allEntries = async (body: {
-	country: string
-	city: string
-	search_term: string
-	page_num: number
-	items_per_page: number
+	country?: string
+	city?: string
+	search_term?: string
+	page_num?: number
+	items_per_page?: number
 }) => {
 	return vsRequest('POST', 'allSadhanaEntries', body) as Promise<
 		| {

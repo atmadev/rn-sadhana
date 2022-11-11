@@ -4,6 +4,7 @@ const tintColorDark = '#fff'
 export const WHITE = 'white'
 export const BLACK = 'black'
 export const GRAY = '#686868'
+export const GRAY_SYSTEM = '#8E8E93'
 export const GRAY_LIGHT = '#CACACA'
 export const GRAY_ULTRALIGHT = '#F2F4F5'
 export const ORANGE = '#FF8C00'
@@ -18,6 +19,7 @@ export const colors = {
 		text2: '#6D6D72',
 		background: '#fff',
 		background2: '#F2F1F6',
+		background3: '#E4E3E8',
 		tint: tintColorLight,
 		tabIconDefault: '#ccc',
 		tabIconSelected: tintColorLight,
@@ -30,6 +32,7 @@ export const colors = {
 		text2: '#888',
 		background: '#1C1C1E',
 		background2: '#010101',
+		background3: '#1C1C1E',
 		tint: tintColorDark,
 		tabIconDefault: '#ccc',
 		tabIconSelected: tintColorDark,

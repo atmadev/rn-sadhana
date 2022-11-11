@@ -121,23 +121,52 @@ export const saveEditing = async () => {
 	}
 }
 
-export const fetchOtherGraphs = async () => {
+const items_per_page = 25
+
+export const fetchOtherGraphs = async (reset?: true) => {
+	if (otherGraphsStore.loading) return
+	const page_num = reset ? 0 : otherGraphsStore.pageNumber + 1
 	try {
+		otherGraphsStore.setLoading(true)
 		const result = await vs.allEntries({
 			country: otherGraphsStore.country,
 			city: otherGraphsStore.city,
-			search_term: otherGraphsStore.searchString,
-			page_num: otherGraphsStore.pageNumber,
-			items_per_page: 5,
+			page_num,
+			items_per_page,
 		})
 		if (result.success) {
-			const { entries, page } = result.data
-			otherGraphsStore.addItems(entries)
-			otherGraphsStore.setPageNumber(page)
+			const { entries } = result.data
+			otherGraphsStore.addItems(entries, reset)
+			otherGraphsStore.setPageNumber(page_num)
 		} else {
 			// TODO: show error
 		}
 	} catch (e) {
 		// TODO: capture exception
+	} finally {
+		otherGraphsStore.setLoading(false)
+	}
+}
+
+export const searchOtherGraphs = async () => {
+	if (otherGraphsStore.loading) return
+	try {
+		otherGraphsStore.setLoading(true)
+		const result = await vs.allEntries({
+			country: otherGraphsStore.country,
+			city: otherGraphsStore.city,
+			search_term: otherGraphsStore.searchString,
+			items_per_page,
+		})
+		if (result.success) {
+			const { entries } = result.data
+			otherGraphsStore.addSearchItems(entries)
+		} else {
+			// TODO: show error
+		}
+	} catch (e) {
+		// TODO: capture exception
+	} finally {
+		otherGraphsStore.setLoading(false)
 	}
 }

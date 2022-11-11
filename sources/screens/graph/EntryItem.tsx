@@ -6,12 +6,11 @@ import { TouchableHighlight } from 'components/primitives'
 import { createStyles } from 'screens/utils'
 import { Image, ViewStyle } from 'react-native'
 import { Spacer } from 'components/Spacer'
-import { Device } from 'const'
 import { graphStore } from 'store/GraphStore'
 import { BLUE, ORANGE, RED, YELLOW } from 'const/Colors'
 import { store } from 'store'
 import { navigate } from 'navigation'
-import { YMD } from 'shared/types'
+import { Entry, YMD } from 'shared/types'
 import { MONTH_MS } from 'shared/dateUtil'
 import { graphEditingStore } from 'store/GraphEditingStore'
 
@@ -21,11 +20,7 @@ export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = obse
 		const entry = graph.entries.get(ymd)
 		const date = new Date(ymd)
 
-		const roundsBefore730 = entry?.jcount_730 ? parseInt(entry?.jcount_730) : 0
-		const roundsBefore10 = entry?.jcount_1000 ? parseInt(entry?.jcount_1000) : 0
-		const roundsBefore18 = entry?.jcount_1800 ? parseInt(entry?.jcount_1800) : 0
-		const roundsAfter = entry?.jcount_after ? parseInt(entry?.jcount_after) : 0
-		const allRounds = roundsBefore730 + roundsBefore10 + roundsBefore18 + roundsAfter
+		const rounds = parseRounds(entry)
 
 		const onPress = useCallback(() => {
 			graphEditingStore.selectYMD(ymd)
@@ -39,64 +34,9 @@ export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = obse
 						<Text style={styles.day}>{date.getUTCDate()}</Text>
 						<Text style={styles.weekday}>{date.getUTCDay()}</Text>
 					</View>
-					{/* GET UP */}
-					<View style={styles.dataItem}>
-						<Image source={getUpIcon} />
-						{entry?.opt_wake_up ? (
-							<>
-								<Spacer width={10} />
-								<Text style={styles.dataText}>{entry.opt_wake_up}</Text>
-							</>
-						) : null}
-					</View>
-
-					{/* KIRTAN */}
-					<Image
-						style={styles.kirtan}
-						source={entry?.kirtan === '1' ? kirtanActiveIcon : kirtanIcon}
-					/>
-
-					{/* READING */}
-					<View style={styles.dataItem}>
-						<Image
-							source={entry?.reading && entry.reading !== '0' ? readingActiveIcon : readingIcon}
-						/>
-						{entry?.reading && entry.reading !== '0' ? (
-							<>
-								<Spacer width={10} />
-								<Text style={styles.dataText}>{entry.reading}</Text>
-							</>
-						) : null}
-					</View>
-
-					{/* BED */}
-					<View style={styles.dataItem}>
-						<Image source={bedIcon} />
-						{entry?.opt_sleep ? (
-							<>
-								<Spacer width={10} />
-								<Text style={styles.dataText}>{entry.opt_sleep}</Text>
-							</>
-						) : null}
-					</View>
-					<Text style={styles.dataText}>{allRounds}</Text>
+					<EntryDataItem entry={entry} allRounds={rounds.all} />
 				</View>
-				{allRounds > 0 ? (
-					<View style={styles.japaLine}>
-						{roundsBefore730 > 0 ? (
-							<Spacer backgroundColor={YELLOW} flex={roundsBefore730 / allRounds} />
-						) : null}
-						{roundsBefore10 > 0 ? (
-							<Spacer backgroundColor={ORANGE} flex={roundsBefore10 / allRounds} />
-						) : null}
-						{roundsBefore18 > 0 ? (
-							<Spacer backgroundColor={RED} flex={roundsBefore18 / allRounds} />
-						) : null}
-						{roundsAfter > 0 ? (
-							<Spacer backgroundColor={BLUE} flex={roundsAfter / allRounds} />
-						) : null}
-					</View>
-				) : null}
+				<JapaLine {...rounds} />
 			</View>
 		)
 
@@ -107,6 +47,89 @@ export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = obse
 		)
 	},
 )
+
+export const EntryDataItem: FC<{ entry?: Entry; allRounds: number }> = ({ entry, allRounds }) => {
+	return (
+		<View style={styles.dataContainer}>
+			{/* GET UP */}
+			<View style={styles.dataItem}>
+				<Image source={getUpIcon} />
+				{entry?.opt_wake_up ? (
+					<>
+						<Spacer width={10} />
+						<Text style={styles.dataText}>{entry.opt_wake_up}</Text>
+					</>
+				) : null}
+			</View>
+
+			{/* KIRTAN */}
+			<Image style={styles.kirtan} source={entry?.kirtan === '1' ? kirtanActiveIcon : kirtanIcon} />
+
+			{/* READING */}
+			<View style={styles.dataItem}>
+				<Image source={entry?.reading && entry.reading !== '0' ? readingActiveIcon : readingIcon} />
+				{entry?.reading && entry.reading !== '0' ? (
+					<>
+						<Spacer width={10} />
+						<Text style={styles.dataText}>{entry.reading}</Text>
+					</>
+				) : null}
+			</View>
+
+			{/* BED */}
+			<View style={styles.dataItem}>
+				<Image source={bedIcon} />
+				{entry?.opt_sleep ? (
+					<>
+						<Spacer width={10} />
+						<Text style={styles.dataText}>{entry.opt_sleep}</Text>
+					</>
+				) : null}
+			</View>
+			<Text style={styles.dataText}>{allRounds}</Text>
+		</View>
+	)
+}
+
+interface JapaRounds {
+	before730: number
+	before10: number
+	before18: number
+	after: number
+	all: number
+}
+
+export const JapaLine: FC<JapaRounds> = (rounds) => {
+	return rounds.all > 0 ? (
+		<View style={styles.japaLine}>
+			{rounds.before730 > 0 ? (
+				<Spacer backgroundColor={YELLOW} flex={rounds.before730 / rounds.all} />
+			) : null}
+			{rounds.before10 > 0 ? (
+				<Spacer backgroundColor={ORANGE} flex={rounds.before10 / rounds.all} />
+			) : null}
+			{rounds.before18 > 0 ? (
+				<Spacer backgroundColor={RED} flex={rounds.before18 / rounds.all} />
+			) : null}
+			{rounds.after > 0 ? <Spacer backgroundColor={BLUE} flex={rounds.after / rounds.all} /> : null}
+		</View>
+	) : null
+}
+
+export const parseRounds = (entry?: Entry) => {
+	const before730 = entry?.jcount_730 ? parseInt(entry?.jcount_730) : 0
+	const before10 = entry?.jcount_1000 ? parseInt(entry?.jcount_1000) : 0
+	const before18 = entry?.jcount_1800 ? parseInt(entry?.jcount_1800) : 0
+	const after = entry?.jcount_after ? parseInt(entry?.jcount_after) : 0
+	const all = before730 + before10 + before18 + after
+	return {
+		before730,
+		before10,
+		before18,
+		after,
+		all,
+	}
+}
 
 const getUpIcon = require('assets/images/sun-active.png')
 const kirtanActiveIcon = require('assets/images/kirtan-active.png')
@@ -120,7 +143,6 @@ const bedIcon = require('assets/images/moon-active.png')
 const containerBasicStyle: ViewStyle = {
 	marginHorizontal: 10,
 	marginVertical: 4,
-	height: 50,
 	borderRadius: 6,
 	overflow: 'hidden',
 }
@@ -137,11 +159,10 @@ const styles = createStyles({
 	}),
 	content: {
 		flex: 1,
-		marginTop: 4,
+		margin: 10,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginHorizontal: 10,
 	},
 	date: { flexDirection: 'row', alignItems: 'center', width: 30, marginRight: 20 },
 	day: () => ({ fontSize: 22, fontWeight: '300', color: store.theme.text }),
@@ -154,14 +175,12 @@ const styles = createStyles({
 		marginLeft: 6,
 	},
 	kirtan: { marginHorizontal: 16 },
-	data: { flexDirection: 'row', justifyContent: 'space-between', marginRight: Device.width / 8 },
-	dataItem: { flexDirection: 'row', flex: 1 },
+	dataContainer: { flexDirection: 'row' },
+	dataItem: { flexDirection: 'row', flex: 1, alignItems: 'center' },
 	dataText: () => ({ color: store.theme.text }),
 	japa: { flexDirection: 'row', alignItems: 'center' },
 	japaLine: {
-		height: 6,
-		right: 0,
+		height: 8,
 		flexDirection: 'row',
-		overflow: 'hidden',
 	},
 })

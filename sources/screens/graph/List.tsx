@@ -50,7 +50,7 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh }) => {
 			renderItem={renderItem}
 			getItemType={getItemType}
 			stickyHeaderIndices={stickyHeaderIndices}
-			estimatedItemSize={50}
+			estimatedItemSize={60}
 			scrollIndicatorInsets={scrollIndicatorInsets}
 		/>
 	)
