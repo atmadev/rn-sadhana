@@ -13,6 +13,7 @@ import { navigate } from 'navigation'
 import { Entry, YMD } from 'shared/types'
 import { MONTH_MS } from 'shared/dateUtil'
 import { graphEditingStore } from 'store/GraphEditingStore'
+import { userStore } from 'store/UserStore'
 
 export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = observer(
 	({ ymd, userID, isLast }) => {
@@ -40,15 +41,17 @@ export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = obse
 			</View>
 		)
 
-		return Date.now() - date.getTime() < 2 * MONTH_MS ? (
-			<TouchableHighlight onPress={onPress}>{content}</TouchableHighlight>
+		return userID === userStore.myID && Date.now() - date.getTime() < 2 * MONTH_MS ? (
+			<TouchableHighlight underlayColor={store.theme.highlight} onPress={onPress}>
+				{content}
+			</TouchableHighlight>
 		) : (
 			content
 		)
 	},
 )
 
-export const EntryDataItem: FC<{ entry?: Entry; allRounds: number }> = ({ entry, allRounds }) => {
+export const EntryDataItem: FC<{ entry?: Entry; allRounds: number }> = ({ entry }) => {
 	return (
 		<View style={styles.dataContainer}>
 			{/* GET UP */}
@@ -86,7 +89,7 @@ export const EntryDataItem: FC<{ entry?: Entry; allRounds: number }> = ({ entry,
 					</>
 				) : null}
 			</View>
-			<Text style={styles.dataText}>{allRounds}</Text>
+			{/* TODO: make fixed size for it <Text style={styles.dataText}>{allRounds}</Text> */}
 		</View>
 	)
 }
@@ -164,15 +167,18 @@ const styles = createStyles({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 	},
-	date: { flexDirection: 'row', alignItems: 'center', width: 30, marginRight: 20 },
+	date: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		width: 40,
+		marginRight: 20,
+	},
 	day: () => ({ fontSize: 22, fontWeight: '300', color: store.theme.text }),
 	weekday: {
 		fontSize: 10,
 		fontWeight: 'bold',
 		color: '#CED2D5',
-		margin: 4,
-		marginRight: 10,
-		marginLeft: 6,
 	},
 	kirtan: { marginHorizontal: 16 },
 	dataContainer: { flexDirection: 'row' },

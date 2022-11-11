@@ -27,11 +27,11 @@ class OtherGraphsStore {
 	addItems = (_: OtherGraphItem[], reset?: true) => (this._items = reset ? _ : this.items.concat(_))
 	addSearchItems = (_: OtherGraphItem[]) => (this.searchItems = _)
 
-	loading = false
-	setLoading = (_: boolean) => (this.loading = _)
+	loadingPage: number | null = null
+	setLoadingPage = (_: number | null) => (this.loadingPage = _)
 
 	get refreshing() {
-		return this.loading && this.pageNumber === 0 && this.searchString.length === 0
+		return this.loadingPage === 0 && this.searchString.length === 0
 	}
 }
 

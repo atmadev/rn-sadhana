@@ -13,6 +13,7 @@ import { MyGraphSettingsScreen } from 'screens/settings/MyGraph'
 import { renderTabBar } from './TabBar'
 import { observer } from 'mobx-react-lite'
 import { OtherGraphsScreen } from 'screens/otherGraphs'
+import { OtherProfileScreen } from 'screens/otherGraphs/OtherProfileScreen'
 
 const RootStack = createNativeStackNavigator()
 
@@ -45,6 +46,7 @@ const LeftStackNavigator = () => (
 const RightStackNavigator = () => (
 	<RightStack.Navigator>
 		<RightStack.Screen {...OtherGraphsScreen.Screen} />
+		<RightStack.Screen {...OtherProfileScreen.Screen} />
 	</RightStack.Navigator>
 )
 

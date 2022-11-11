@@ -10,6 +10,7 @@ export interface OtherGraphItem extends Entry {
 	city: string
 	country: string
 	avatarUrl: string
+	user_id: string
 }
 
 export type EntryInputFields = ExpandDeep<ShapedNamed<'EntryInputFields'>>

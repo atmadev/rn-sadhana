@@ -25,6 +25,16 @@ class GraphStore {
 		this.map.set(userID, graph)
 	}
 
+	selectedID: string | null = null
+	setSelectedID = (id: string | null) => {
+		this.selectedID = id
+		if (id && !this.map.has(id)) this.map.set(id, new MXGraph(id))
+	}
+
+	get selected() {
+		return this.selectedID ? this.map.get(this.selectedID) : null
+	}
+
 	clear = () => {
 		this.map.clear()
 	}

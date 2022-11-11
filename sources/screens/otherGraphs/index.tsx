@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useMemo } from 'react'
-import { View, Text, ViewStyle, Image, TextInput } from 'react-native'
+import React, { FC, useCallback, useEffect, useMemo } from 'react'
+import { View, Text, ViewStyle, Image, TextInput, ActivityIndicator } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createScreen, createStyles } from 'screens/utils'
 import { fetchOtherGraphs, searchOtherGraphs } from 'logic/entries'
@@ -14,14 +14,20 @@ import { Spacer } from 'components/Spacer'
 import debounce from 'lodash/debounce'
 import { SearchIcon } from 'components/Icons'
 import { GRAY_SYSTEM } from 'const/Colors'
+import { TouchableHighlight } from 'react-native-gesture-handler'
+import { navigate } from 'navigation'
+import { graphStore } from 'store/GraphStore'
+import { userStore } from 'store/UserStore'
 
 // TODO: graph list
+// TODO: search no results label
+// TODO: search clear button
 
 export const OtherGraphsScreen = createScreen(
 	'OtherGraphs',
 	observer(() => {
 		useEffect(() => {
-			onRefresh()
+			if (otherGraphsStore.items.length === 0) onRefresh()
 		}, [])
 
 		return (
@@ -36,6 +42,7 @@ export const OtherGraphsScreen = createScreen(
 					onEndReached={fetchOtherGraphs}
 					onEndReachedThreshold={1}
 					keyboardDismissMode="interactive"
+					ListFooterComponent={ListFooter}
 				/>
 			</View>
 		)
@@ -63,6 +70,12 @@ const ListHeader: FC = observer(() => {
 	)
 })
 
+const ListFooter: FC = observer(() => {
+	return otherGraphsStore.loadingPage && otherGraphsStore.loadingPage > 0 ? (
+		<ActivityIndicator style={styles.bottomActivityIndicator} />
+	) : null
+})
+
 const onSearch = (text: string) => {
 	otherGraphsStore.setSearchString(text)
 	searchDebounced()
@@ -74,22 +87,35 @@ const GraphItem: FC<{ item: OtherGraphItem }> = observer(({ item }) => {
 	const avatarSource = useMemo(() => ({ uri: item.avatarUrl }), [item.avatarUrl])
 	const rounds = parseRounds(item)
 
+	const onPress = useCallback(() => {
+		if (item.user_id === userStore.myID) {
+			navigate('MyGraph')
+			return
+		}
+
+		graphStore.setSelectedID(item.user_id)
+		graphStore.selected!.setItem(item)
+		navigate('OtherProfile')
+	}, [item])
+
 	return (
-		<View style={styles.item}>
-			<Spacer flex={1} flexDirection="row" alignItems="center" margin={10}>
-				<Image style={styles.image} source={avatarSource} />
-				<Spacer flex={1}>
-					<Text style={styles.title}>
-						{trimmed(item.spiritual_name) ??
-							trimmed(item.karmic_name) ??
-							trimmed(item.user_nicename)}
-					</Text>
-					<Spacer height={12} />
-					<EntryDataItem entry={item} allRounds={rounds.all} />
+		<TouchableHighlight underlayColor={store.theme.highlight} onPress={onPress}>
+			<View style={styles.item}>
+				<Spacer flex={1} flexDirection="row" alignItems="center" margin={10}>
+					<Image style={styles.image} source={avatarSource} />
+					<Spacer flex={1}>
+						<Text style={styles.title}>
+							{trimmed(item.spiritual_name) ??
+								trimmed(item.karmic_name) ??
+								trimmed(item.user_nicename)}
+						</Text>
+						<Spacer height={12} />
+						<EntryDataItem entry={item} allRounds={rounds.all} />
+					</Spacer>
 				</Spacer>
-			</Spacer>
-			<JapaLine {...rounds} />
-		</View>
+				<JapaLine {...rounds} />
+			</View>
+		</TouchableHighlight>
 	)
 })
 
@@ -126,4 +152,5 @@ const styles = createStyles({
 		color: store.theme.text,
 		fontSize: 15,
 	}),
+	bottomActivityIndicator: { marginTop: 50, marginBottom: 70 },
 })

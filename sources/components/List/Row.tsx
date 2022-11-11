@@ -1,6 +1,5 @@
 import { TouchableHighlight } from 'components/primitives'
 import { Spacer } from 'components/Spacer'
-import { GRAY_ULTRALIGHT } from 'const/Colors'
 import { observer } from 'mobx-react-lite'
 import React, { FC } from 'react'
 import { Image, Text, View } from 'react-native'
@@ -18,7 +17,7 @@ export const Row: FC<{ title: string; arrow?: true; onPress?: () => void }> = ob
 		)
 
 		return onPress ? (
-			<TouchableHighlight onPress={onPress} underlayColor={GRAY_ULTRALIGHT}>
+			<TouchableHighlight onPress={onPress} underlayColor={store.theme.highlight}>
 				{content}
 			</TouchableHighlight>
 		) : (

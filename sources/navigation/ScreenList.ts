@@ -5,4 +5,5 @@ export interface ScreenList {
 	Settings: undefined
 	MyGraphSettings: undefined
 	OtherGraphs: undefined
+	OtherProfile: undefined
 }

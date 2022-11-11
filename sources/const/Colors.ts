@@ -26,6 +26,7 @@ export const colors = {
 		separator: '#bbbbbb',
 		separator2: '#F2F4F5',
 		placeholder: '#CED2D5',
+		highlight: '#D1D0D5',
 	},
 	dark: {
 		text: '#fff',
@@ -39,5 +40,6 @@ export const colors = {
 		separator: '#4a4a4a',
 		separator2: '#bbbbbb',
 		placeholder: '#888',
+		highlight: '#3A3A3C',
 	},
 }

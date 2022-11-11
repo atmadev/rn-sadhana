@@ -3,7 +3,7 @@ import * as db from 'services/localDB'
 import * as vs from 'services/network/vs'
 import { PostEntry, UpdateEntry } from 'services/network/vsShapes'
 import { getLast } from 'services/utils'
-import { utcStringFromDate } from 'shared/dateUtil'
+import { monthStringFromDate, utcStringFromDate } from 'shared/dateUtil'
 import { Entry } from 'shared/types'
 import { Shaped } from 'shared/types/primitives'
 import { graphStore } from 'store/GraphStore'
@@ -121,13 +121,65 @@ export const saveEditing = async () => {
 	}
 }
 
+const fetchOtherEntries = async (date = new Date()) => {
+	const graph = graphStore.selected!
+	const result = await vs.monthEntries(graph.userID, {
+		year: date.getFullYear(),
+		month: date.getMonth() + 1,
+	})
+
+	if (result.success) {
+		const { entries } = result.data
+		graph.setEntries(entries)
+		graph.setLastLoadedMonth(monthStringFromDate(date))
+	} else {
+		// TODO: handle error
+	}
+}
+
+export const refreshOtherEntries = async () => {
+	const graph = graphStore.selected
+	if (!graph || graph.refreshing) return
+	graph.setRefreshing(true)
+	graph.setLoadingPreviousMonth(true)
+
+	try {
+		await fetchOtherEntries()
+
+		const date = new Date()
+		date.setMonth(date.getMonth() - 1)
+		await fetchOtherEntries(date)
+	} catch (e) {
+		// TODO: hande error (show alert, send to the sentry)
+	} finally {
+		graph.setRefreshing(false)
+		graph.setLoadingPreviousMonth(false)
+	}
+}
+
+export const fetchOtherEntriesPreviousMonth = async () => {
+	const graph = graphStore.selected
+	if (!graph || graph.loadingPreviousMonth || !graph.lastLoadedMonth) return
+	graph.setLoadingPreviousMonth(true)
+
+	try {
+		const date = new Date(graph.lastLoadedMonth)
+		date.setMonth(date.getMonth() - 1)
+		await fetchOtherEntries(date)
+	} catch (e) {
+		// TODO: hande error (show alert, send to the sentry)
+	} finally {
+		graph.setLoadingPreviousMonth(false)
+	}
+}
+
 const items_per_page = 25
 
 export const fetchOtherGraphs = async (reset?: true) => {
-	if (otherGraphsStore.loading) return
+	if (otherGraphsStore.loadingPage !== null) return
 	const page_num = reset ? 0 : otherGraphsStore.pageNumber + 1
 	try {
-		otherGraphsStore.setLoading(true)
+		otherGraphsStore.setLoadingPage(page_num)
 		const result = await vs.allEntries({
 			country: otherGraphsStore.country,
 			city: otherGraphsStore.city,
@@ -144,14 +196,14 @@ export const fetchOtherGraphs = async (reset?: true) => {
 	} catch (e) {
 		// TODO: capture exception
 	} finally {
-		otherGraphsStore.setLoading(false)
+		otherGraphsStore.setLoadingPage(null)
 	}
 }
 
 export const searchOtherGraphs = async () => {
-	if (otherGraphsStore.loading) return
+	if (otherGraphsStore.loadingPage !== null) return
 	try {
-		otherGraphsStore.setLoading(true)
+		otherGraphsStore.setLoadingPage(0)
 		const result = await vs.allEntries({
 			country: otherGraphsStore.country,
 			city: otherGraphsStore.city,
@@ -167,6 +219,6 @@ export const searchOtherGraphs = async () => {
 	} catch (e) {
 		// TODO: capture exception
 	} finally {
-		otherGraphsStore.setLoading(false)
+		otherGraphsStore.setLoadingPage(null)
 	}
 }

@@ -87,12 +87,12 @@ export const entries = async (
 	}
 }
 
-export const monthEntries = async (userId: string, data: Shaped<typeof MonthEntriesRequest>) => {
+export const monthEntries = async (userId: string, data?: Shaped<typeof MonthEntriesRequest>) => {
 	try {
 		const result = await vsAuthorizedRequest(
 			'POST',
 			'userSadhanaEntries/' + userId,
-			{ shape: { MonthEntriesRequest: MonthEntriesRequest }, data },
+			data ? { shape: { MonthEntriesRequest: MonthEntriesRequest }, data } : undefined,
 			{ EntriesResponse },
 		)
 		// console.log('result', result)

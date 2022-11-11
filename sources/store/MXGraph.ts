@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { Entry, YMD } from 'shared/types'
+import { Entry, OtherGraphItem, YMD } from 'shared/types'
 import { MXEntry } from './MXEntry'
 
 export class MXGraph {
@@ -7,12 +7,12 @@ export class MXGraph {
 
 	constructor(userID: string) {
 		this.userID = userID
-		makeAutoObservable(this, { userID: false })
+		makeAutoObservable(this, { userID: false, item: false })
 	}
 
 	entries = new Map<YMD, Entry>()
-	setEntries = (es: Entry[]) => {
-		es.forEach((e) => this.entries.set(e.date, e))
+	setEntries = (_: Entry[]) => {
+		_.forEach((_) => this.entries.set(_.date, _))
 	}
 
 	mxEntries = new Map<YMD, MXEntry>()
@@ -31,5 +31,14 @@ export class MXGraph {
 	clearMXEntries = () => this.mxEntries.clear()
 
 	refreshing = false
-	setRefreshing = (r: boolean) => (this.refreshing = r)
+	setRefreshing = (_: boolean) => (this.refreshing = _)
+
+	loadingPreviousMonth = false
+	setLoadingPreviousMonth = (_: boolean) => (this.loadingPreviousMonth = _)
+
+	item: OtherGraphItem | null = null
+	setItem = (_: OtherGraphItem) => (this.item = _)
+
+	lastLoadedMonth: string | null = null
+	setLastLoadedMonth = (_: string) => (this.lastLoadedMonth = _)
 }
