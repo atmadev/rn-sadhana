@@ -1,13 +1,6 @@
 import React, { useEffect } from 'react'
-import {
-	View,
-	Text,
-	InteractionManager,
-	ListRenderItemInfo,
-	Animated,
-	Button,
-	StyleSheet,
-} from 'react-native'
+// prettier-ignore
+import { View, Text, InteractionManager, ListRenderItemInfo, Animated, StyleSheet, Image } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 import { goBack } from 'navigation'
@@ -26,6 +19,7 @@ import { DateList } from './DateList'
 import { YMD } from 'shared/types'
 import { Spacer } from 'components/Spacer'
 import { graphEditingStore } from 'store/GraphEditingStore'
+import { arrowLeft, arrowRight, checkButton } from 'assets/index'
 
 export const GraphEditingScreen = createScreen(
 	'GraphEditing',
@@ -57,9 +51,24 @@ export const GraphEditingScreen = createScreen(
 				/>
 
 				<View style={styles.bottomBar}>
-					<Button title="Back" onPress={graphEditingStore.currentEntry.goBack} />
-					<Button title="Next" onPress={graphEditingStore.currentEntry.goNext} />
-					<Button title="Save" onPress={onSave} />
+					<Spacer flex={1} flexDirection="row">
+						<TouchableOpacity
+							style={styles.arrowButton}
+							onPress={graphEditingStore.currentEntry.goBack}
+						>
+							<Image source={arrowLeft} />
+						</TouchableOpacity>
+						<TouchableOpacity
+							style={styles.arrowButton}
+							onPress={graphEditingStore.currentEntry.goNext}
+						>
+							<Image source={arrowRight} />
+						</TouchableOpacity>
+					</Spacer>
+					<TouchableOpacity onPress={onSave}>
+						<Image source={checkButton} />
+					</TouchableOpacity>
+					<Spacer flex={1} />
 				</View>
 				<Spacer
 					height={keyboardStore.isVisible ? keyboardStore.keyboardHeight : Device.safeBottomInset}
@@ -101,10 +110,18 @@ const onSave = () => {
 const styles = createStyles({
 	container: () => ({ flex: 1, backgroundColor: store.theme.background }),
 	bottomBar: () => ({
-		height: 44,
+		height: 50,
 		borderTopColor: store.theme.separator,
 		borderTopWidth: StyleSheet.hairlineWidth,
 		flexDirection: 'row',
+		alignItems: 'center',
+		paddingHorizontal: 10,
 	}),
 	cancelText: () => ({ color: ORANGE, fontSize: 16 }),
+	arrowButton: {
+		width: 44,
+		height: 44,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 })

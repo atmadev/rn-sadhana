@@ -7,7 +7,6 @@ import { FlashList } from '@shopify/flash-list'
 import { otherGraphsStore } from 'store/OtherGraphsStore'
 import { OtherGraphItem } from 'shared/types'
 import { gloablStyles } from 'const'
-import { trimmed } from 'shared/utils'
 import { store } from 'store'
 import { EntryDataItem, JapaLine, parseRounds } from 'screens/graph/EntryItem'
 import { Spacer } from 'components/Spacer'
@@ -18,6 +17,7 @@ import { TouchableHighlight } from 'react-native-gesture-handler'
 import { navigate } from 'navigation'
 import { graphStore } from 'store/GraphStore'
 import { userStore } from 'store/UserStore'
+import { graphItemName } from 'utils'
 
 // TODO: search no results label
 // TODO: search clear button
@@ -102,11 +102,7 @@ const GraphItem: FC<{ item: OtherGraphItem }> = observer(({ item }) => {
 			<View style={styles.item}>
 				<Image style={styles.image} source={avatarSource} />
 				<Spacer flex={1}>
-					<Text style={styles.title}>
-						{trimmed(item.spiritual_name) ??
-							trimmed(item.karmic_name) ??
-							trimmed(item.user_nicename)}
-					</Text>
+					<Text style={styles.title}>{graphItemName(item)}</Text>
 					<EntryDataItem entry={item} />
 					<JapaLine {...rounds} />
 				</Spacer>
@@ -157,9 +153,9 @@ const styles = createStyles({
 		fontSize: 12,
 		color: store.theme.text,
 		alignSelf: 'flex-end',
-		width: 14,
+		width: 15,
 		textAlign: 'center',
-		marginLeft: 6,
+		marginLeft: 5,
 		marginBottom: -3,
 		marginRight: 2,
 	}),

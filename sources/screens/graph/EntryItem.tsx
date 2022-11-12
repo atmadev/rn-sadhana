@@ -63,9 +63,9 @@ export const EntryDataItem: FC<{ entry?: Entry }> = observer(({ entry }) => {
 			{/* READING */}
 			<View style={styles.dataItem}>
 				<Image source={entry?.reading && entry.reading !== '0' ? readingIconActive : readingIcon} />
-				<Spacer width={10} />
 				<FastText
 					fontSize={12}
+					marginLeft={5}
 					color={
 						entry?.reading && entry.reading !== '0' ? store.theme.text : store.theme.placeholder
 					}
@@ -206,7 +206,7 @@ const styles = createStyles({
 		color: store.theme.text,
 		alignSelf: 'flex-end',
 		marginBottom: 6,
-		width: 14,
+		width: 15,
 		textAlign: 'center',
 	}),
 	dataItemDummy: () => ({

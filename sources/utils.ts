@@ -1,4 +1,6 @@
 import { Alert } from 'react-native'
+import { OtherGraphItem, User } from 'shared/types'
+import { trimmed } from 'shared/utils'
 
 export const isNetworkError = (e: any) => {
 	const message = inferErrorMessage(e)
@@ -21,3 +23,8 @@ export const inferErrorMessage = (error: any): string | null => {
 
 export const showError = (e: any) =>
 	Alert.alert('Error', inferErrorMessage(e) ?? '', [{ text: 'OK' }], { cancelable: true })
+
+export const userName = (user: User) => trimmed(user.user_name) ?? trimmed(user.user_nicename) ?? ''
+
+export const graphItemName = (item: OtherGraphItem) =>
+	trimmed(item.spiritual_name) ?? trimmed(item.karmic_name) ?? trimmed(item.user_nicename)

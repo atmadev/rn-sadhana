@@ -52,7 +52,7 @@ export const DateList: FC = observer(() => {
 	)
 })
 
-const dateItemWidth = 100
+const dateItemWidth = Device.width / 3
 const itemK = dateItemWidth / Device.width
 
 const styles = createStyles({

@@ -40,7 +40,7 @@ export const pad = (number: number, width: number) => {
 		: new Array(width - numberString.length + 1).join('0') + numberString
 }
 
-export const trimmed = (string?: string) => {
+export const trimmed = (string?: string | null) => {
 	if (!string) return null
 	const trimmed = string.trim()
 	return trimmed.length > 0 ? trimmed : null

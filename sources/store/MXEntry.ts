@@ -83,6 +83,7 @@ export class MXEntry {
 			}
 			i++
 		}
+		this.refs[forward ? 0 : this.refs.length - 1].current?.focus()
 	}
 
 	goBack = () => this.go(false)
