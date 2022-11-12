@@ -19,7 +19,6 @@ import { navigate } from 'navigation'
 import { graphStore } from 'store/GraphStore'
 import { userStore } from 'store/UserStore'
 
-// TODO: graph list
 // TODO: search no results label
 // TODO: search clear button
 
@@ -101,19 +100,17 @@ const GraphItem: FC<{ item: OtherGraphItem }> = observer(({ item }) => {
 	return (
 		<TouchableHighlight underlayColor={store.theme.highlight} onPress={onPress}>
 			<View style={styles.item}>
-				<Spacer flex={1} flexDirection="row" alignItems="center" margin={10}>
-					<Image style={styles.image} source={avatarSource} />
-					<Spacer flex={1}>
-						<Text style={styles.title}>
-							{trimmed(item.spiritual_name) ??
-								trimmed(item.karmic_name) ??
-								trimmed(item.user_nicename)}
-						</Text>
-						<Spacer height={12} />
-						<EntryDataItem entry={item} allRounds={rounds.all} />
-					</Spacer>
+				<Image style={styles.image} source={avatarSource} />
+				<Spacer flex={1}>
+					<Text style={styles.title}>
+						{trimmed(item.spiritual_name) ??
+							trimmed(item.karmic_name) ??
+							trimmed(item.user_nicename)}
+					</Text>
+					<EntryDataItem entry={item} />
+					<JapaLine {...rounds} />
 				</Spacer>
-				<JapaLine {...rounds} />
+				<Text style={styles.roundsText}>{rounds.all > 0 ? rounds.all : ''}</Text>
 			</View>
 		</TouchableHighlight>
 	)
@@ -141,6 +138,8 @@ const styles = createStyles({
 		backgroundColor: store.theme.background,
 		borderRadius: 14,
 		overflow: 'hidden',
+		flexDirection: 'row',
+		padding: 10,
 	}),
 	image: {
 		width: 54,
@@ -151,6 +150,17 @@ const styles = createStyles({
 	title: () => ({
 		color: store.theme.text,
 		fontSize: 15,
+		marginBottom: 6,
 	}),
 	bottomActivityIndicator: { marginTop: 50, marginBottom: 70 },
+	roundsText: () => ({
+		fontSize: 12,
+		color: store.theme.text,
+		alignSelf: 'flex-end',
+		width: 14,
+		textAlign: 'center',
+		marginLeft: 6,
+		marginBottom: -3,
+		marginRight: 2,
+	}),
 })

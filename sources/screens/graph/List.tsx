@@ -31,17 +31,12 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 	const { data, headerIndexes, lastItemIndexes } = calendarStore.lastYearDaysWithMonths
 
 	const renderItem = useCallback(
-		({ item, index }: { item: string; index: number }) => {
-			if (headerIndexes.has(index)) {
-				return (
-					<View style={styles.sectionHeader}>
-						<Text style={styles.sectionHeaderText}>{item}</Text>
-					</View>
-				)
-			}
-
-			return <EntryItem ymd={item} userID={userID} isLast={lastItemIndexes.has(index)} />
-		},
+		({ item, index }: { item: string; index: number }) =>
+			headerIndexes.has(index) ? (
+				<SectionHeader title={item} />
+			) : (
+				<EntryItem ymd={item} userID={userID} isLast={lastItemIndexes.has(index)} />
+			),
 		[userID, headerIndexes],
 	)
 
@@ -73,7 +68,7 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 			renderItem={renderItem}
 			getItemType={getItemType}
 			stickyHeaderIndices={stickyHeaderIndices}
-			estimatedItemSize={60}
+			estimatedItemSize={57}
 			scrollIndicatorInsets={scrollIndicatorInsets}
 			onEndReached={trimmed ? fetchOtherEntriesPreviousMonth : undefined}
 			onEndReachedThreshold={1}
@@ -81,6 +76,12 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 		/>
 	)
 })
+
+const SectionHeader: FC<{ title: string }> = observer(({ title }) => (
+	<View style={styles.sectionHeader}>
+		<Text style={styles.sectionHeaderText}>{title}</Text>
+	</View>
+))
 
 const Footer: FC = observer(() => {
 	const graph = graphStore.selected

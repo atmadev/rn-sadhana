@@ -15,6 +15,7 @@ import { observer } from 'mobx-react-lite'
 import { OtherGraphsScreen } from 'screens/otherGraphs'
 import { OtherProfileScreen } from 'screens/otherGraphs/OtherProfileScreen'
 import { RegistrationScreen } from 'screens/registration'
+import { ORANGE } from 'const/Colors'
 
 const RootStack = createNativeStackNavigator()
 
@@ -84,3 +85,6 @@ const OtherGraphsTapOptions = {
 }
 
 const noHeader = { headerShown: false }
+
+DefaultTheme.colors.primary = ORANGE
+DarkTheme.colors.primary = ORANGE

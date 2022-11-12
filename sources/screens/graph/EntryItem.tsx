@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { TouchableHighlight } from 'components/primitives'
 import { createStyles } from 'screens/utils'
 import { Image, ViewStyle } from 'react-native'
-import { Spacer } from 'components/Spacer'
+import { FastText, Spacer } from 'components/Spacer'
 import { graphStore } from 'store/GraphStore'
 import { BLUE, ORANGE, RED, YELLOW } from 'const/Colors'
 import { store } from 'store'
@@ -30,14 +30,15 @@ export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = obse
 
 		const content = (
 			<View style={isLast ? styles.containerLast : styles.container}>
-				<View style={styles.content}>
-					<View style={styles.date}>
-						<Text style={styles.day}>{date.getUTCDate()}</Text>
-						<Text style={styles.weekday}>{date.getUTCDay()}</Text>
-					</View>
-					<EntryDataItem entry={entry} allRounds={rounds.all} />
+				<View style={styles.date}>
+					<Text style={styles.day}>{date.getUTCDate()}</Text>
+					<Text style={styles.weekday}>{date.getUTCDay()}</Text>
 				</View>
-				<JapaLine {...rounds} />
+				<View style={styles.content}>
+					<EntryDataItem entry={entry} />
+					<JapaLine {...rounds} />
+				</View>
+				<Text style={styles.roundsText}>{rounds.all > 0 ? rounds.all : ''}</Text>
 			</View>
 		)
 
@@ -51,48 +52,52 @@ export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = obse
 	},
 )
 
-export const EntryDataItem: FC<{ entry?: Entry; allRounds: number }> = ({ entry }) => {
+export const EntryDataItem: FC<{ entry?: Entry }> = observer(({ entry }) => {
 	return (
 		<View style={styles.dataContainer}>
 			{/* GET UP */}
-			<View style={styles.dataItem}>
-				<Image source={getUpIcon} />
-				{entry?.opt_wake_up ? (
-					<>
-						<Spacer width={10} />
-						<Text style={styles.dataText}>{entry.opt_wake_up}</Text>
-					</>
-				) : null}
-			</View>
-
+			<TimeItem data={entry?.opt_wake_up} icon={wakeUpIcon} iconActive={wakeUpIconActive} />
 			{/* KIRTAN */}
-			<Image style={styles.kirtan} source={entry?.kirtan === '1' ? kirtanActiveIcon : kirtanIcon} />
+			<Image style={styles.kirtan} source={entry?.kirtan === '1' ? kirtanIconActive : kirtanIcon} />
 
 			{/* READING */}
 			<View style={styles.dataItem}>
-				<Image source={entry?.reading && entry.reading !== '0' ? readingActiveIcon : readingIcon} />
-				{entry?.reading && entry.reading !== '0' ? (
-					<>
-						<Spacer width={10} />
-						<Text style={styles.dataText}>{entry.reading}</Text>
-					</>
-				) : null}
+				<Image source={entry?.reading && entry.reading !== '0' ? readingIconActive : readingIcon} />
+				<Spacer width={10} />
+				<FastText
+					fontSize={12}
+					color={
+						entry?.reading && entry.reading !== '0' ? store.theme.text : store.theme.placeholder
+					}
+				>
+					{entry?.reading ?? 0}
+				</FastText>
 			</View>
 
 			{/* BED */}
-			<View style={styles.dataItem}>
-				<Image source={bedIcon} />
-				{entry?.opt_sleep ? (
-					<>
-						<Spacer width={10} />
-						<Text style={styles.dataText}>{entry.opt_sleep}</Text>
-					</>
-				) : null}
-			</View>
-			{/* TODO: make fixed size for it <Text style={styles.dataText}>{allRounds}</Text> */}
+			<TimeItem data={entry?.opt_sleep} icon={bedIcon} iconActive={bedIconActive} />
 		</View>
 	)
-}
+})
+
+export const TimeItem: FC<{ data?: string | null; icon: any; iconActive: any }> = observer(
+	({ data, icon, iconActive }) => (
+		<View style={styles.dataItem}>
+			{data ? (
+				<>
+					<Image source={iconActive} />
+					<Spacer width={5} />
+					<Text style={styles.dataText}>{data}</Text>
+				</>
+			) : (
+				<>
+					<Image source={icon} />
+					<View style={styles.dataItemDummy} />
+				</>
+			)}
+		</View>
+	),
+)
 
 interface JapaRounds {
 	before730: number
@@ -134,20 +139,26 @@ export const parseRounds = (entry?: Entry) => {
 	}
 }
 
-const getUpIcon = require('assets/images/sun-active.png')
-const kirtanActiveIcon = require('assets/images/kirtan-active.png')
+const wakeUpIcon = require('assets/images/sun.png')
+const wakeUpIconActive = require('assets/images/sun-active.png')
+
 const kirtanIcon = require('assets/images/kirtan.png')
+const kirtanIconActive = require('assets/images/kirtan-active.png')
 
-const readingActiveIcon = require('assets/images/book-active.png')
 const readingIcon = require('assets/images/book.png')
+const readingIconActive = require('assets/images/book-active.png')
 
-const bedIcon = require('assets/images/moon-active.png')
+const bedIcon = require('assets/images/moon.png')
+const bedIconActive = require('assets/images/moon-active.png')
 
 const containerBasicStyle: ViewStyle = {
 	marginHorizontal: 10,
 	marginVertical: 4,
 	borderRadius: 6,
 	overflow: 'hidden',
+	flexDirection: 'row',
+	alignItems: 'center',
+	paddingHorizontal: 10,
 }
 
 const styles = createStyles({
@@ -163,7 +174,6 @@ const styles = createStyles({
 	content: {
 		flex: 1,
 		margin: 10,
-		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
 	},
@@ -172,7 +182,7 @@ const styles = createStyles({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		width: 40,
-		marginRight: 20,
+		marginRight: 10,
 	},
 	day: () => ({ fontSize: 22, fontWeight: '300', color: store.theme.text }),
 	weekday: {
@@ -183,10 +193,29 @@ const styles = createStyles({
 	kirtan: { marginHorizontal: 16 },
 	dataContainer: { flexDirection: 'row' },
 	dataItem: { flexDirection: 'row', flex: 1, alignItems: 'center' },
-	dataText: () => ({ color: store.theme.text }),
-	japa: { flexDirection: 'row', alignItems: 'center' },
+	dataText: () => ({ color: store.theme.text, fontSize: 12 }),
 	japaLine: {
-		height: 8,
+		height: 6,
 		flexDirection: 'row',
+		borderRadius: 3,
+		overflow: 'hidden',
+		marginTop: 8,
 	},
+	roundsText: () => ({
+		fontSize: 12,
+		color: store.theme.text,
+		alignSelf: 'flex-end',
+		marginBottom: 6,
+		width: 14,
+		textAlign: 'center',
+	}),
+	dataItemDummy: () => ({
+		flex: 1,
+		maxWidth: 30,
+		height: 3,
+		borderRadius: 1.5,
+		overflow: 'hidden',
+		backgroundColor: store.theme.background3,
+		marginLeft: 5,
+	}),
 })
