@@ -45,3 +45,9 @@ export const trimmed = (string?: string) => {
 	const trimmed = string.trim()
 	return trimmed.length > 0 ? trimmed : null
 }
+
+export const validateEmail = (text: string) => {
+	const re =
+		/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+	return re.test(String(text).toLowerCase())
+}

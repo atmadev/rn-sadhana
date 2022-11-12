@@ -14,6 +14,7 @@ import { renderTabBar } from './TabBar'
 import { observer } from 'mobx-react-lite'
 import { OtherGraphsScreen } from 'screens/otherGraphs'
 import { OtherProfileScreen } from 'screens/otherGraphs/OtherProfileScreen'
+import { RegistrationScreen } from 'screens/registration'
 
 const RootStack = createNativeStackNavigator()
 
@@ -27,6 +28,7 @@ export const Navigation = observer(() => {
 				<RootStack.Screen {...LoginScreen.Screen} />
 				<RootStack.Screen name="Tab" component={TabNavigator} options={noHeader} />
 				<RootStack.Screen {...GraphEditingScreen.Screen} />
+				<RootStack.Screen {...RegistrationScreen.Screen} />
 			</RootStack.Navigator>
 		</NavigationContainer>
 	)

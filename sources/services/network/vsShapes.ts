@@ -50,3 +50,15 @@ export const EntriesResponse = shape({
 		items_per_page: number,
 	}),
 })
+
+export const Registration = shape({
+	spiritual_name: string,
+	first_name: r(string),
+	last_name: r(string),
+	password: r(string),
+	email: r(string),
+})
+
+export const UserID = shape({
+	user_id: r(string),
+})

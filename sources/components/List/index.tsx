@@ -1,5 +1,5 @@
-import React, { FC, PropsWithChildren } from 'react'
-import { ScrollView } from 'react-native'
+import React, { FC } from 'react'
+import { ScrollView, ScrollViewProps } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createStyles } from 'screens/utils'
 
@@ -7,20 +7,24 @@ import { Section } from './Section'
 import { Row } from './Row'
 import { Button } from './Button'
 import { Switch } from './Switch'
+import { Input } from './Input'
 import { store } from 'store'
 
 export const List = {
-	Scroll: observer(({ children }) => {
+	Scroll: observer((props) => {
 		return (
-			<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-				{children}
-			</ScrollView>
+			<ScrollView
+				{...props}
+				style={styles.container}
+				contentContainerStyle={styles.contentContainer}
+			/>
 		)
-	}) as FC<PropsWithChildren<{}>>,
+	}) as FC<ScrollViewProps>,
 	Section,
 	Row,
 	Button,
 	Switch,
+	Input,
 }
 
 const styles = createStyles({

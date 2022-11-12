@@ -6,6 +6,11 @@ import * as db from 'services/localDB'
 import { fetchMyRecentEntries } from './entries'
 import { loginStore } from 'store/LoginStore'
 import { settingsStore } from 'store/SettingsStore'
+import { clearRegistrationStore, registrationStore } from 'store/RegistrationStore'
+import { InteractionManager } from 'react-native'
+import { resetToMyGraph } from 'navigation'
+import { validateEmail } from 'shared/utils'
+import { showError } from 'utils'
 
 // TODO: don't logout on network error
 
@@ -51,5 +56,61 @@ export const fetchInitialData = async () => {
 		// TODO: handle auth error
 		// @ts-ignore
 		return { success: FALSE, message: e.message }
+	}
+}
+
+export const register = async () => {
+	if (!validateEmail(registrationStore.email)) {
+		showError("Email isn't valid")
+		return
+	}
+
+	if (registrationStore.password !== registrationStore.confirmPassword) {
+		showError('Passwords are different')
+		return
+	}
+
+	try {
+		registrationStore.setLoading(true)
+		const data = {
+			spiritual_name: registrationStore.spiritualName,
+			first_name: registrationStore.firstName,
+			last_name: registrationStore.lastName,
+			email: registrationStore.email,
+			password: registrationStore.password,
+		}
+		console.log(data)
+		const result = await vs.register(data)
+		console.log({ result })
+
+		if (!result.success) {
+			// TODO: show error
+			return
+		}
+
+		// TODO: login with user id
+		const loginResult = await login(registrationStore.email, registrationStore.password)
+		console.log({ loginResult })
+
+		if (!loginResult.success) {
+			// TODO: handle error
+			return
+		}
+
+		const initialDataResult = await fetchInitialData()
+		console.log({ initialDataResult })
+
+		if (!initialDataResult) {
+			// TODO: handle error
+			return
+		}
+
+		resetToMyGraph()
+
+		InteractionManager.runAfterInteractions(clearRegistrationStore)
+	} catch (e) {
+		// TODO: show error, capture exception
+	} finally {
+		registrationStore.setLoading(false)
 	}
 }

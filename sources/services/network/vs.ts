@@ -3,7 +3,7 @@ import { Shaped, Shape } from 'shared/types/primitives'
 import { User } from 'shared/types/shapes'
 import { request, RequestMethod, VSResponse } from '.'
 // prettier-ignore
-import { MonthEntriesRequest, LoginParams, PostEntry, EntryID, sTokens, UpdateEntry, EntriesResponse, EntriesRequest, Tokens } from './vsShapes'
+import { MonthEntriesRequest, LoginParams, PostEntry, EntryID, sTokens, UpdateEntry, EntriesResponse, EntriesRequest, Tokens, Registration, UserID } from './vsShapes'
 
 let tokens: Tokens | null = null
 
@@ -33,21 +33,24 @@ export const login = async (username: string, password: string) => {
 
 const apiPath = 'https://vaishnavaseva.net/vs-api/v2/sadhana/'
 
-const vsAuthorizedRequest = async <ParamsShape extends Shape, ResponseShape extends Shape>(
+const vsShapedRequest = async <ParamsShape extends Shape, ResponseShape extends Shape>(
 	method: RequestMethod,
 	path: string,
 	body?: {
 		shape: { [shapeName: string]: ParamsShape }
 		data: Shaped<ParamsShape>
+		authorize?: boolean
 	},
 	response?: { [shapeName: string]: ResponseShape },
 ) => {
-	if (!tokens) throw new Error('Trying to make VS request without tokens!')
+	const authorize = body?.authorize === undefined ? true : body.authorize
+
+	if (authorize && !tokens) throw new Error('Trying to make VS request without tokens!')
 
 	return request(
 		method,
 		'https://vaishnavaseva.net/vs-api/v2/sadhana/' + path,
-		{ body, headers: { Authorization: 'Bearer ' + tokens!.access_token } },
+		{ body, headers: authorize ? { Authorization: 'Bearer ' + tokens!.access_token } : undefined },
 		response,
 	)
 }
@@ -59,7 +62,7 @@ const vsRequest = async (method: RequestMethod, path: string, body?: any) => {
 
 export const me = async () => {
 	try {
-		const result = await vsAuthorizedRequest('GET', 'me', undefined, { User })
+		const result = await vsShapedRequest('GET', 'me', undefined, { User })
 		// console.log('result', result)
 		return result
 	} catch (e) {
@@ -73,10 +76,10 @@ export const entries = async (
 	data: Shaped<typeof EntriesRequest>,
 ): Promise<VSResponse<Shaped<typeof EntriesResponse>>> => {
 	try {
-		const result = await vsAuthorizedRequest(
+		const result = await vsShapedRequest(
 			'POST',
 			'userSadhanaEntries/' + userId,
-			{ shape: { EntriesRequest: EntriesRequest }, data },
+			{ shape: { EntriesRequest }, data },
 			{ EntriesResponse },
 		)
 		// console.log('entries result', result)
@@ -89,7 +92,7 @@ export const entries = async (
 
 export const monthEntries = async (userId: string, data?: Shaped<typeof MonthEntriesRequest>) => {
 	try {
-		const result = await vsAuthorizedRequest(
+		const result = await vsShapedRequest(
 			'POST',
 			'userSadhanaEntries/' + userId,
 			data ? { shape: { MonthEntriesRequest: MonthEntriesRequest }, data } : undefined,
@@ -105,7 +108,7 @@ export const monthEntries = async (userId: string, data?: Shaped<typeof MonthEnt
 
 export const postEntry = async (userId: string, data: Shaped<typeof PostEntry>) => {
 	try {
-		const result = await vsAuthorizedRequest(
+		const result = await vsShapedRequest(
 			'POST',
 			'sadhanaEntry/' + userId,
 			{ shape: { PostEntry }, data },
@@ -121,7 +124,7 @@ export const postEntry = async (userId: string, data: Shaped<typeof PostEntry>) 
 
 export const updateEntry = async (userId: string, data: Shaped<typeof UpdateEntry>) => {
 	try {
-		const result = await vsAuthorizedRequest('PUT', 'sadhanaEntry/' + userId, {
+		const result = await vsShapedRequest('PUT', 'sadhanaEntry/' + userId, {
 			shape: { UpdateEntry },
 			data,
 		})
@@ -135,7 +138,7 @@ export const updateEntry = async (userId: string, data: Shaped<typeof UpdateEntr
 
 export const updateOptions = async (data: Shaped<typeof User>) => {
 	try {
-		const result = await vsAuthorizedRequest('POST', 'options/' + data.userid, {
+		const result = await vsShapedRequest('POST', 'options/' + data.userid, {
 			shape: { User },
 			data,
 		})
@@ -167,6 +170,14 @@ export const allEntries = async (body: {
 		| { success: false; error: { name: string; message: string } }
 	>
 }
+
+export const register = async (data: Shaped<typeof Registration>) =>
+	vsShapedRequest(
+		'POST',
+		'registration',
+		{ shape: { Registration }, data, authorize: false },
+		{ UserID },
+	)
 
 const client_id = 'IXndKqmEoXPTwu46f7nmTcoJ2CfIS6'
 const client_secret = '1A4oOPOatd8j6EOaL3i9pblOUnqa6j'

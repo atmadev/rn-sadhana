@@ -6,8 +6,8 @@ import { observer } from 'mobx-react-lite'
 import { createStyles } from 'screens/utils'
 import { store } from 'store'
 
-export const Section: FC<PropsWithChildren<{ title?: string }>> = observer(
-	({ title, children }) => {
+export const Section: FC<PropsWithChildren<{ title?: string; subTitle?: string }>> = observer(
+	({ title, children, subTitle }) => {
 		return (
 			<View style={styles.container}>
 				{title ? <Text style={styles.title}>{title.toUpperCase()}</Text> : null}
@@ -21,6 +21,7 @@ export const Section: FC<PropsWithChildren<{ title?: string }>> = observer(
 						  ))
 						: children}
 				</View>
+				{subTitle ? <Text style={styles.subTitle}>{subTitle}</Text> : null}
 			</View>
 		)
 	},
@@ -36,5 +37,12 @@ const styles = createStyles({
 		borderRadius: 10,
 		marginHorizontal: 16,
 		overflow: 'hidden',
+	}),
+	subTitle: () => ({
+		marginHorizontal: 32,
+		marginTop: 8,
+		fontSize: 13,
+		color: store.theme.text2,
+		textAlign: 'center',
 	}),
 })

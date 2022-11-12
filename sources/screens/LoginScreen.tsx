@@ -14,7 +14,7 @@ import { StatusBar } from 'expo-status-bar'
 import { arrowRightWhite, beadsLight, prabhupada, vaishnavaseva } from 'assets/index'
 import { Card } from 'components/Card'
 import { RadialGradient } from 'components/RadialGradient'
-import { configureLayoutAnimationFromKeyboardEvent, Device, doNothing } from 'const/index'
+import { configureLayoutAnimationFromKeyboardEvent, Device } from 'const/index'
 import * as Haptics from 'expo-haptics'
 import { createScreen } from 'screens/utils'
 import { fetchInitialData, login } from 'logic/auth'
@@ -22,7 +22,7 @@ import { userStore } from 'store/UserStore'
 import { observer } from 'mobx-react-lite'
 import { fetchLocalEntries } from 'logic/entries'
 import { GRAY_LIGHT, ORANGE, ORANGE_LIGHT, WHITE } from 'const/Colors'
-import { resetToMyGraph } from 'navigation'
+import { navigate, resetToMyGraph } from 'navigation'
 
 let keyboardMarginBottom = 0
 const formHorizontalOffset = new Animated.Value(0)
@@ -193,7 +193,7 @@ export const LoginScreen = createScreen(
 					<View style={styles.registrationContainer}>
 						<TouchableOpacity
 							style={styles.registrationButton}
-							onPress={doNothing}
+							onPress={onPressRegister}
 							hitSlop={hitSlop}
 						>
 							<Text style={styles.registrationText}>Реєстрація</Text>
@@ -206,6 +206,8 @@ export const LoginScreen = createScreen(
 	}),
 	{ headerShown: false },
 )
+
+const onPressRegister = () => navigate('Registration')
 
 const hitSlop = { top: 16, bottom: 16 }
 
