@@ -57,8 +57,6 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 		return data
 	}, [trimmed, data, lastLoadedMonth, entries.size])
 
-	if (trimmed) console.log('render data length', memoData.length)
-
 	return (
 		<FlashList
 			ListHeaderComponent={header}
@@ -68,7 +66,7 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 			renderItem={renderItem}
 			getItemType={getItemType}
 			stickyHeaderIndices={stickyHeaderIndices}
-			estimatedItemSize={57}
+			estimatedItemSize={55}
 			scrollIndicatorInsets={scrollIndicatorInsets}
 			onEndReached={trimmed ? fetchOtherEntriesPreviousMonth : undefined}
 			onEndReachedThreshold={1}

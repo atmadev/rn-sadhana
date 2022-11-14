@@ -37,7 +37,7 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 	// const text = await result.text()
 	// console.log('result', text)
 	const data = await result.json()
-	// console.log('response', method, url, data)
+	// console.log('response', method, url, data, result.status)
 
 	if (result.ok) {
 		// TODO: validate response code
@@ -51,8 +51,8 @@ export const request = async <ParamsShape extends Shape, ResponseShape extends S
 		return {
 			success: FALSE,
 			error: {
-				name: data.error,
-				message: data.error_description,
+				name: data.error ?? data.code,
+				message: data.error_description ?? data.message,
 			},
 		}
 	}

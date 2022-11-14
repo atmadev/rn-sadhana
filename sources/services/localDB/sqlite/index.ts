@@ -38,6 +38,7 @@ export class Table<TableName extends ShapeName, Object = PersistentShaped<TableN
 	}
 
 	insert = (...objects: Object[]) => {
+		if (objects.length === 0) return
 		const query = new InsertQuery(this.name, objects)
 		return query.run()
 	}

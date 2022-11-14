@@ -48,8 +48,8 @@ export const fetchInitialData = async () => {
 
 		const success = await fetchMyRecentEntries()
 
-		if (success) return { success }
-		else return { success, message: "Can't load entries" }
+		if (success) return { success: TRUE }
+		else return { success: FALSE, message: "Can't load entries" }
 	} catch (e) {
 		console.log('fetchInitialData', e)
 		// TODO: handle exceptions / errors
@@ -85,6 +85,7 @@ export const register = async () => {
 
 		if (!result.success) {
 			// TODO: show error
+			showError(result.error)
 			return
 		}
 
@@ -94,14 +95,16 @@ export const register = async () => {
 
 		if (!loginResult.success) {
 			// TODO: handle error
+			showError(loginResult.message)
 			return
 		}
 
 		const initialDataResult = await fetchInitialData()
 		console.log({ initialDataResult })
 
-		if (!initialDataResult) {
+		if (!initialDataResult.success) {
 			// TODO: handle error
+			showError(initialDataResult.message)
 			return
 		}
 
@@ -110,6 +113,7 @@ export const register = async () => {
 		InteractionManager.runAfterInteractions(clearRegistrationStore)
 	} catch (e) {
 		// TODO: show error, capture exception
+		showError(e)
 	} finally {
 		registrationStore.setLoading(false)
 	}

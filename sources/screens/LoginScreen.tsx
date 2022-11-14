@@ -121,7 +121,7 @@ export const LoginScreen = createScreen(
 				enabled={isKeyboardVisible}
 			>
 				<View style={styles.container} pointerEvents={isLoading ? 'none' : 'box-none'}>
-					<StatusBar style="light" />
+					<StatusBar style="light" animated />
 					<RadialGradient
 						containerStyle={styles.gradient}
 						width={Device.width}

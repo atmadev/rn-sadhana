@@ -3785,10 +3785,10 @@ expo-asset@~8.6.1:
     path-browserify "^1.0.0"
     url-parse "^1.5.9"
 
-expo-clipboard@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/expo-clipboard/-/expo-clipboard-4.0.1.tgz#74385c2deacbfc75583ebb22e95067bd8f79a037"
-  integrity sha512-ikVitSk8ltbbdmufQE/7+BpkDFU1hsLw5lhjEqknG6PHjtn4TP+ypMxKobBftU2VpFiz9O09bpRt86E8CzsJgQ==
+expo-clipboard@~3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/expo-clipboard/-/expo-clipboard-3.1.0.tgz#ff4b7a2a796488d3784ca8a40229a37bbcb7b65e"
+  integrity sha512-0cnmySP43VnpSWONn+1yIvPT0dwJWzCaPZcOZVxuH5mLhNi4p3UDLJFZt94tu4+bnyvDKjWxCK2/LoCM0XdwwQ==
 
 expo-constants@~13.2.0, expo-constants@~13.2.2, expo-constants@~13.2.3, expo-constants@~13.2.4:
   version "13.2.4"
@@ -3839,10 +3839,10 @@ expo-linking@~3.2.2:
     qs "^6.9.1"
     url-parse "^1.5.9"
 
-expo-mail-composer@^12.0.0:
-  version "12.0.0"
-  resolved "https://registry.yarnpkg.com/expo-mail-composer/-/expo-mail-composer-12.0.0.tgz#d7e98af7dfe4434a3167eb11cd87ffa55d7b0a84"
-  integrity sha512-Q1ko7D+knF1nOF2VKPc9AESowQaG7ta435PWjP0tKu33rmG4EzIzjHfDsCxMoQ9uiqJEwc1mdx/MOQpJlGEtLg==
+expo-mail-composer@~11.3.0:
+  version "11.3.0"
+  resolved "https://registry.yarnpkg.com/expo-mail-composer/-/expo-mail-composer-11.3.0.tgz#bd55763b58e97a2d159a0f098a6fd6eb117478ce"
+  integrity sha512-9/ZuM2Wg7ES0BTVv2QqaiCE5+vWY82PZz7QINxYcxNinRRPGWA3a9YzWh2IXLftzcOu3IB4IrGdeKIDN3ae9CA==
   dependencies:
     query-string "^6.2.0"
 

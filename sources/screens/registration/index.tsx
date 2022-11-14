@@ -7,12 +7,14 @@ import { register } from 'logic/auth'
 import { Button } from 'react-native'
 import { goBack } from 'navigation'
 import { ORANGE } from 'const/Colors'
+import { StatusBar } from 'expo-status-bar'
 
 export const RegistrationScreen = createScreen(
 	'Registration',
 	observer(() => {
 		return (
 			<List.Scroll keyboardDismissMode="interactive">
+				<StatusBar style="dark" animated />
 				<List.Section>
 					<List.Input
 						title="Spiritual name"

@@ -14,7 +14,6 @@ import { userName } from 'utils'
 export const SettingsScreen = createScreen(
 	'Settings',
 	observer(() => {
-		console.log({ me: userStore.me })
 		return (
 			<List.Scroll>
 				<List.Section>
@@ -33,7 +32,6 @@ export const SettingsScreen = createScreen(
 			</List.Scroll>
 		)
 	}),
-	{},
 )
 
 const openMyGraphSetting = () => navigate('MyGraphSettings')
