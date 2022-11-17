@@ -5,7 +5,7 @@ import { View, Text, TextInput } from 'react-native'
 import { createStyles, useForwardedRef } from 'screens/utils'
 import { ORANGE } from 'const/Colors'
 import { store } from 'store'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { TouchableWithoutFeedback } from 'components/primitives'
 
 export const SubtitledTextInput = observer(
 	forwardRef<

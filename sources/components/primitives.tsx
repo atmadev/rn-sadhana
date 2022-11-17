@@ -1,6 +1,9 @@
-import { TouchableHighlight as RNTouchableHighlight } from 'react-native'
-
-import { TouchableHighlight as GHTouchableHighlight } from 'react-native-gesture-handler'
+import * as RN from 'react-native'
+import * as GH from 'react-native-gesture-handler'
 import { Device } from 'const'
 
-export const TouchableHighlight = Device.ios ? GHTouchableHighlight : RNTouchableHighlight
+const source = Device.ios ? GH : RN
+
+export const TouchableHighlight = source.TouchableHighlight
+export const TouchableOpacity = source.TouchableOpacity
+export const TouchableWithoutFeedback = source.TouchableWithoutFeedback

@@ -5,7 +5,7 @@ import { createStyles } from 'screens/utils'
 import { store } from 'store'
 import { Device } from 'const'
 import { ORANGE } from 'const/Colors'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { TouchableWithoutFeedback } from 'components/primitives'
 
 export const Input: FC<{ title: string } & TextInputProps> = observer((props) => {
 	const { title, ...textInputProps } = props

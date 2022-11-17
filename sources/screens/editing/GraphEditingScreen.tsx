@@ -4,7 +4,7 @@ import { View, Text, InteractionManager, ListRenderItemInfo, Animated, StyleShee
 
 import { observer } from 'mobx-react-lite'
 import { goBack } from 'navigation'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity } from 'components/primitives'
 import { createScreen, createStyles } from 'screens/utils'
 import { EntryEditingView } from './EntryEditingView'
 import { Device, configureLayoutAnimationFromKeyboardEvent } from 'const'

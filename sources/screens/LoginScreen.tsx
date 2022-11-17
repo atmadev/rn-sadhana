@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { TouchableHighlight } from 'components/primitives'
+import { TouchableHighlight, TouchableOpacity } from 'components/primitives'
 // prettier-ignore
 import { ActivityIndicator, Animated, Easing, Image, Keyboard, StyleSheet, Text, TextInput, View, ViewStyle} from 'react-native'
 import {
-	TouchableOpacity,
 	FlingGestureHandler,
 	TapGestureHandlerStateChangeEvent,
 	State,

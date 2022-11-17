@@ -3,10 +3,10 @@ import { View, StyleSheet, Image } from 'react-native'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { BottomTabDescriptor } from '@react-navigation/bottom-tabs/lib/typescript/src/types'
 import { TabBarIconMyGraph, TabBarIconOtherGraphs } from 'components/Icons'
-import { gloablStyles, Device } from 'const'
+import { Device } from 'const'
 import { ORANGE, GRAY_LIGHT, GRAY } from 'const/Colors'
 import { observer } from 'mobx-react-lite'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity } from 'components/primitives'
 import { createStyles } from 'screens/utils'
 import { store } from 'store'
 import { Spacer, FastText } from 'components/Spacer'
@@ -24,8 +24,8 @@ const TabBar: FC<BottomTabBarProps> = observer(({ state, descriptors, navigation
 				descriptor={descriptors[state.routes[0].key]}
 				focused={state.index === 0}
 			/>
-			<TouchableOpacity onPress={onPressPlus} containerStyle={styles.plusContainer}>
-				<Image source={plusButton} />
+			<TouchableOpacity onPress={onPressPlus}>
+				<Image style={styles.plusImage} source={plusButton} />
 			</TouchableOpacity>
 			<TabBarItem
 				IconComponent={TabBarIconOtherGraphs}
@@ -61,8 +61,8 @@ const TabBarItem: FC<
 	const color = focused ? ORANGE : GRAY_LIGHT
 
 	return (
-		<TouchableOpacity onPress={onPress} containerStyle={gloablStyles.flex1}>
-			<View style={gloablStyles.alignCenter}>
+		<TouchableOpacity onPress={onPress}>
+			<View style={styles.itemContainer}>
 				<View style={styles.iconContainer}>
 					<IconComponent color={color} />
 				</View>
@@ -85,14 +85,18 @@ const styles = createStyles({
 		borderTopWidth: StyleSheet.hairlineWidth,
 		borderTopColor: store.theme.separator,
 		backgroundColor: store.theme.background,
+		justifyContent: 'space-evenly',
 	}),
+	itemContainer: {
+		alignItems: 'center',
+	},
 	iconContainer: {
 		width: 34,
 		height: 34,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
-	plusContainer: {
-		paddingTop: 5,
+	plusImage: {
+		marginTop: Device.ios ? 5 : 4,
 	},
 })
