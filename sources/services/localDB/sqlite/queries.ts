@@ -49,10 +49,10 @@ export class SelectQuery<
 
 	orderBy = (...keys: OrderItem<Object>[]) => {
 		this.orderItems.push(...keys)
-		return { fetch: this.fetch }
+		return { run: this.run }
 	}
 
-	fetch = async (
+	run = async (
 		limit?: number,
 		offset?: number,
 	): Promise<
@@ -81,7 +81,7 @@ export class SelectQuery<
 		return objects
 	}
 
-	private actions = { fetch: this.fetch, orderBy: this.orderBy }
+	private actions = { run: this.run, orderBy: this.orderBy }
 
 	private readonly whereBuilder = new WhereBuilder<TableName, typeof this.actions>(this.actions)
 	where = this.whereBuilder.where
@@ -108,7 +108,7 @@ export class AggregateQuery<
 	})
 
 	// prettier-ignore
-	fetch = async (): Promise<{
+	run = async (): Promise<{
 		[P in AggregateColumn]
 			// eslint-disable-next-line no-unused-vars
 			: P extends COUNT<infer _> ? number
@@ -119,7 +119,7 @@ export class AggregateQuery<
 		return result[0]
 	}
 
-	private actions = { fetch: this.fetch }
+	private actions = { run: this.run }
 
 	private readonly whereBuilder = new WhereBuilder<TableName, typeof this.actions>(this.actions)
 	where = this.whereBuilder.where

@@ -1,5 +1,5 @@
 import { utcStringFromDate } from 'shared/dateUtil'
-import { User, Entry } from 'shared/types'
+import { User, Profile, Entry } from 'shared/types'
 import { Shaped, ShapeName, primitiveTypes } from 'shared/types/primitives'
 import { shape } from 'shared/types/shapeTool'
 import { setupDB, SQLDB, Table } from './sqlite'
@@ -9,12 +9,13 @@ const { string, boolean } = primitiveTypes
 
 const useShapes = <SN extends ShapeName>(...names: SN[]) => names
 
-const usedShapeNames = useShapes('User', 'Entry', 'KeyValue', 'EntryUpdatedDates')
+const usedShapeNames = useShapes('User', 'Entry', 'KeyValue', 'EntryUpdatedDates', 'Profile')
 
 type UsedShapeNames = typeof usedShapeNames[number]
 
 const schema: SQLSchema<UsedShapeNames> = {
 	User: {},
+	Profile: {},
 	Entry: {
 		unique: [['user_id', 'date']],
 		index: [['user_id', 'dateSynced']],
@@ -24,47 +25,53 @@ const schema: SQLSchema<UsedShapeNames> = {
 }
 
 let db: SQLDB<UsedShapeNames>
-
-let entriesTable: Table<'Entry'>
+let users: Table<'User'>
+let profiles: Table<'Profile'>
+let entries: Table<'Entry'>
 
 export const initLocalDB = async () => {
 	db = await setupDB(schema)
-	entriesTable = db.table('Entry')
+	users = db.table('User')
+	profiles = db.table('Profile')
+	entries = db.table('Entry')
 }
 
-export const insertUsers = (...users: User[]) => db.table('User').insert(...users)
+export const insertUsers = (..._: User[]) => users.insert(..._)
+export const fetchUsers = () => users.select().run()
 
-export const insertEntries = (entries: Entry[]) => db.table('Entry').insert(...entries)
+export const insertProfile = (profile: Profile) => profiles.insert(profile)
+export const fetchProfiles = () => profiles.select().run()
+
+export const insertEntries = (_: Entry[]) => entries.insert(..._)
 
 export const updateEntry = (
 	user_id: string,
 	date: string,
 	entry: Partial<Omit<Entry, 'user_id' | 'date' | 'dateSynced' | 'created_at'>>,
 ) =>
-	db
-		.table('Entry')
+	entries
 		.update({ ...entry, updated_at: utcStringFromDate(new Date()) })
 		.match({ user_id, date })
 		.run()
 
-export const entries = (user_id: string) =>
-	db.table('Entry').select().match({ user_id }).orderBy('date DESC').fetch()
+export const fetchEntries = (user_id: string) =>
+	entries.select().match({ user_id }).orderBy('date DESC').run()
 
-export const allEntriesCount = () => entriesTable.aggregate('COUNT(*)').fetch()
+export const allEntriesCount = () => entries.aggregate('COUNT(*)').run()
 // prettier-ignore
 export const entriesToSync = (user_id: string) =>
-	db.table('Entry')
+	entries
 		.select()
 		.match({ user_id })
 		.where('dateSynced', 'IS', 'NULL')
 		.or('dateSynced', '<', 'updated_at', true)
-		.fetch()
+		.run()
 
 export const setEntryUpdatedDateForUser = async (userID: string, date: string) =>
 	db.table('EntryUpdatedDates').insert({ userID, date })
 
 export const entryUpdatedDateForUser = async (userID: string) => {
-	const result = await db.table('EntryUpdatedDates').select('date').match({ userID }).fetch()
+	const result = await db.table('EntryUpdatedDates').select('date').match({ userID }).run()
 	return result[0]?.date
 }
 
@@ -80,7 +87,7 @@ const LocalStoreShape = shape({
 type LocalStore = Shaped<typeof LocalStoreShape>
 
 export const fetchLocalStore = async () => {
-	const result = await db.table('KeyValue').select().fetch()
+	const result = await db.table('KeyValue').select().run()
 
 	const localStore: LocalStore = {}
 	result.forEach((row) => {
@@ -98,7 +105,7 @@ export const setValueToLocalStore = <K extends keyof LocalStore, V extends Local
 export const getValueFromLocalStore = async <K extends keyof LocalStore, V extends LocalStore[K]>(
 	key: K,
 ): Promise<V | null> => {
-	const [row] = await db.table('KeyValue').select('value').match({ key }).fetch()
+	const [row] = await db.table('KeyValue').select('value').match({ key }).run()
 	return row?.value ?? null
 }
 
@@ -110,7 +117,7 @@ export const setObjectToLocalStore = <K extends keyof LocalStore, V extends Loca
 export const getObjectFromLocalStore = async <K extends keyof LocalStore, V extends LocalStore[K]>(
 	key: K,
 ) => {
-	const [row] = await db.table('KeyValue').select('object').match({ key }).fetch()
+	const [row] = await db.table('KeyValue').select('object').match({ key }).run()
 	return (row?.object ?? null) as V | null
 }
 

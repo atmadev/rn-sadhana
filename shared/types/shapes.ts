@@ -25,6 +25,16 @@ export const User = shape({
 	entriesDate: _(string, 'local'),
 })
 
+export const Profile = shape({
+	userid: p(string),
+	first_name: string,
+	last_name: string,
+	spiritual_name: string,
+	login: string,
+	email: string,
+	registration_date: string,
+})
+
 export const EntryInputFields = shape({
 	jcount_730: string,
 	jcount_1000: string,

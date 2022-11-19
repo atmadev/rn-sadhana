@@ -43,7 +43,7 @@ export const fetchMyRecentEntries = async () => {
 }
 
 export const fetchLocalEntries = async () => {
-	const localEntries = await db.entries(userStore.myID!)
+	const localEntries = await db.fetchEntries(userStore.myID!)
 	graphStore.setEntries(localEntries, userStore.myID!)
 }
 

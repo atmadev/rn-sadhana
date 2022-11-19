@@ -11,6 +11,7 @@ import { InteractionManager } from 'react-native'
 import { resetToMyGraph } from 'navigation'
 import { validateEmail } from 'shared/utils'
 import { showError } from 'utils'
+import { profileStore } from 'store/ProfileStore'
 
 // TODO: don't logout on network error
 
@@ -35,16 +36,18 @@ export const fetchInitialData = async () => {
 	try {
 		loginStore.setStatus('Success!')
 		const myResult = await vs.me()
-		if (myResult.success === false) {
-			return { success: FALSE, message: myResult.error.message }
-		}
+		if (myResult.success === false) return { success: FALSE, message: myResult.error.message }
+
 		const me = myResult.data
 		loginStore.setStatus(`Hey, ${me.user_name ?? 'user'}! Downloading your sadhana...`)
 
 		userStore.setMe(me)
 		settingsStore.mapFromUser(me)
-		await db.insertUsers(me)
 		await db.setValueToLocalStore('myID', me.userid)
+
+		const profileResult = await vs.profile(me.userid)
+		if (!profileResult.success) return { success: FALSE, message: profileResult.error.message }
+		profileStore.setMe(profileResult.data)
 
 		const success = await fetchMyRecentEntries()
 

@@ -3,6 +3,7 @@ export interface ScreenList {
 	MyGraph: undefined
 	GraphEditing: undefined
 	Settings: undefined
+	MyProfileSettings: undefined
 	MyGraphSettings: undefined
 	OtherGraphs: undefined
 	OtherProfile: undefined

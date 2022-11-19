@@ -17,7 +17,12 @@ export const SettingsScreen = createScreen(
 		return (
 			<List.Scroll>
 				<List.Section>
-					<List.Row imageUrl={userStore.me!.avatar_url} title={userName(userStore.me!)} arrow />
+					<List.Row
+						imageUrl={userStore.me!.avatar_url}
+						title={userName(userStore.me!)}
+						arrow
+						onPress={openMyProfileSettings}
+					/>
 				</List.Section>
 				<List.Section>
 					<List.Row title="My Graph" arrow onPress={openMyGraphSetting} />
@@ -34,6 +39,7 @@ export const SettingsScreen = createScreen(
 	}),
 )
 
+const openMyProfileSettings = () => navigate('MyProfileSettings')
 const openMyGraphSetting = () => navigate('MyGraphSettings')
 const exportCSV = () => {}
 

@@ -16,6 +16,7 @@ import { OtherGraphsScreen } from 'screens/otherGraphs'
 import { OtherProfileScreen } from 'screens/otherGraphs/OtherProfileScreen'
 import { RegistrationScreen } from 'screens/registration'
 import { ORANGE } from 'const/Colors'
+import { MyProfileSettingsScreen } from 'screens/settings/MyProfile'
 
 const RootStack = createNativeStackNavigator()
 
@@ -43,6 +44,7 @@ const LeftStackNavigator = () => (
 		<LeftStack.Screen {...MyGraphScreen.Screen} />
 		<LeftStack.Screen {...SettingsScreen.Screen} />
 		<LeftStack.Screen {...MyGraphSettingsScreen.Screen} />
+		<LeftStack.Screen {...MyProfileSettingsScreen.Screen} />
 	</LeftStack.Navigator>
 )
 

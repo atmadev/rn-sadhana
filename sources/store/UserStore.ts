@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx'
+import { fetchUsers, insertUsers } from 'services/localDB'
 import { User } from 'shared/types'
 
 class UserStore {
@@ -22,6 +23,12 @@ class UserStore {
 
 	setUser = (user: User) => {
 		this.map.set(user.userid, user)
+		insertUsers(user)
+	}
+
+	loadFromDisk = async () => {
+		const users = await fetchUsers()
+		users.forEach((u) => this.map.set(u.userid, u))
 	}
 
 	clear = () => {

@@ -1,6 +1,7 @@
 import { ExpandDeep, ShapedNamed } from './primitives'
 
 export type User = ExpandDeep<ShapedNamed<'User'>>
+export type Profile = ExpandDeep<ShapedNamed<'Profile'>>
 export type Entry = ExpandDeep<ShapedNamed<'Entry'>>
 
 export interface OtherGraphItem extends Entry {
@@ -15,4 +16,4 @@ export interface OtherGraphItem extends Entry {
 
 export type EntryInputFields = ExpandDeep<ShapedNamed<'EntryInputFields'>>
 
-export type YMD = string
+export type YMD = string // Year Month Day

@@ -1,6 +1,6 @@
 import { OtherGraphItem } from 'shared/types'
 import { Shaped, Shape } from 'shared/types/primitives'
-import { User } from 'shared/types/shapes'
+import { User, Profile } from 'shared/types/shapes'
 import { request, RequestMethod, VSResponse } from '.'
 // prettier-ignore
 import { MonthEntriesRequest, LoginParams, PostEntry, EntryID, sTokens, UpdateEntry, EntriesResponse, EntriesRequest, Tokens, Registration, UserID } from './vsShapes'
@@ -67,6 +67,31 @@ export const me = async () => {
 		return result
 	} catch (e) {
 		console.log('me error', e)
+		throw e
+	}
+}
+
+export const profile = async (id: string) => {
+	try {
+		const result = await vsShapedRequest('GET', 'userProfile/' + id, undefined, { Profile })
+		console.log('result', result)
+		return result
+	} catch (e) {
+		console.log('load userProfile error', e)
+		throw e
+	}
+}
+
+export const updateProfile = async (data: Shaped<typeof Profile>) => {
+	try {
+		const result = await vsShapedRequest('POST', 'userProfile/' + data.userid, {
+			shape: { Profile },
+			data,
+		})
+		console.log('result', result)
+		return result
+	} catch (e) {
+		console.log('load userProfile error', e)
 		throw e
 	}
 }

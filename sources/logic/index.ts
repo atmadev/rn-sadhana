@@ -12,6 +12,7 @@ import { loginStore } from 'store/LoginStore'
 import { fetchLocalEntries } from './entries'
 import { navigate, reset, resetToMyGraph } from 'navigation'
 import { settingsStore } from 'store/SettingsStore'
+import { profileStore } from 'store/ProfileStore'
 
 // TODO: think about offline mode
 // TODO: think how to show the my graph ASAP
@@ -21,9 +22,14 @@ export const initApp = async () => {
 		SplashScreen.preventAutoHideAsync()
 
 		await initLocalDB()
-		await settingsStore.loadFromDisk()
+		await Promise.all([
+			userStore.loadFromDisk(),
+			profileStore.loadFromDisk(),
+			settingsStore.loadFromDisk(),
+		])
 		store.setInited()
 	} catch (e) {
+		// TODO: capture exception on sentry
 		// We might want to provide this error information to an error reporting service
 		console.warn(e)
 	} finally {
@@ -41,6 +47,7 @@ export const onAppStart = async () => {
 
 		if (username && password && myID) {
 			userStore.setMyID(myID)
+			profileStore.setMyID(myID)
 			// Prefetch only local entries from the DB
 			await fetchLocalEntries()
 			resetToMyGraph()
