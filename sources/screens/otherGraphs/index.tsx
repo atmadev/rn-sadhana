@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react'
-import { View, Text, ViewStyle, Image, TextInput, ActivityIndicator } from 'react-native'
+import React, { FC, useEffect } from 'react'
+import { View, TextInput, ActivityIndicator, TouchableOpacity } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createScreen, createStyles } from 'screens/utils'
 import { fetchOtherGraphs, searchOtherGraphs } from 'logic/entries'
@@ -8,16 +8,13 @@ import { otherGraphsStore } from 'store/OtherGraphsStore'
 import { OtherGraphItem } from 'shared/types'
 import { gloablStyles } from 'const'
 import { store } from 'store'
-import { EntryDataItem, JapaLine, parseRounds } from 'screens/graph/EntryItem'
-import { Spacer } from 'components/Spacer'
 import debounce from 'lodash/debounce'
 import { SearchIcon } from 'components/Icons'
-import { GRAY_SYSTEM } from 'const/Colors'
-import { TouchableHighlight } from 'components/primitives'
-import { navigate } from 'navigation'
+import { GRAY_SYSTEM, ORANGE } from 'const/Colors'
+import { GraphItem } from './GraphItem'
+import { FastText, Spacer } from 'components/Spacer'
 import { graphStore } from 'store/GraphStore'
-import { userStore } from 'store/UserStore'
-import { graphItemName } from 'utils'
+import { MXGraph } from 'store/MXGraph'
 
 // TODO: search no results label
 // TODO: search clear button
@@ -31,27 +28,49 @@ export const OtherGraphsScreen = createScreen(
 
 		return (
 			<View style={gloablStyles.flex1}>
-				<FlashList
-					ListHeaderComponent={ListHeader}
-					refreshing={otherGraphsStore.refreshing}
-					onRefresh={onRefresh}
-					data={otherGraphsStore.items}
-					estimatedItemSize={85}
-					renderItem={renderItem}
-					onEndReached={fetchOtherGraphs}
-					onEndReachedThreshold={1}
-					keyboardDismissMode="interactive"
-					ListFooterComponent={ListFooter}
-				/>
+				{otherGraphsStore.showFavorites ? (
+					<FlashList
+						ListHeaderComponent={<Spacer height={10} />}
+						data={graphStore.favorites}
+						estimatedItemSize={85}
+						renderItem={renderFavoriteItem}
+					/>
+				) : (
+					<FlashList
+						ListHeaderComponent={ListHeader}
+						refreshing={otherGraphsStore.refreshing}
+						onRefresh={onRefresh}
+						data={otherGraphsStore.items}
+						estimatedItemSize={85}
+						renderItem={renderItem}
+						onEndReached={fetchOtherGraphs}
+						onEndReachedThreshold={1}
+						keyboardDismissMode="interactive"
+						ListFooterComponent={ListFooter}
+					/>
+				)}
 			</View>
 		)
 	}),
+	{
+		headerRight: () => <NavigationHeaderRight />,
+	},
 )
+
+const NavigationHeaderRight = observer(() => (
+	<TouchableOpacity onPress={otherGraphsStore.toggleFavorites}>
+		<FastText color={ORANGE}>{otherGraphsStore.showFavorites ? '★' : '☆'}</FastText>
+	</TouchableOpacity>
+))
 
 const onRefresh = () => fetchOtherGraphs(true)
 
+const renderFavoriteItem = ({ item }: { item: MXGraph }) => {
+	return <GraphItem userID={item.userID} />
+}
+
 const renderItem = ({ item }: { item: OtherGraphItem }) => {
-	return <GraphItem item={item} />
+	return <GraphItem userID={item.user_id} />
 }
 
 const ListHeader: FC = observer(() => {
@@ -82,36 +101,6 @@ const onSearch = (text: string) => {
 
 const searchDebounced = debounce(searchOtherGraphs, 300)
 
-const GraphItem: FC<{ item: OtherGraphItem }> = observer(({ item }) => {
-	const avatarSource = useMemo(() => ({ uri: item.avatarUrl }), [item.avatarUrl])
-	const rounds = parseRounds(item)
-
-	const onPress = useCallback(() => {
-		if (item.user_id === userStore.myID) {
-			navigate('MyGraph')
-			return
-		}
-
-		graphStore.setSelectedID(item.user_id)
-		graphStore.selected!.setItem(item)
-		navigate('OtherProfile')
-	}, [item])
-
-	return (
-		<TouchableHighlight underlayColor={store.theme.highlight} onPress={onPress}>
-			<View style={styles.item}>
-				<Image style={styles.image} source={avatarSource} />
-				<Spacer flex={1}>
-					<Text style={styles.title}>{graphItemName(item)}</Text>
-					<EntryDataItem entry={item} />
-					<JapaLine {...rounds} />
-				</Spacer>
-				<Text style={styles.roundsText}>{rounds.all > 0 ? rounds.all : ''}</Text>
-			</View>
-		</TouchableHighlight>
-	)
-})
-
 const styles = createStyles({
 	listHeader: () => ({
 		flexDirection: 'row',
@@ -128,35 +117,5 @@ const styles = createStyles({
 		color: store.theme.text,
 		fontSize: 17,
 	}),
-	item: (): ViewStyle => ({
-		marginBottom: 10,
-		marginHorizontal: 10,
-		backgroundColor: store.theme.background,
-		borderRadius: 14,
-		overflow: 'hidden',
-		flexDirection: 'row',
-		padding: 10,
-	}),
-	image: {
-		width: 54,
-		height: 54,
-		borderRadius: 10,
-		marginRight: 10,
-	},
-	title: () => ({
-		color: store.theme.text,
-		fontSize: 15,
-		marginBottom: 6,
-	}),
 	bottomActivityIndicator: { marginTop: 50, marginBottom: 70 },
-	roundsText: () => ({
-		fontSize: 12,
-		color: store.theme.text,
-		alignSelf: 'flex-end',
-		width: 15,
-		textAlign: 'center',
-		marginLeft: 5,
-		marginBottom: -3,
-		marginRight: 2,
-	}),
 })

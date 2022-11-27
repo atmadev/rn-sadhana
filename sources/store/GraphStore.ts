@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { Entry } from 'shared/types'
 import { MXGraph } from './MXGraph'
 import { userStore } from './UserStore'
@@ -19,10 +19,20 @@ class GraphStore {
 		return this.map.get(userStore.myID)
 	}
 
-	setEntries = (entries: Entry[], userID: string) => {
+	graphForUserID = (userID: string) => {
 		const graph = this.map.get(userID) ?? new MXGraph(userID)
+		runInAction(() => this.map.set(userID, graph))
+
+		return graph
+	}
+
+	get favorites() {
+		return userStore.favorites.map((u) => this.graphForUserID(u.userid))
+	}
+
+	setEntries = (entries: Entry[], userID: string) => {
+		const graph = this.graphForUserID(userID)
 		graph.setEntries(entries)
-		this.map.set(userID, graph)
 	}
 
 	selectedID: string | null = null

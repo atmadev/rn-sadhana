@@ -1,18 +1,27 @@
 import { makeAutoObservable } from 'mobx'
-import { Entry, OtherGraphItem, YMD } from 'shared/types'
+import { Entry, YMD } from 'shared/types'
 import { MXEntry } from './MXEntry'
+import { userStore } from './UserStore'
 
 export class MXGraph {
 	userID: string
 
 	constructor(userID: string) {
 		this.userID = userID
-		makeAutoObservable(this, { userID: false, item: false })
+		makeAutoObservable(this, { userID: false })
 	}
 
 	entries = new Map<YMD, Entry>()
 	setEntries = (_: Entry[]) => {
 		_.forEach((_) => this.entries.set(_.date, _))
+	}
+
+	get lastEntry() {
+		return this.entries.size > 0
+			? Array.from(this.entries.values()).reduce((prev, current) =>
+					prev.date > current.date ? prev : current,
+			  )
+			: null
 	}
 
 	mxEntries = new Map<YMD, MXEntry>()
@@ -24,7 +33,6 @@ export class MXGraph {
 		const mxEntry = new MXEntry(ymd, this.entries.get(ymd))
 		this.mxEntries.set(ymd, mxEntry)
 
-		// console.log(ymd, 'created')
 		return mxEntry
 	}
 
@@ -36,9 +44,14 @@ export class MXGraph {
 	loadingPreviousMonth = false
 	setLoadingPreviousMonth = (_: boolean) => (this.loadingPreviousMonth = _)
 
-	item: OtherGraphItem | null = null
-	setItem = (_: OtherGraphItem) => (this.item = _)
-
 	lastLoadedMonth: string | null = null
 	setLastLoadedMonth = (_: string) => (this.lastLoadedMonth = _)
+
+	get favorite() {
+		return userStore.favorites.some((user) => user.userid === this.userID)
+	}
+
+	toggleFavorite = () => {
+		userStore.setUserFavorite(this.userID, !this.favorite)
+	}
 }

@@ -6,6 +6,10 @@ import { graphStore } from 'store/GraphStore'
 import { Image } from 'react-native'
 import { Device } from 'const'
 import { refreshOtherEntries } from 'logic/entries'
+import { TouchableOpacity } from 'components/primitives'
+import { FastText } from 'components/Spacer'
+import { ORANGE } from 'const/Colors'
+import { userStore } from 'store/UserStore'
 
 export const OtherProfileScreen = createScreen(
 	'OtherProfile',
@@ -13,19 +17,33 @@ export const OtherProfileScreen = createScreen(
 		const graph = graphStore.selected
 
 		useEffect(() => {
-			if (graph?.entries.size === 0) refreshOtherEntries()
+			if (graph && graph.entries.size < 2) refreshOtherEntries()
 		}, [])
 
 		return graph ? (
 			<GraphList userID={graph.userID} onRefresh={refreshOtherEntries} header={Header} trimmed />
 		) : null
 	}),
+	{
+		headerRight: () => <NavigationHeaderRight />,
+	},
+)
+
+const NavigationHeaderRight = observer(() =>
+	graphStore.selected ? (
+		<TouchableOpacity onPress={graphStore.selected.toggleFavorite}>
+			<FastText color={ORANGE}>{graphStore.selected.favorite ? '★' : '☆'}</FastText>
+		</TouchableOpacity>
+	) : null,
 )
 
 const Header: FC = observer(() => {
 	const graph = graphStore.selected
 	// TODO: put placeholder here if needed
-	const source = useMemo(() => ({ uri: graph?.item?.avatarUrl ?? '' }), [])
+	const source = useMemo(
+		() => (graph ? { uri: userStore.map.get(graph?.userID)?.avatar_url ?? '' } : undefined),
+		[],
+	)
 	return <Image style={styles.headerImage} source={source} />
 })
 

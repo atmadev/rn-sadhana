@@ -137,8 +137,8 @@ const fetchOtherEntries = async (date = new Date()) => {
 	}
 }
 
-export const refreshOtherEntries = async () => {
-	const graph = graphStore.selected
+export const refreshOtherEntries = async (userID?: string) => {
+	const graph = userID ? graphStore.graphForUserID(userID) : graphStore.selected
 	if (!graph || graph.refreshing) return
 	graph.setRefreshing(true)
 	graph.setLoadingPreviousMonth(true)

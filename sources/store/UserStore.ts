@@ -1,5 +1,10 @@
-import { makeAutoObservable } from 'mobx'
-import { fetchUsers, insertUsers } from 'services/localDB'
+import { makeAutoObservable, runInAction } from 'mobx'
+import {
+	fetchUsers,
+	getObjectFromLocalStore,
+	insertUsers,
+	setObjectToLocalStore,
+} from 'services/localDB'
 import { User } from 'shared/types'
 
 class UserStore {
@@ -8,6 +13,22 @@ class UserStore {
 	}
 
 	map = new Map<string, User>()
+	get array() {
+		return Array.from(this.map.values())
+	}
+
+	get favorites() {
+		return this.array.filter((u) => this.favoriteIDs.has(u.userid))
+	}
+
+	setUserFavorite = async (userID: string, favorite: boolean) => {
+		if (favorite) this.favoriteIDs.add(userID)
+		else this.favoriteIDs.delete(userID)
+
+		setObjectToLocalStore('favorites', Array.from(this.favoriteIDs))
+	}
+
+	favoriteIDs = new Set<string>()
 
 	myID: string | null = null
 	setMyID = (ID: string | null) => (this.myID = ID)
@@ -27,8 +48,14 @@ class UserStore {
 	}
 
 	loadFromDisk = async () => {
-		const users = await fetchUsers()
-		users.forEach((u) => this.map.set(u.userid, u))
+		const [users, favoriteIDs] = await Promise.all([
+			fetchUsers(),
+			getObjectFromLocalStore('favorites'),
+		])
+		runInAction(() => {
+			users.forEach((u) => this.map.set(u.userid, u))
+			if (favoriteIDs) favoriteIDs.forEach((_) => this.favoriteIDs.add(_))
+		})
 	}
 
 	clear = () => {

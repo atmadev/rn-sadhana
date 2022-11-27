@@ -37,7 +37,15 @@ export const initLocalDB = async () => {
 }
 
 export const insertUsers = (..._: User[]) => users.insert(..._)
+export const updateUser = (userid: string, update: Partial<Omit<User, 'userid'>>) =>
+	users.update(update).match({ userid }).run()
 export const fetchUsers = () => users.select().run()
+export const fetchUser = (userid: string) =>
+	users
+		.select()
+		.match({ userid })
+		.run()
+		.then((_) => _[0])
 
 export const insertProfile = (profile: Profile) => profiles.insert(profile)
 export const fetchProfiles = () => profiles.select().run()
@@ -82,6 +90,7 @@ const LocalStoreShape = shape({
 	yogaEnabled: boolean,
 	lectionsEnabled: boolean,
 	bedEnabled: boolean,
+	favorites: [string],
 })
 
 type LocalStore = Shaped<typeof LocalStoreShape>
