@@ -121,8 +121,8 @@ export const saveEditing = async () => {
 	}
 }
 
-const fetchOtherEntries = async (date = new Date()) => {
-	const graph = graphStore.selected!
+const fetchOtherEntries = async (date = new Date(), userID?: string) => {
+	const graph = userID ? graphStore.graphForUserID(userID) : graphStore.selected!
 	const result = await vs.monthEntries(graph.userID, {
 		year: date.getFullYear(),
 		month: date.getMonth() + 1,
@@ -144,11 +144,11 @@ export const refreshOtherEntries = async (userID?: string) => {
 	graph.setLoadingPreviousMonth(true)
 
 	try {
-		await fetchOtherEntries()
+		await fetchOtherEntries(undefined, userID)
 
 		const date = new Date()
 		date.setMonth(date.getMonth() - 1)
-		await fetchOtherEntries(date)
+		await fetchOtherEntries(date, userID)
 	} catch (e) {
 		// TODO: hande error (show alert, send to the sentry)
 	} finally {

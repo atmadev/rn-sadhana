@@ -5,7 +5,6 @@ import { createScreen, createStyles } from 'screens/utils'
 import { fetchOtherGraphs, searchOtherGraphs } from 'logic/entries'
 import { FlashList } from '@shopify/flash-list'
 import { otherGraphsStore } from 'store/OtherGraphsStore'
-import { OtherGraphItem } from 'shared/types'
 import { gloablStyles } from 'const'
 import { store } from 'store'
 import debounce from 'lodash/debounce'
@@ -14,10 +13,10 @@ import { GRAY_SYSTEM, ORANGE } from 'const/Colors'
 import { GraphItem } from './GraphItem'
 import { FastText, Spacer } from 'components/Spacer'
 import { graphStore } from 'store/GraphStore'
-import { MXGraph } from 'store/MXGraph'
 
 // TODO: search no results label
 // TODO: search clear button
+// TODO: fix blink on go back from graph
 
 export const OtherGraphsScreen = createScreen(
 	'OtherGraphs',
@@ -33,7 +32,7 @@ export const OtherGraphsScreen = createScreen(
 						ListHeaderComponent={<Spacer height={10} />}
 						data={graphStore.favorites}
 						estimatedItemSize={85}
-						renderItem={renderFavoriteItem}
+						renderItem={renderItem}
 					/>
 				) : (
 					<FlashList
@@ -65,12 +64,8 @@ const NavigationHeaderRight = observer(() => (
 
 const onRefresh = () => fetchOtherGraphs(true)
 
-const renderFavoriteItem = ({ item }: { item: MXGraph }) => {
-	return <GraphItem userID={item.userID} />
-}
-
-const renderItem = ({ item }: { item: OtherGraphItem }) => {
-	return <GraphItem userID={item.user_id} />
+const renderItem = ({ item }: { item: any }) => {
+	return <GraphItem userID={item.userID ?? item.user_id} />
 }
 
 const ListHeader: FC = observer(() => {

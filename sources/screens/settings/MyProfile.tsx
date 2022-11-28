@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { List } from 'components/List'
 import { createScreen } from 'screens/utils'
-import { observer, useLocalStore } from 'mobx-react-lite'
+import { observer, useLocalObservable } from 'mobx-react-lite'
 import { profileStore } from 'store/ProfileStore'
 import { useFocusEffect } from '@react-navigation/native'
 import { updateProfile } from 'services/network/vs'
@@ -11,7 +11,7 @@ export const MyProfileSettingsScreen = createScreen(
 	observer(() => {
 		const profile = profileStore.me
 
-		const localStore = useLocalStore(() => ({
+		const localStore = useLocalObservable(() => ({
 			spiritual_name: profile?.spiritual_name ?? '',
 			setSpiritName: (_: string) => (localStore.spiritual_name = _),
 
