@@ -1,5 +1,5 @@
 import { transaction, Transaction } from './engine'
-import { pick, hash, mapFromArray } from 'services/utils'
+import { pick, hash, mapFromArray } from 'shared/utils'
 import { ShapeName } from 'shared/types/primitives'
 import * as shapes from 'shared/types/shapes'
 import { mapKeys } from 'shared/types/utils'

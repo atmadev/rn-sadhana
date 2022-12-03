@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx'
+import { monthStringFromYmd } from 'shared/dateUtil'
 import { Entry, YMD } from 'shared/types'
 import { MXEntry } from './MXEntry'
 import { userStore } from './UserStore'
@@ -14,6 +15,19 @@ export class MXGraph {
 	entries = new Map<YMD, Entry>()
 	setEntries = (_: Entry[]) => {
 		_.forEach((_) => this.entries.set(_.date, _))
+	}
+
+	get entriesByMonth() {
+		const entries = {} as { [month: string]: Entry[] }
+
+		this.entries.forEach((entry) => {
+			const month = monthStringFromYmd(entry.date)
+			const array = entries[month] ?? []
+			array.push(entry)
+			entries[month] = array
+		})
+
+		return entries
 	}
 
 	get lastEntry() {

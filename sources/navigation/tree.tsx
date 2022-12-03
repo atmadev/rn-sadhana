@@ -17,6 +17,7 @@ import { OtherProfileScreen } from 'screens/otherGraphs/OtherProfileScreen'
 import { RegistrationScreen } from 'screens/registration'
 import { ORANGE } from 'const/Colors'
 import { MyProfileSettingsScreen } from 'screens/settings/MyProfile'
+import { ExportCSVScreen } from 'screens/settings/ExportCSV'
 
 const RootStack = createNativeStackNavigator()
 
@@ -45,6 +46,7 @@ const LeftStackNavigator = () => (
 		<LeftStack.Screen {...SettingsScreen.Screen} />
 		<LeftStack.Screen {...MyGraphSettingsScreen.Screen} />
 		<LeftStack.Screen {...MyProfileSettingsScreen.Screen} />
+		<LeftStack.Screen {...ExportCSVScreen.Screen} />
 	</LeftStack.Navigator>
 )
 

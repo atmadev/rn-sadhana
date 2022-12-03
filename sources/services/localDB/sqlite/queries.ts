@@ -1,5 +1,5 @@
 import { Query } from 'expo-sqlite'
-import { getLast } from 'services/utils'
+import { getLast } from 'shared/utils'
 import {
 	PersistentShaped,
 	ShapeName,

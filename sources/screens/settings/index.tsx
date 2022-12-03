@@ -41,7 +41,7 @@ export const SettingsScreen = createScreen(
 
 const openMyProfileSettings = () => navigate('MyProfileSettings')
 const openMyGraphSetting = () => navigate('MyGraphSettings')
-const exportCSV = () => {}
+const exportCSV = () => navigate('ExportCSV')
 
 const feedbackEmail = 'feedback.sadhana@gmail.com'
 const onFeedback = async () => {

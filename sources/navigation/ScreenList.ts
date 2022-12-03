@@ -9,4 +9,5 @@ export interface ScreenList {
 	Favorites: undefined
 	OtherProfile: undefined
 	Registration: undefined
+	ExportCSV: undefined
 }

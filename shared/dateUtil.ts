@@ -34,6 +34,8 @@ export const utcStringFromDate = (date = new Date()) => {
 export const monthStringFromDate = (date = new Date()) =>
 	`${date.getFullYear()}-${pad(date.getMonth() + 1, 2)}`
 
+export const monthStringFromYmd = (ymd: YMD) => ymd.slice(0, 7)
+
 export const SECOND_MS = 1000
 export const MINUTE_MS = 60 * SECOND_MS
 export const HOUR_MS = 60 * MINUTE_MS

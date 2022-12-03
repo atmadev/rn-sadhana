@@ -28,7 +28,7 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 	const graph = graphStore.map.get(userID)!
 	const { refreshing, lastLoadedMonth, entries } = graph
 
-	const { data, headerIndexes, lastItemIndexes } = calendarStore.lastYearDaysWithMonths
+	const { data, headerIndexes, lastItemIndexes } = calendarStore.lastYearDaysWithMonthsInPlace
 
 	const renderItem = useCallback(
 		({ item, index }: { item: string; index: number }) =>
@@ -92,7 +92,7 @@ const Footer: FC = observer(() => {
 })
 
 const getItemType = (_: any, index: number) => {
-	const { headerIndexes } = calendarStore.lastYearDaysWithMonths
+	const { headerIndexes } = calendarStore.lastYearDaysWithMonthsInPlace
 	return headerIndexes.has(index) ? 'header' : 'entry'
 }
 
