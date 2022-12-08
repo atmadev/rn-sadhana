@@ -22,12 +22,7 @@ export const OtherGraphsScreen = createScreen(
 		return (
 			<View style={gloablStyles.flex1}>
 				{otherGraphsStore.showFavorites ? (
-					<FlashList
-						ListHeaderComponent={<Spacer height={10} />}
-						data={graphStore.favorites}
-						estimatedItemSize={85}
-						renderItem={renderItem}
-					/>
+					<FlashList data={graphStore.favorites} estimatedItemSize={85} renderItem={renderItem} />
 				) : (
 					<FlashList
 						refreshing={otherGraphsStore.refreshing}
