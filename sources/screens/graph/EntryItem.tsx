@@ -105,24 +105,29 @@ interface JapaRounds {
 	before18: number
 	after: number
 	all: number
+	left: number
 }
 
-export const JapaLine: FC<JapaRounds> = (rounds) => {
-	return rounds.all > 0 ? (
-		<View style={styles.japaLine}>
-			{rounds.before730 > 0 ? (
-				<Spacer backgroundColor={YELLOW} flex={rounds.before730 / rounds.all} />
-			) : null}
-			{rounds.before10 > 0 ? (
-				<Spacer backgroundColor={ORANGE} flex={rounds.before10 / rounds.all} />
-			) : null}
-			{rounds.before18 > 0 ? (
-				<Spacer backgroundColor={RED} flex={rounds.before18 / rounds.all} />
-			) : null}
-			{rounds.after > 0 ? <Spacer backgroundColor={BLUE} flex={rounds.after / rounds.all} /> : null}
-		</View>
-	) : null
-}
+export const JapaLine: FC<JapaRounds> = (rounds) => (
+	<View style={styles.japaLine}>
+		{rounds.before730 > 0 ? (
+			<Spacer backgroundColor={YELLOW} flex={rounds.before730 / rounds.all} />
+		) : null}
+		{rounds.before10 > 0 ? (
+			<Spacer backgroundColor={ORANGE} flex={rounds.before10 / rounds.all} />
+		) : null}
+		{rounds.before18 > 0 ? (
+			<Spacer backgroundColor={RED} flex={rounds.before18 / rounds.all} />
+		) : null}
+		{rounds.after > 0 ? <Spacer backgroundColor={BLUE} flex={rounds.after / rounds.all} /> : null}
+		{rounds.left > 0 ? (
+			<Spacer
+				backgroundColor={store.theme.separator2}
+				flex={rounds.all > 0 ? rounds.left / rounds.all : 1}
+			/>
+		) : null}
+	</View>
+)
 
 export const parseRounds = (entry?: Entry) => {
 	const before730 = entry?.jcount_730 ? parseInt(entry?.jcount_730) : 0
@@ -136,6 +141,7 @@ export const parseRounds = (entry?: Entry) => {
 		before18,
 		after,
 		all,
+		left: Math.max(16 - all, 0),
 	}
 }
 

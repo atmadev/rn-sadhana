@@ -6,6 +6,7 @@ export interface ScreenList {
 	MyProfileSettings: undefined
 	MyGraphSettings: undefined
 	OtherGraphs: undefined
+	SearchGraph: undefined
 	Favorites: undefined
 	OtherProfile: undefined
 	Registration: undefined

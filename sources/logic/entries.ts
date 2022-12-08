@@ -2,14 +2,15 @@ import { InteractionManager } from 'react-native'
 import * as db from 'services/localDB'
 import * as vs from 'services/network/vs'
 import { PostEntry, UpdateEntry } from 'services/network/vsShapes'
-import { getLast } from 'shared/utils'
+import { getLast, trimmed } from 'shared/utils'
 import { monthStringFromDate, utcStringFromDate } from 'shared/dateUtil'
-import { Entry } from 'shared/types'
+import { Entry, OtherGraphItem } from 'shared/types'
 import { Shaped } from 'shared/types/primitives'
 import { graphStore } from 'store/GraphStore'
 import { otherGraphsStore } from 'store/OtherGraphsStore'
 import { userStore } from 'store/UserStore'
 import { vsRunSafe } from './vs'
+import { searchGraphStore } from 'store/SearchGraphStore'
 
 export const fetchMyRecentEntries = async () => {
 	try {
@@ -181,13 +182,12 @@ export const fetchOtherGraphs = async (reset?: true) => {
 	try {
 		otherGraphsStore.setLoadingPage(page_num)
 		const result = await vs.allEntries({
-			country: otherGraphsStore.country,
-			city: otherGraphsStore.city,
 			page_num,
 			items_per_page,
 		})
 		if (result.success) {
 			const { entries } = result.data
+			entries.forEach(handleGraphItem)
 			otherGraphsStore.addItems(entries, reset)
 			otherGraphsStore.setPageNumber(page_num)
 		} else {
@@ -200,25 +200,37 @@ export const fetchOtherGraphs = async (reset?: true) => {
 	}
 }
 
-export const searchOtherGraphs = async () => {
-	if (otherGraphsStore.loadingPage !== null) return
+export const searchGraph = async () => {
+	const searchTime = Date.now()
 	try {
-		otherGraphsStore.setLoadingPage(0)
+		searchGraphStore.setSearchingTime(searchTime)
 		const result = await vs.allEntries({
-			country: otherGraphsStore.country,
-			city: otherGraphsStore.city,
-			search_term: otherGraphsStore.searchString,
+			country: searchGraphStore.country,
+			city: searchGraphStore.city,
+			search_term: searchGraphStore.searchString,
 			items_per_page,
 		})
 		if (result.success) {
 			const { entries } = result.data
-			otherGraphsStore.addSearchItems(entries)
+			entries.forEach(handleGraphItem)
+			searchGraphStore.setItems(entries, searchTime)
 		} else {
 			// TODO: show error
 		}
 	} catch (e) {
 		// TODO: capture exception
 	} finally {
-		otherGraphsStore.setLoadingPage(null)
+		searchGraphStore.removeSearchingTime(searchTime)
 	}
+}
+
+const handleGraphItem = (item: OtherGraphItem) => {
+	userStore.setUser({
+		userid: item.user_id,
+		user_name: trimmed(item.spiritual_name) ?? trimmed(item.karmic_name),
+		user_nicename: item.user_nicename,
+		avatar_url: item.avatarUrl,
+	})
+	const graph = graphStore.graphForUserID(item.user_id)
+	graph.setEntries([item])
 }

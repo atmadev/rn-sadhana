@@ -60,7 +60,7 @@ export const GraphItem: FC<{ userID: string }> = observer(({ userID }) => {
 
 const styles = createStyles({
 	item: (): ViewStyle => ({
-		marginBottom: 10,
+		marginTop: 10,
 		marginHorizontal: 10,
 		backgroundColor: store.theme.background,
 		borderRadius: 14,

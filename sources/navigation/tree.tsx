@@ -15,9 +15,10 @@ import { observer } from 'mobx-react-lite'
 import { OtherGraphsScreen } from 'screens/otherGraphs'
 import { OtherProfileScreen } from 'screens/otherGraphs/OtherProfileScreen'
 import { RegistrationScreen } from 'screens/registration'
-import { ORANGE } from 'const/Colors'
+import { colors, ORANGE } from 'const/Colors'
 import { MyProfileSettingsScreen } from 'screens/settings/MyProfile'
 import { ExportCSVScreen } from 'screens/settings/ExportCSV'
+import { SearchGraphScreen } from 'screens/otherGraphs/SearchScreen'
 
 const RootStack = createNativeStackNavigator()
 
@@ -54,6 +55,7 @@ const RightStackNavigator = () => (
 	<RightStack.Navigator>
 		<RightStack.Screen {...OtherGraphsScreen.Screen} />
 		<RightStack.Screen {...OtherProfileScreen.Screen} />
+		<RightStack.Screen {...SearchGraphScreen.Screen} />
 	</RightStack.Navigator>
 )
 
@@ -91,4 +93,7 @@ const OtherGraphsTapOptions = {
 const noHeader = { headerShown: false }
 
 DefaultTheme.colors.primary = ORANGE
+DefaultTheme.colors.background = colors.light.background2
+
 DarkTheme.colors.primary = ORANGE
+DarkTheme.colors.background = colors.dark.background2

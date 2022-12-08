@@ -1,22 +1,16 @@
 import React, { FC, useEffect } from 'react'
-import { View, TextInput, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, ActivityIndicator, TouchableOpacity } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createScreen, createStyles } from 'screens/utils'
-import { fetchOtherGraphs, searchOtherGraphs } from 'logic/entries'
+import { fetchOtherGraphs } from 'logic/entries'
 import { FlashList } from '@shopify/flash-list'
 import { otherGraphsStore } from 'store/OtherGraphsStore'
 import { gloablStyles } from 'const'
-import { store } from 'store'
-import debounce from 'lodash/debounce'
-import { SearchIcon } from 'components/Icons'
-import { GRAY_SYSTEM, ORANGE } from 'const/Colors'
+import { ORANGE } from 'const/Colors'
 import { GraphItem } from './GraphItem'
 import { FastText, Spacer } from 'components/Spacer'
 import { graphStore } from 'store/GraphStore'
-
-// TODO: search no results label
-// TODO: search clear button
-// TODO: fix blink on go back from graph
+import { navigate } from 'navigation'
 
 export const OtherGraphsScreen = createScreen(
 	'OtherGraphs',
@@ -36,7 +30,6 @@ export const OtherGraphsScreen = createScreen(
 					/>
 				) : (
 					<FlashList
-						ListHeaderComponent={ListHeader}
 						refreshing={otherGraphsStore.refreshing}
 						onRefresh={onRefresh}
 						data={otherGraphsStore.items}
@@ -44,7 +37,6 @@ export const OtherGraphsScreen = createScreen(
 						renderItem={renderItem}
 						onEndReached={fetchOtherGraphs}
 						onEndReachedThreshold={1}
-						keyboardDismissMode="interactive"
 						ListFooterComponent={ListFooter}
 					/>
 				)}
@@ -56,11 +48,23 @@ export const OtherGraphsScreen = createScreen(
 	},
 )
 
-const NavigationHeaderRight = observer(() => (
-	<TouchableOpacity onPress={otherGraphsStore.toggleFavorites}>
-		<FastText color={ORANGE}>{otherGraphsStore.showFavorites ? '★' : '☆'}</FastText>
-	</TouchableOpacity>
-))
+const NavigationHeaderRight = observer(() => {
+	return (
+		<Spacer flexDirection="row">
+			<TouchableOpacity onPress={otherGraphsStore.toggleFavorites}>
+				<FastText color={ORANGE} padding={5}>
+					{otherGraphsStore.showFavorites ? '★' : '☆'}
+				</FastText>
+			</TouchableOpacity>
+			<Spacer width={10} />
+			<TouchableOpacity onPress={showSearch}>
+				<FastText padding={5}>🔍</FastText>
+			</TouchableOpacity>
+		</Spacer>
+	)
+})
+
+const showSearch = () => navigate('SearchGraph')
 
 const onRefresh = () => fetchOtherGraphs(true)
 
@@ -68,49 +72,12 @@ const renderItem = ({ item }: { item: any }) => {
 	return <GraphItem userID={item.userID ?? item.user_id} />
 }
 
-const ListHeader: FC = observer(() => {
-	return (
-		<View style={styles.listHeader}>
-			<SearchIcon color={GRAY_SYSTEM} />
-			<TextInput
-				style={styles.searchInput}
-				placeholder="Search"
-				placeholderTextColor={GRAY_SYSTEM}
-				value={otherGraphsStore.searchString}
-				onChangeText={onSearch}
-			/>
-		</View>
-	)
-})
-
 const ListFooter: FC = observer(() => {
 	return otherGraphsStore.loadingPage && otherGraphsStore.loadingPage > 0 ? (
 		<ActivityIndicator style={styles.bottomActivityIndicator} />
 	) : null
 })
 
-const onSearch = (text: string) => {
-	otherGraphsStore.setSearchString(text)
-	searchDebounced()
-}
-
-const searchDebounced = debounce(searchOtherGraphs, 300)
-
 const styles = createStyles({
-	listHeader: () => ({
-		flexDirection: 'row',
-		margin: 10,
-		alignItems: 'center',
-		backgroundColor: store.theme.background3,
-		paddingHorizontal: 10,
-		borderRadius: 14,
-	}),
-	searchInput: () => ({
-		height: 40,
-		flex: 1,
-		marginLeft: 10,
-		color: store.theme.text,
-		fontSize: 17,
-	}),
 	bottomActivityIndicator: { marginTop: 50, marginBottom: 70 },
 })

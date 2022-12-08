@@ -1,6 +1,7 @@
 import { FC, createElement, useEffect, useRef, ForwardedRef } from 'react'
 
 import { computed } from 'mobx'
+import { observer } from 'mobx-react-lite'
 import { ViewStyle, TextStyle, ImageStyle } from 'react-native'
 import { store } from 'store'
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack'
@@ -10,16 +11,18 @@ export const createScreen = <Name extends keyof ScreenList>(
 	name: Name,
 	rawComponent: FC<ScreenList[Name]>,
 	options?: NativeStackNavigationOptions,
-) => ({
-	Screen: {
-		name,
-		get component() {
-			// @ts-ignore
-			return ({ route: { params } }) => createElement(rawComponent, params)
+) => {
+	// @ts-ignore
+	const component: FC = observer((props) => createElement(rawComponent, props?.route?.params))
+
+	return {
+		Screen: {
+			name,
+			component,
+			options,
 		},
-		options,
-	},
-})
+	}
+}
 
 export type Style = ViewStyle | TextStyle | ImageStyle
 
