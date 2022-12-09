@@ -1,4 +1,3 @@
-import { utcStringFromDate } from 'shared/dateUtil'
 import { User, Profile, Entry } from 'shared/types'
 import { Shaped, primitiveTypes, Expand } from 'shared/types/primitives'
 import { KeyValue } from 'shared/types/shapes'

@@ -5,6 +5,7 @@ import { observer, useLocalObservable } from 'mobx-react-lite'
 import { profileStore } from 'store/ProfileStore'
 import { useFocusEffect } from '@react-navigation/native'
 import { updateProfile } from 'services/network/vs'
+import { openURL } from 'expo-linking'
 
 export const MyProfileSettingsScreen = createScreen(
 	'MyProfileSettings',
@@ -60,6 +61,10 @@ export const MyProfileSettingsScreen = createScreen(
 					/>
 				</List.Section>
 
+				<List.Section title="To upload avatar image, please visit our site">
+					<List.Button title="vaishnavaseva.net" onPress={openSite}></List.Button>
+				</List.Section>
+
 				<List.Section>
 					<List.Row title="Login" value={profile.login ?? ''} />
 					<List.Row title="Email" value={profile.email ?? ''} />
@@ -70,3 +75,5 @@ export const MyProfileSettingsScreen = createScreen(
 		) : null
 	}),
 )
+
+const openSite = () => openURL('http://vaishnavaseva.net')
