@@ -2,7 +2,7 @@ import * as vs from 'services/network/vs'
 import { FALSE, TRUE } from 'shared/types/primitives'
 import { saveSecure } from 'services/secureStore'
 import { userStore } from 'store/UserStore'
-import * as db from 'services/localDB'
+import { db } from 'services/localDB'
 import { fetchMyRecentEntries } from './entries'
 import { loginStore } from 'store/LoginStore'
 import { settingsStore } from 'store/SettingsStore'
@@ -43,7 +43,7 @@ export const fetchInitialData = async () => {
 
 		userStore.setMe(me)
 		settingsStore.mapFromUser(me)
-		await db.setValueToLocalStore('myID', me.userid)
+		await db.setLocal('myID', me.userid)
 
 		const profileResult = await vs.profile(me.userid)
 		if (!profileResult.success) return { success: FALSE, message: profileResult.error.message }

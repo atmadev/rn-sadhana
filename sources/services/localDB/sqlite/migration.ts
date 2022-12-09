@@ -62,10 +62,10 @@ const createTableFromScratch = <UsedShapeName extends ShapeName>(
 
 	tx.query(`CREATE TABLE ${shapeName} (${createdColumns.join(', ')})`)
 	// prettier-ignore
-	schemaItem.unique?.forEach((columns) =>
+	schemaItem?.unique?.forEach((columns) =>
 		tx.query(`CREATE UNIQUE INDEX ${indexName(shapeName, columns as string[])} ON ${shapeName} (${columns.join(', ')})`))
 	// prettier-ignore
-	schemaItem.index?.forEach((columns) =>
+	schemaItem?.index?.forEach((columns) =>
 		tx.query(`CREATE INDEX IF NOT EXISTS ${indexName(shapeName, columns as string[])} ON ${shapeName} (${columns.join(', ')})`))
 }
 
@@ -113,7 +113,7 @@ const migrateTables = async <UsedShapeName extends ShapeName>(
 			// | if not exists
 			if (!tableInfo) {
 				let oldTableName: string | null = null
-				schemaItem.tableNamesHistory?.forEach((n) => {
+				schemaItem?.tableNamesHistory?.forEach((n) => {
 					if (!tableInfo) {
 						tableInfo = oldTableInfos[n]
 						if (tableInfo) {
@@ -143,7 +143,7 @@ const migrateTables = async <UsedShapeName extends ShapeName>(
 				if (!tableInfoMap[key]) {
 					// look up history
 					// prettier-ignore
-					oldColumnName = schemaItem.columnNamesHistory?.[key as UsedShapeName]?.find(on => tableInfoMap[on])
+					oldColumnName = schemaItem?.columnNamesHistory?.[key as UsedShapeName]?.find(on => tableInfoMap[on])
 
 					if (oldColumnName) {
 						// RENAME COLUMN
@@ -200,7 +200,7 @@ const migrateIndex = <UsedShapeName extends ShapeName>(
 		indexListMap: { [name: string]: SQLIndexInfo }
 	}
 ) => {
-	const list = unique ? schemaItem.unique : schemaItem.index
+	const list = unique ? schemaItem?.unique : schemaItem?.index
 
 	list?.forEach((columns) => {
 		const name = indexName(shapeName, columns as string[])

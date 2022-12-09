@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { fetchProfiles, insertProfile } from 'services/localDB'
+import { db } from 'services/localDB'
 import { Profile } from 'shared/types'
 
 class ProfileStore {
@@ -23,11 +23,11 @@ class ProfileStore {
 
 	setProfile = (profile: Profile) => {
 		this.map.set(profile.userid, profile)
-		insertProfile(profile)
+		db.insertProfile(profile)
 	}
 
 	loadFromDisk = async () => {
-		const profiles = await fetchProfiles()
+		const profiles = await db.fetchProfiles()
 		profiles.forEach((p) => this.map.set(p.userid, p))
 	}
 

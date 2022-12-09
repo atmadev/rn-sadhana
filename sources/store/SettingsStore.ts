@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { getValueFromLocalStore, setValueToLocalStore } from 'services/localDB'
+import { db } from 'services/localDB'
 import { User } from 'shared/types'
 
 class SettingsStore {
@@ -10,31 +10,31 @@ class SettingsStore {
 	wakeUpEnabled = true
 	setWakeUpEnabled = (e: boolean = true) => {
 		this.wakeUpEnabled = e
-		setValueToLocalStore('wakeUpEnabled', e)
+		db.setLocal('wakeUpEnabled', e)
 	}
 
 	serviceEnabled = true
 	setServiceEnabled = (e: boolean = true) => {
 		this.serviceEnabled = e
-		setValueToLocalStore('serviceEnabled', e)
+		db.setLocal('serviceEnabled', e)
 	}
 
 	yogaEnabled = true
 	setYogaEnabled = (e: boolean = true) => {
 		this.yogaEnabled = e
-		setValueToLocalStore('yogaEnabled', e)
+		db.setLocal('yogaEnabled', e)
 	}
 
 	lectionsEnabled = true
 	setLectionsEnabled = (e: boolean = true) => {
 		this.lectionsEnabled = e
-		setValueToLocalStore('lectionsEnabled', e)
+		db.setLocal('lectionsEnabled', e)
 	}
 
 	bedEnabled = true
 	setBedEnabled = (e: boolean = true) => {
 		this.bedEnabled = e
-		setValueToLocalStore('bedEnabled', e)
+		db.setLocal('bedEnabled', e)
 	}
 
 	get enabledOptionsCount() {
@@ -48,20 +48,20 @@ class SettingsStore {
 	}
 
 	loadFromDisk = async () => {
-		const props = await Promise.all([
-			getValueFromLocalStore('wakeUpEnabled'),
-			getValueFromLocalStore('serviceEnabled'),
-			getValueFromLocalStore('yogaEnabled'),
-			getValueFromLocalStore('lectionsEnabled'),
-			getValueFromLocalStore('bedEnabled'),
-		])
+		const props = await db.getLocals(
+			'wakeUpEnabled',
+			'serviceEnabled',
+			'yogaEnabled',
+			'lectionsEnabled',
+			'bedEnabled',
+		)
 
 		runInAction(() => {
-			this.wakeUpEnabled = props[0] ?? true
-			this.serviceEnabled = props[1] ?? true
-			this.yogaEnabled = props[2] ?? true
-			this.lectionsEnabled = props[3] ?? true
-			this.bedEnabled = props[4] ?? true
+			this.wakeUpEnabled = props.wakeUpEnabled ?? true
+			this.serviceEnabled = props.serviceEnabled ?? true
+			this.yogaEnabled = props.yogaEnabled ?? true
+			this.lectionsEnabled = props.lectionsEnabled ?? true
+			this.bedEnabled = props.bedEnabled ?? true
 		})
 	}
 

@@ -1,9 +1,8 @@
 import * as SplashScreen from 'expo-splash-screen'
-import { initLocalDB } from 'services/localDB'
+import { db } from 'services/localDB'
 import { store } from 'store'
 import { deleteSecure, fetchSecure } from 'services/secureStore'
 import { fetchInitialData, login } from './auth'
-import * as db from 'services/localDB'
 import { graphStore } from 'store/GraphStore'
 import { userStore } from 'store/UserStore'
 import { isNetworkError } from 'utils'
@@ -21,7 +20,7 @@ export const initApp = async () => {
 	try {
 		SplashScreen.preventAutoHideAsync()
 
-		await initLocalDB()
+		await db.init()
 		await Promise.all([
 			userStore.loadFromDisk(),
 			profileStore.loadFromDisk(),
@@ -42,7 +41,7 @@ export const onAppStart = async () => {
 		const [username, password, myID] = await Promise.all([
 			fetchSecure('username'),
 			fetchSecure('password'),
-			db.getValueFromLocalStore('myID'),
+			db.getLocal('myID'),
 		])
 
 		if (username && password && myID) {
@@ -74,11 +73,7 @@ export const onAppStart = async () => {
 export const signOut = async () => {
 	reset('Login')
 	InteractionManager.runAfterInteractions(async () => {
-		await Promise.all([
-			deleteSecure('username'),
-			deleteSecure('password'),
-			db.removeItemFromLocalStore('myID'),
-		])
+		await Promise.all([deleteSecure('username'), deleteSecure('password'), db.removeLocal('myID')])
 		userStore.clear()
 		graphStore.clear()
 		loginStore.clear()

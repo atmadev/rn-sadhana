@@ -1,10 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import {
-	fetchUsers,
-	getObjectFromLocalStore,
-	insertUsers,
-	setObjectToLocalStore,
-} from 'services/localDB'
+import { db } from 'services/localDB'
 import { User } from 'shared/types'
 
 class UserStore {
@@ -25,7 +20,7 @@ class UserStore {
 		if (favorite) this.favoriteIDs.add(userID)
 		else this.favoriteIDs.delete(userID)
 
-		setObjectToLocalStore('favorites', Array.from(this.favoriteIDs))
+		db.setLocal('favorites', Array.from(this.favoriteIDs))
 	}
 
 	favoriteIDs = new Set<string>()
@@ -44,14 +39,11 @@ class UserStore {
 
 	setUser = (user: User) => {
 		this.map.set(user.userid, user)
-		insertUsers(user)
+		db.insertUsers(user)
 	}
 
 	loadFromDisk = async () => {
-		const [users, favoriteIDs] = await Promise.all([
-			fetchUsers(),
-			getObjectFromLocalStore('favorites'),
-		])
+		const [users, favoriteIDs] = await Promise.all([db.fetchUsers(), db.getLocal('favorites')])
 		runInAction(() => {
 			users.forEach((u) => this.map.set(u.userid, u))
 			if (favoriteIDs) favoriteIDs.forEach((_) => this.favoriteIDs.add(_))

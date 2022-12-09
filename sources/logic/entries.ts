@@ -1,5 +1,5 @@
 import { InteractionManager } from 'react-native'
-import * as db from 'services/localDB'
+import { db } from 'services/localDB'
 import * as vs from 'services/network/vs'
 import { PostEntry, UpdateEntry } from 'services/network/vsShapes'
 import { getLast, trimmed } from 'shared/utils'
@@ -60,17 +60,22 @@ export const saveEditing = async () => {
 
 		// if exists, update (merge)
 		const existingEntry = graph.entries.get(ymd)
-		if (existingEntry && existingEntry.id) {
+		if (existingEntry) {
 			const mergedEntry = {
 				...existingEntry,
 				...mxEntry.entryInputFields,
 			}
 			editedEntries.push(mergedEntry)
-			if (mergedEntry.id) {
+			if (existingEntry.id) {
 				dataToUpdate.push({
 					...mxEntry.entryInputFields,
-					entry_id: existingEntry.id!,
-					entrydate: existingEntry.date,
+					entry_id: existingEntry.id,
+					entrydate: ymd,
+				})
+			} else {
+				dataToPost.push({
+					...mxEntry.entryInputFields,
+					entrydate: ymd,
 				})
 			}
 		} else {
