@@ -71,11 +71,6 @@ const ListHeader: FC = observer(() => {
 })
 
 const ListFooter: FC = observer(() => {
-	console.log(
-		searchGraphStore.searchingTime,
-		searchGraphStore.searchString.length,
-		searchGraphStore.items.length,
-	)
 	if (searchGraphStore.searchString.length === 0 || searchGraphStore.items.length > 0)
 		return <Spacer height={10} />
 

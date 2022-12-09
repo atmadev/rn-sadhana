@@ -93,10 +93,13 @@ export const fetchLocalStore = async () => {
 	return localStore
 }
 
-export const setLocal = <K extends keyof LocalStore, V extends LocalStore[K]>(key: K, value: V) => {
+export const setLocal = <K extends keyof LocalStore, V extends LocalStore[K]>(
+	key: string & K,
+	value: V,
+) => {
 	const row: Expand<Shaped<typeof KeyValue>> = { key }
 
-	if (isObject('KeyValue', key)) row.object = value
+	if (isObject(LocalStoreShape, key)) row.object = value
 	else row.value = value
 
 	return db.table('KeyValue').insert(row)
@@ -105,7 +108,7 @@ export const setLocal = <K extends keyof LocalStore, V extends LocalStore[K]>(ke
 export const getLocal = async <K extends keyof LocalStore, V extends LocalStore[K]>(
 	key: K,
 ): Promise<V | null> => {
-	const rowKey: keyof Shaped<typeof KeyValue> = isObject('KeyValue', key) ? 'object' : 'value'
+	const rowKey: keyof Shaped<typeof KeyValue> = isObject(LocalStoreShape, key) ? 'object' : 'value'
 	const [row] = await db.table('KeyValue').select(rowKey).match({ key }).run()
 	return row?.[rowKey]
 }

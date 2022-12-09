@@ -1,4 +1,4 @@
-import { Type, ShapeName, Flag, Shape, Shapes } from './primitives'
+import { Type, ShapeName, Flag, Shape } from './primitives'
 import * as shapes from './shapes'
 
 export const mapKeys = <T>(
@@ -52,12 +52,9 @@ export const validateObjectWithShape = (
 	}
 }
 
-export const isObject = <SN extends ShapeName, S = Shapes[SN]>(
-	shapeName: ShapeName,
-	key: keyof S,
-) => {
+export const isObject = <S extends Shape>(shape: Shape, key: keyof S) => {
 	// @ts-ignore
-	const item = shapes[shapeName][key]
+	const item = shape[key]
 	const type = item instanceof Object && '_shapeItem' in item ? item.type : item
 
 	return type instanceof Object
