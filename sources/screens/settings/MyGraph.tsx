@@ -44,6 +44,13 @@ export const MyGraphSettingsScreen = createScreen(
 					/>
 				</List.Section>
 				<List.Section>
+					<List.Switch
+						title="Reading only in minutes"
+						value={settingsStore.readingInMinutes}
+						setValue={settingsStore.setReadingInMinutes}
+					/>
+				</List.Section>
+				<List.Section>
 					<List.Button title="Suggest Setting" onPress={suggestSetting} />
 				</List.Section>
 			</List.Scroll>

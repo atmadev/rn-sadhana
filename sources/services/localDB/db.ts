@@ -42,12 +42,8 @@ export const insertEntries = (_: Entry[]) => entries.insert(..._)
 export const updateEntry = (
 	user_id: string,
 	date: string,
-	entry: Partial<Omit<Entry, 'user_id' | 'date' | 'dateSynced' | 'created_at'>>,
-) =>
-	entries
-		.update({ ...entry, updated_at: utcStringFromDate(new Date()) })
-		.match({ user_id, date })
-		.run()
+	entry: Partial<Omit<Entry, 'user_id' | 'date' | 'created_at'>>,
+) => entries.update(entry).match({ user_id, date }).run()
 
 export const fetchEntries = (user_id: string) =>
 	entries.select().match({ user_id }).orderBy('date DESC').run()
@@ -77,6 +73,7 @@ const LocalStoreShape = shape({
 	yogaEnabled: boolean,
 	lectionsEnabled: boolean,
 	bedEnabled: boolean,
+	readingInMinutes: boolean,
 	favorites: [string],
 })
 

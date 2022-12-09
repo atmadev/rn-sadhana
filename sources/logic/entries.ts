@@ -1,11 +1,9 @@
 import { InteractionManager } from 'react-native'
 import { db } from 'services/localDB'
 import * as vs from 'services/network/vs'
-import { PostEntry, UpdateEntry } from 'services/network/vsShapes'
 import { getLast, trimmed } from 'shared/utils'
 import { monthStringFromDate, utcStringFromDate } from 'shared/dateUtil'
 import { Entry, OtherGraphItem } from 'shared/types'
-import { Shaped } from 'shared/types/primitives'
 import { graphStore } from 'store/GraphStore'
 import { otherGraphsStore } from 'store/OtherGraphsStore'
 import { userStore } from 'store/UserStore'
@@ -27,6 +25,7 @@ export const fetchMyRecentEntries = async () => {
 		if (!entriesResult.success) return false
 
 		const { entries } = entriesResult.data
+		entries.forEach((e) => (e.dateSynced = e.updated_at))
 		graphStore.setEntries(entries, myID)
 		await db.insertEntries(entries)
 
@@ -49,9 +48,6 @@ export const fetchLocalEntries = async () => {
 }
 
 export const saveEditing = async () => {
-	const dataToPost: Shaped<typeof PostEntry>[] = []
-	const dataToUpdate: Shaped<typeof UpdateEntry>[] = []
-
 	const editedEntries: Entry[] = []
 	const graph = graphStore.my!
 
@@ -61,23 +57,12 @@ export const saveEditing = async () => {
 		// if exists, update (merge)
 		const existingEntry = graph.entries.get(ymd)
 		if (existingEntry) {
-			const mergedEntry = {
+			const mergedEntry: Entry = {
 				...existingEntry,
 				...mxEntry.entryInputFields,
+				updated_at: utcStringFromDate(),
 			}
 			editedEntries.push(mergedEntry)
-			if (existingEntry.id) {
-				dataToUpdate.push({
-					...mxEntry.entryInputFields,
-					entry_id: existingEntry.id,
-					entrydate: ymd,
-				})
-			} else {
-				dataToPost.push({
-					...mxEntry.entryInputFields,
-					entrydate: ymd,
-				})
-			}
 		} else {
 			// post entry
 			const localEntry: Entry = {
@@ -92,10 +77,6 @@ export const saveEditing = async () => {
 			}
 
 			editedEntries.push(localEntry)
-			dataToPost.push({
-				...mxEntry.entryInputFields,
-				entrydate: ymd,
-			})
 		}
 	})
 
@@ -106,25 +87,7 @@ export const saveEditing = async () => {
 
 	InteractionManager.runAfterInteractions(graph.clearMXEntries)
 
-	try {
-		for await (const entry of dataToPost) {
-			const result = await vsRunSafe(() => vs.postEntry(userStore.myID!, entry))
-			console.log('Posting entry result', result)
-		}
-	} catch (e) {
-		// TODO: capture on sentry
-		console.log('Posting entry exception', e)
-	}
-
-	try {
-		for await (const entry of dataToUpdate) {
-			const result = await vsRunSafe(() => vs.updateEntry(userStore.myID!, entry))
-			console.log('Updating entry result', result)
-		}
-	} catch (e) {
-		// TODO: capture on sentry
-		console.log('Updating entry exception', e)
-	}
+	await sendEntries()
 }
 
 const fetchOtherEntries = async (date = new Date(), userID?: string) => {
@@ -226,6 +189,50 @@ export const searchGraph = async () => {
 		// TODO: capture exception
 	} finally {
 		searchGraphStore.removeSearchingTime(searchTime)
+	}
+}
+
+export const sendEntries = async () => {
+	const userId = userStore.myID
+	if (!userId) return
+	try {
+		const entries = await db.entriesToSync(userId)
+		if (entries.length > 0) {
+			for await (const entry of entries) {
+				if (entry.id) {
+					// UPDATE
+					const result = await vsRunSafe(() =>
+						vs.updateEntry(userId!, {
+							...entry,
+							entry_id: entry.id!,
+							entrydate: entry.date,
+						}),
+					)
+
+					if (result.success)
+						await db.updateEntry(userId, entry.date, { dateSynced: entry.updated_at })
+					else {
+						// TODO: handle error
+					}
+				} else {
+					// POST
+					const result = await vsRunSafe(() =>
+						vs.postEntry(userId!, { ...entry, entrydate: entry.date }),
+					)
+					if (result.success) {
+						await db.updateEntry(userId!, entry.date, {
+							id: result.data.entry_id,
+							dateSynced: entry.updated_at,
+						})
+					} else {
+						// TODO: handle error
+					}
+				}
+			}
+		}
+	} catch (e) {
+		// TODO: handle error
+		console.log('logic/entries.sendEntries', e)
 	}
 }
 

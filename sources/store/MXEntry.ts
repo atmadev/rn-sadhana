@@ -27,9 +27,9 @@ export class MXEntry {
 
 		this.sleep = new MXTime(entry?.opt_sleep ?? undefined)
 
-		let refsCount = 6 + settingsStore.enabledOptionsCount
-		if (settingsStore.wakeUpEnabled) refsCount++
-		if (settingsStore.bedEnabled) refsCount++
+		let refsCount = 6
+		if (settingsStore.wakeUpEnabled) refsCount += 2
+		if (settingsStore.bedEnabled) refsCount += 2
 
 		for (let i = 0; i < refsCount; i++) {
 			this.refs.push(createRef<TextInput | null>())

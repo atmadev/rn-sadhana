@@ -48,12 +48,31 @@ export class MXTime {
 		this.minutes = minutes
 	}
 
+	setAllInMinutes = (allMinutes: string) => {
+		if (allMinutes === '') {
+			this.hours = ''
+			this.minutes = ''
+			return
+		}
+
+		const number = parseInt(allMinutes)
+		const minutes = number % 60
+		const hours = Math.floor(number / 60)
+
+		if (hours < 24) {
+			this.minutes = minutes.toString()
+			this.hours = hours > 0 ? hours.toString() : ''
+		}
+	}
+
 	get string() {
 		return pad(this.hoursNumber, 2) + ':' + pad(this.minutesNumber, 2)
 	}
 
 	get allInMinutesString() {
-		return (this.hoursNumber * 60 + this.minutesNumber).toString()
+		return this.hours === '' && this.minutes === ''
+			? ''
+			: (this.hoursNumber * 60 + this.minutesNumber).toString()
 	}
 
 	get empty() {

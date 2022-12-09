@@ -29,8 +29,9 @@ export const Navigation = observer(() => {
 			theme={store.colorScheme === 'dark' ? DarkTheme : DefaultTheme}
 		>
 			<RootStack.Navigator>
+				<RootStack.Screen name="Splash" component={BlankComponent} options={noHeader} />
 				<RootStack.Screen {...LoginScreen.Screen} />
-				<RootStack.Screen name="Tab" component={TabNavigator} options={noHeader} />
+				<RootStack.Screen name="Tab" component={TabNavigator} options={noHeaderFade} />
 				<RootStack.Screen {...GraphEditingScreen.Screen} />
 				<RootStack.Screen {...RegistrationScreen.Screen} />
 			</RootStack.Navigator>
@@ -82,6 +83,8 @@ const TabNavigator = () => {
 	)
 }
 
+const BlankComponent = () => null
+
 const MyGraphTapOptions = {
 	title: 'My Graph',
 }
@@ -91,6 +94,7 @@ const OtherGraphsTapOptions = {
 }
 
 const noHeader = { headerShown: false }
+const noHeaderFade = { headerShown: false, animation: 'fade' } as const
 
 DefaultTheme.colors.primary = ORANGE
 DefaultTheme.colors.background = colors.light.background2

@@ -74,7 +74,7 @@ export const me = async () => {
 export const profile = async (id: string) => {
 	try {
 		const result = await vsShapedRequest('GET', 'userProfile/' + id, undefined, { Profile })
-		console.log('result', result)
+		// console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('load userProfile error', e)
@@ -88,7 +88,7 @@ export const updateProfile = async (data: Shaped<typeof Profile>) => {
 			shape: { Profile },
 			data,
 		})
-		console.log('result', result)
+		// console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('load userProfile error', e)
@@ -131,7 +131,10 @@ export const monthEntries = async (userId: string, data?: Shaped<typeof MonthEnt
 	}
 }
 
-export const postEntry = async (userId: string, data: Shaped<typeof PostEntry>) => {
+export const postEntry = async (
+	userId: string,
+	data: Shaped<typeof PostEntry>,
+): Promise<VSResponse<Shaped<typeof EntryID>>> => {
 	try {
 		const result = await vsShapedRequest(
 			'POST',
@@ -139,7 +142,7 @@ export const postEntry = async (userId: string, data: Shaped<typeof PostEntry>) 
 			{ shape: { PostEntry }, data },
 			{ EntryID },
 		)
-		// console.log('result', result)
+		console.log('vs.postEntry result', result)
 		return result
 	} catch (e) {
 		console.log('postEntry error', e)
@@ -147,13 +150,18 @@ export const postEntry = async (userId: string, data: Shaped<typeof PostEntry>) 
 	}
 }
 
-export const updateEntry = async (userId: string, data: Shaped<typeof UpdateEntry>) => {
+export const updateEntry = async (
+	userId: string,
+	data: Shaped<typeof UpdateEntry>,
+): Promise<VSResponse<void>> => {
 	try {
 		const result = await vsShapedRequest('PUT', 'sadhanaEntry/' + userId, {
 			shape: { UpdateEntry },
 			data,
 		})
 		// console.log('result', result)
+
+		// @ts-ignore
 		return result
 	} catch (e) {
 		console.log('postEntry error', e)

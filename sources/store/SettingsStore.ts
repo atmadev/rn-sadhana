@@ -37,14 +37,10 @@ class SettingsStore {
 		db.setLocal('bedEnabled', e)
 	}
 
-	get enabledOptionsCount() {
-		return (
-			toInt(this.wakeUpEnabled) +
-			toInt(this.serviceEnabled) +
-			toInt(this.yogaEnabled) +
-			toInt(this.lectionsEnabled) +
-			toInt(this.bedEnabled)
-		)
+	readingInMinutes = true
+	setReadingInMinutes = (_: boolean = true) => {
+		this.readingInMinutes = _
+		db.setLocal('readingInMinutes', _)
 	}
 
 	loadFromDisk = async () => {
@@ -54,6 +50,7 @@ class SettingsStore {
 			'yogaEnabled',
 			'lectionsEnabled',
 			'bedEnabled',
+			'readingInMinutes',
 		)
 
 		runInAction(() => {
@@ -75,5 +72,3 @@ class SettingsStore {
 }
 
 export const settingsStore = new SettingsStore()
-
-const toInt = (b: boolean) => (b ? 1 : 0)

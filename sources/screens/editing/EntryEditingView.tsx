@@ -78,9 +78,18 @@ export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 
 			<Text style={styles.title}>Reading books</Text>
 			<View style={styles.row}>
-				<HoursInput time={entry.reading} {...currentRefs()} />
-				<View style={styles.verticalSeparator} />
-				<MinutesInput time={entry.reading} {...currentRefs()} />
+				{!settingsStore.readingInMinutes ? (
+					<>
+						<HoursInput time={entry.reading} {...currentRefs()} />
+						<View style={styles.verticalSeparator} />
+					</>
+				) : null}
+
+				<MinutesInput
+					time={entry.reading}
+					allInMinutes={settingsStore.readingInMinutes}
+					{...currentRefs()}
+				/>
 			</View>
 
 			<SwitcherCell title="Kirtan" value={entry.kirtan} setValue={entry.setKirtan} />

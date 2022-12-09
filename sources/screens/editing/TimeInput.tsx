@@ -31,27 +31,35 @@ export const HoursInput = observer(
 )
 // TODO: convert to hours option
 export const MinutesInput = observer(
-	forwardRef<RNTextInput | null, { time: MXTime; nextRef?: RefObject<RNTextInput | null> }>(
-		({ time, nextRef }, ref) => {
-			const onTypeMinutes = useCallback(
-				(minutes: string) => {
-					time.setMinutes(minutes)
-					if (time.minutesNumber > 5 || time.minutes.length === 2) {
-						nextRef?.current?.focus()
-					}
-				},
-				[time, nextRef],
-			)
+	forwardRef<
+		RNTextInput | null,
+		{ time: MXTime; allInMinutes?: boolean; nextRef?: RefObject<RNTextInput | null> }
+	>(({ time, allInMinutes, nextRef }, ref) => {
+		const onTypeMinutes = useCallback(
+			(minutes: string) => {
+				if (allInMinutes) {
+					time.setAllInMinutes(minutes)
+					if (time.allInMinutesString.length > 2) nextRef?.current?.focus()
+					return
+				}
 
-			return (
-				<SubtitledTextInput
-					subtitle="minutes"
-					placeholder="00"
-					value={time.minutes}
-					onChangeText={onTypeMinutes}
-					ref={ref}
-				/>
-			)
-		},
-	),
+				time.setMinutes(minutes)
+				if (time.minutesNumber > 5 || time.minutes.length === 2) {
+					nextRef?.current?.focus()
+				}
+			},
+			[time, allInMinutes, nextRef],
+		)
+
+		return (
+			<SubtitledTextInput
+				subtitle="minutes"
+				placeholder="00"
+				value={allInMinutes ? time.allInMinutesString : time.minutes}
+				onChangeText={onTypeMinutes}
+				maxLength={allInMinutes ? 3 : 2}
+				ref={ref}
+			/>
+		)
+	}),
 )

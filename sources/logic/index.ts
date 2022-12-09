@@ -8,7 +8,7 @@ import { userStore } from 'store/UserStore'
 import { isNetworkError } from 'utils'
 import { InteractionManager } from 'react-native'
 import { loginStore } from 'store/LoginStore'
-import { fetchLocalEntries } from './entries'
+import { fetchLocalEntries, sendEntries } from './entries'
 import { navigate, reset, resetToMyGraph } from 'navigation'
 import { settingsStore } from 'store/SettingsStore'
 import { profileStore } from 'store/ProfileStore'
@@ -47,6 +47,7 @@ export const onAppStart = async () => {
 		if (username && password && myID) {
 			userStore.setMyID(myID)
 			profileStore.setMyID(myID)
+
 			// Prefetch only local entries from the DB
 			await fetchLocalEntries()
 			resetToMyGraph()
@@ -59,7 +60,8 @@ export const onAppStart = async () => {
 					throw new Error(result.message)
 				}
 
-				fetchInitialData()
+				await fetchInitialData()
+				await sendEntries()
 			} catch (e) {
 				if (isNetworkError(e)) return
 				throw e
