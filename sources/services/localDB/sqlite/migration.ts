@@ -88,8 +88,6 @@ const migrateTables = async <UsedShapeName extends ShapeName>(
 	hash: number,
 	oldTableNames: string[],
 ) => {
-	const shapeNames = Object.keys(schema) as UsedShapeName[]
-
 	const [tableInfosList, indexListsList] = await Promise.all([
 		tableInfo(oldTableNames),
 		indexList(oldTableNames),
@@ -105,6 +103,7 @@ const migrateTables = async <UsedShapeName extends ShapeName>(
 
 	return transaction((tx) => {
 		// ENUMERATE TABLES
+		const shapeNames = Object.keys(schema) as UsedShapeName[]
 		shapeNames.forEach((shapeName) => {
 			const schemaItem = schema[shapeName]
 			let tableInfo = oldTableInfos[shapeName]
@@ -113,7 +112,7 @@ const migrateTables = async <UsedShapeName extends ShapeName>(
 			// | if not exists
 			if (!tableInfo) {
 				let oldTableName: string | null = null
-				schemaItem?.tableNamesHistory?.forEach((n) => {
+				schemaItem.tableNamesHistory?.forEach((n) => {
 					if (!tableInfo) {
 						tableInfo = oldTableInfos[n]
 						if (tableInfo) {
@@ -143,7 +142,7 @@ const migrateTables = async <UsedShapeName extends ShapeName>(
 				if (!tableInfoMap[key]) {
 					// look up history
 					// prettier-ignore
-					oldColumnName = schemaItem?.columnNamesHistory?.[key as UsedShapeName]?.find(on => tableInfoMap[on])
+					oldColumnName = schemaItem.columnNamesHistory?.[key as UsedShapeName]?.find(on => tableInfoMap[on])
 
 					if (oldColumnName) {
 						// RENAME COLUMN
@@ -200,7 +199,7 @@ const migrateIndex = <UsedShapeName extends ShapeName>(
 		indexListMap: { [name: string]: SQLIndexInfo }
 	}
 ) => {
-	const list = unique ? schemaItem?.unique : schemaItem?.index
+	const list = unique ? schemaItem.unique : schemaItem.index
 
 	list?.forEach((columns) => {
 		const name = indexName(shapeName, columns as string[])

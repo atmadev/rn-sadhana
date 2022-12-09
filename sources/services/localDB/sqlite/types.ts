@@ -89,7 +89,7 @@ export interface SQLIndexInfo {
 }
 
 export type SQLSchema<ShapeNames extends ShapeName> = {
-	[SN in ShapeNames]?: {
+	[SN in ShapeNames]: {
 		unique?: NotNullOrderItem<keyof PersistentShaped<SN>>[][]
 		index?: NotNullOrderItem<keyof PersistentShaped<SN>>[][]
 		columnNamesHistory?: {

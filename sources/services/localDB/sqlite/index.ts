@@ -14,21 +14,19 @@ import {
 } from './queries'
 import { setUpSchemaIfNeeded } from './migration'
 
-export const setupDB = async <UsedShapeNames extends ShapeName>(
-	schema: SQLSchema<UsedShapeNames>,
-): Promise<SQLDB<UsedShapeNames>> => {
+export const preInitDB = <UsedShapeName extends ShapeName>(
+	schema: SQLSchema<UsedShapeName>,
+): SQLDB<UsedShapeName> => {
 	// console.log(styleLog('bold', '\n💿 Setup DB\n'))
 
-	const shapeNames = Object.keys(schema) as UsedShapeNames[]
+	const shapeNames = Object.keys(schema) as UsedShapeName[]
 
-	await setUpSchemaIfNeeded(schema)
-
-	const tables = {} as SQLDB<UsedShapeNames>['tables']
+	const tables = {} as SQLDB<UsedShapeName>['tables']
 	for (const shapeName of shapeNames) {
 		tables[shapeName] = new Table(shapeName)
 	}
 
-	return { tables, table: (name) => tables[name] }
+	return { tables, table: (name) => tables[name], init: () => setUpSchemaIfNeeded(schema) }
 }
 
 export class Table<TableName extends ShapeName, Object = PersistentShaped<TableName>> {
@@ -60,4 +58,5 @@ export class Table<TableName extends ShapeName, Object = PersistentShaped<TableN
 export type SQLDB<ShapeNames extends ShapeName> = {
 	table: <SN extends ShapeNames>(table: SN) => Table<SN>
 	tables: { [SN in ShapeNames]: Table<SN> }
+	init: () => Promise<void>
 }

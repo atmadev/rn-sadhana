@@ -1,38 +1,27 @@
 import { utcStringFromDate } from 'shared/dateUtil'
 import { User, Profile, Entry } from 'shared/types'
-import { Shaped, ShapeName, primitiveTypes, Expand } from 'shared/types/primitives'
+import { Shaped, primitiveTypes, Expand } from 'shared/types/primitives'
 import { KeyValue } from 'shared/types/shapes'
 import { shape } from 'shared/types/shapeTool'
 import { isObject } from 'shared/types/utils'
-import { setupDB, SQLDB, Table } from './sqlite'
-import { SQLSchema } from './sqlite/types'
+import { preInitDB } from './sqlite'
 
 const { string, boolean } = primitiveTypes
 
-const useShapes = <SN extends ShapeName>(...names: SN[]) => names
-
-const usedShapeNames = useShapes('User', 'Entry', 'KeyValue', 'EntryUpdatedDates', 'Profile')
-
-type UsedShapeNames = typeof usedShapeNames[number]
-
-const schema: SQLSchema<UsedShapeNames> = {
+const db = preInitDB({
+	User: {},
 	Entry: {
 		unique: [['user_id', 'date']],
 		index: [['user_id', 'dateSynced']],
 	},
-}
+	KeyValue: {},
+	EntryUpdatedDates: {},
+	Profile: {},
+})
 
-let db: SQLDB<UsedShapeNames>
-let users: Table<'User'>
-let profiles: Table<'Profile'>
-let entries: Table<'Entry'>
+const { User: users, Profile: profiles, Entry: entries } = db.tables
 
-export const init = async () => {
-	db = await setupDB(schema)
-	users = db.table('User')
-	profiles = db.table('Profile')
-	entries = db.table('Entry')
-}
+export const init = () => db.init()
 
 export const insertUsers = (..._: User[]) => users.insert(..._)
 export const updateUser = (userid: string, update: Partial<Omit<User, 'userid'>>) =>
@@ -110,7 +99,7 @@ export const setLocal = <K extends keyof LocalStore, V extends LocalStore[K]>(ke
 	if (isObject('KeyValue', key)) row.object = value
 	else row.value = value
 
-	db.table('KeyValue').insert(row)
+	return db.table('KeyValue').insert(row)
 }
 
 export const getLocal = async <K extends keyof LocalStore, V extends LocalStore[K]>(
