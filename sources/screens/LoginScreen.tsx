@@ -203,7 +203,7 @@ export const LoginScreen = createScreen(
 			</FlingGestureHandler>
 		)
 	}),
-	{ headerShown: false },
+	{ headerShown: false, animation: 'fade' },
 )
 
 const onPressRegister = () => navigate('Registration')

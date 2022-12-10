@@ -9,6 +9,8 @@ import { store } from 'store'
 import { createStyles } from 'screens/utils'
 import { observer } from 'mobx-react-lite'
 import { graphEditingStore } from 'store/GraphEditingStore'
+import { ORANGE, ORANGE_LIGHT } from 'const/Colors'
+import { ymdStringFromDate } from 'shared/dateUtil'
 
 export const DateList: FC = observer(() => {
 	const style = useMemo(
@@ -30,6 +32,7 @@ export const DateList: FC = observer(() => {
 	)
 
 	const selectedYMD = graphEditingStore.currentYMD
+	const todayYMD = ymdStringFromDate()
 
 	return (
 		<View style={styles.container}>
@@ -37,10 +40,22 @@ export const DateList: FC = observer(() => {
 				{calendarStore.lastYearDays
 					.filter((_, index) => index - graphEditingStore.index < 10)
 					.map((ymd) => {
-						const selected = selectedYMD === ymd
+						const today = ymd === todayYMD
+						const selected = ymd === selectedYMD
 						return (
 							<View style={styles.item} key={ymd}>
-								<FastText color={selected ? store.theme.text : store.theme.text2} fontWeight="bold">
+								<FastText
+									color={
+										today
+											? selected
+												? ORANGE
+												: ORANGE_LIGHT
+											: selected
+											? store.theme.text
+											: store.theme.text2
+									}
+									fontWeight="bold"
+								>
 									{ymd}
 								</FastText>
 							</View>

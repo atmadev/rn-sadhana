@@ -16,10 +16,10 @@ import { profileStore } from 'store/ProfileStore'
 // TODO: think about offline mode
 // TODO: think how to show the my graph ASAP
 
+SplashScreen.preventAutoHideAsync()
+
 export const initApp = async () => {
 	try {
-		SplashScreen.preventAutoHideAsync()
-
 		await db.init()
 		await Promise.all([
 			userStore.loadFromDisk(),
@@ -31,8 +31,6 @@ export const initApp = async () => {
 		// TODO: capture exception on sentry
 		// We might want to provide this error information to an error reporting service
 		console.warn(e)
-	} finally {
-		SplashScreen.hideAsync()
 	}
 }
 
@@ -49,9 +47,12 @@ export const onAppStart = async () => {
 			profileStore.setMyID(myID)
 
 			// Prefetch only local entries from the DB
-			await fetchLocalEntries()
+			try {
+				await fetchLocalEntries()
+			} catch (e) {}
 			resetToMyGraph()
 
+			SplashScreen.hideAsync()
 			try {
 				const result = await login(username, password)
 
@@ -66,8 +67,12 @@ export const onAppStart = async () => {
 				if (isNetworkError(e)) return
 				throw e
 			}
-		} else navigate('Login')
+		} else {
+			SplashScreen.hideAsync()
+			navigate('Login')
+		}
 	} catch (e) {
+		SplashScreen.hideAsync()
 		navigate('Login')
 	}
 }

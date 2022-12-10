@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useState } from 'react'
 
-import { Button, View, Text, StyleSheet } from 'react-native'
+import { Button, View, Text } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createScreen, createStyles } from 'screens/utils'
 import { goBack } from 'navigation'
@@ -8,7 +8,7 @@ import { store } from 'store'
 import { calendarStore } from 'store/CalendarStore'
 import { TouchableHighlight } from 'components/primitives'
 import { FastText, Spacer } from 'components/Spacer'
-import { GRAY, GRAY_LIGHT, GRAY_ULTRALIGHT, ORANGE } from 'const/Colors'
+import { GRAY, GRAY_SYSTEM, GRAY_ULTRALIGHT, ORANGE } from 'const/Colors'
 import { Device } from 'const'
 import { shareCSV } from 'logic/csv'
 
@@ -40,14 +40,12 @@ export const ExportCSVScreen = createScreen(
 			<View style={styles.container}>
 				<Spacer flex={1} />
 				<Text style={styles.title}>Please choose months to export:</Text>
-				<View style={styles.section}>
-					<View style={styles.yearContainer}>
-						{calendarStore.lastYearMonths.map((month, index) => {
-							const selected = selectedMonths.includes(month)
-							const today = index === 0
-							return <MonthItem {...{ selected, today, toggleSelection, month }} key={month} />
-						})}
-					</View>
+				<View style={styles.yearContainer}>
+					{calendarStore.lastYearMonths.map((month, index) => {
+						const selected = selectedMonths.includes(month)
+						const today = index === 0
+						return <MonthItem {...{ selected, today, toggleSelection, month }} key={month} />
+					})}
 				</View>
 				<Spacer flex={1} />
 				<View style={styles.section}>
@@ -90,7 +88,7 @@ const MonthItem: FC<{
 						? today
 							? ORANGE
 							: store.colorScheme === 'light'
-							? GRAY_LIGHT
+							? GRAY_SYSTEM
 							: GRAY
 						: 'transparent'
 				}
@@ -99,8 +97,8 @@ const MonthItem: FC<{
 				justifyContent="center"
 			>
 				<FastText
-					color={selected && today ? 'white' : store.theme.text}
-					fontWeight={selected ? (today ? 'bold' : 'normal') : '200'}
+					color={selected ? 'white' : today ? ORANGE : store.theme.text}
+					fontWeight={selected ? 'bold' : today ? 'normal' : '200'}
 					fontSize={16}
 				>
 					{month}
@@ -113,14 +111,14 @@ const MonthItem: FC<{
 const margin = 8
 
 const styles = createStyles({
-	container: { margin, flex: 1 },
+	container: { flex: 1 },
 
 	section: () => ({
 		borderRadius: 16,
 		margin,
+		marginHorizontal: margin * 2,
 		backgroundColor: store.theme.background,
 		alignItems: 'stretch',
-		overflow: 'hidden',
 	}),
 	title: () => ({
 		color: store.theme.text2,
@@ -131,12 +129,15 @@ const styles = createStyles({
 	yearContainer: () => ({
 		flexDirection: 'row-reverse',
 		flexWrap: 'wrap-reverse',
+		justifyContent: 'center',
 	}),
 	monthItem: () => ({
-		borderColor: store.theme.separator2,
-		borderWidth: StyleSheet.hairlineWidth,
+		borderRadius: 16,
+		backgroundColor: store.theme.background,
+		margin,
 		height: 44,
-		width: (Device.width - margin * 4) / 2 - StyleSheet.hairlineWidth,
+		width: (Device.width - margin * 8) / 3,
+		overflow: 'hidden',
 	}),
 	buttonContainer: {
 		height: 57,

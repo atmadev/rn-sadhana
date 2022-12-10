@@ -19,6 +19,7 @@ import { colors, ORANGE } from 'const/Colors'
 import { MyProfileSettingsScreen } from 'screens/settings/MyProfile'
 import { ExportCSVScreen } from 'screens/settings/ExportCSV'
 import { SearchGraphScreen } from 'screens/otherGraphs/SearchScreen'
+import { Spacer } from 'components/Spacer'
 
 const RootStack = createNativeStackNavigator()
 
@@ -83,7 +84,7 @@ const TabNavigator = () => {
 	)
 }
 
-const BlankComponent = () => null
+const BlankComponent = () => <Spacer flex={1} backgroundColor={ORANGE} />
 
 const MyGraphTapOptions = {
 	title: 'My Graph',
