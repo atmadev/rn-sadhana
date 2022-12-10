@@ -26,9 +26,10 @@ export const GraphEditingScreen = createScreen(
 	observer(() => {
 		if (Device.ios)
 			useEffect(() => {
-				const e = keyboardStore.lastKeyboardEvent
-				if (e) configureLayoutAnimationFromKeyboardEvent(e)
-			}, [keyboardStore.lastKeyboardEvent])
+				const t = keyboardStore.lastKeyboardEventTime
+				if (keyboardStore.lastKeyboardEvent && Date.now() - t < 1000)
+					configureLayoutAnimationFromKeyboardEvent(keyboardStore.lastKeyboardEvent)
+			}, [keyboardStore.lastKeyboardEventTime])
 
 		return (
 			<View style={styles.container}>

@@ -21,6 +21,7 @@ class KeyboardStore {
 	}
 
 	lastKeyboardEvent: KeyboardEvent | null = null
+	lastKeyboardEventTime = 0
 
 	rootViewHeight = 0
 	setRootViewHeight = (h: number) => (this.rootViewHeight = h)
@@ -28,6 +29,7 @@ class KeyboardStore {
 	private setVisible = (v: boolean, event: KeyboardEvent) => {
 		this.isVisible = v
 		this.lastKeyboardEvent = event
+		this.lastKeyboardEventTime = Date.now()
 	}
 
 	private onKeyboardShow = (e: KeyboardEvent) => this.setVisible(true, e)

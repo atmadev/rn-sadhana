@@ -65,6 +65,7 @@ export const ExportCSVScreen = createScreen(
 						<Button title="Cancel" onPress={goBack} color={ORANGE} />
 					</View>
 				</View>
+				<Spacer height={Device.safeBottomInset} />
 			</View>
 		)
 	}),

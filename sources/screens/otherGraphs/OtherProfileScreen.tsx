@@ -3,13 +3,14 @@ import { observer } from 'mobx-react-lite'
 import { GraphList } from 'screens/graph/List'
 import { createScreen, createStyles } from 'screens/utils'
 import { graphStore } from 'store/GraphStore'
-import { Image } from 'react-native'
+import { Image, Text } from 'react-native'
 import { Device } from 'const'
 import { refreshOtherEntries } from 'logic/entries'
 import { TouchableOpacity } from 'components/primitives'
 import { FastText } from 'components/Spacer'
 import { ORANGE } from 'const/Colors'
 import { userStore } from 'store/UserStore'
+import { userName } from 'utils'
 
 export const OtherProfileScreen = createScreen(
 	'OtherProfile',
@@ -25,6 +26,16 @@ export const OtherProfileScreen = createScreen(
 		) : null
 	}),
 	{
+		headerTitle: () => {
+			const defaultTitle = 'Profile'
+			const userID = graphStore.selected?.userID
+			if (!userID) return defaultTitle
+
+			const user = userStore.map.get(userID)
+			if (!user) return defaultTitle
+
+			return <Text>{userName(user)}</Text>
+		},
 		headerRight: () => <NavigationHeaderRight />,
 	},
 )
@@ -32,7 +43,9 @@ export const OtherProfileScreen = createScreen(
 const NavigationHeaderRight = observer(() =>
 	graphStore.selected ? (
 		<TouchableOpacity onPress={graphStore.selected.toggleFavorite}>
-			<FastText color={ORANGE}>{graphStore.selected.favorite ? '★' : '☆'}</FastText>
+			<FastText fontSize={20} color={ORANGE}>
+				{graphStore.selected.favorite ? '★' : '☆'}
+			</FastText>
 		</TouchableOpacity>
 	) : null,
 )

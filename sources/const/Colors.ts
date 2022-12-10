@@ -26,7 +26,7 @@ export const colors = {
 		separator: '#bbbbbb',
 		separator2: '#F2F4F5',
 		placeholder: '#CED2D5',
-		highlight: '#D1D0D5',
+		highlight: '#E5E5E9', //E5E5E9 D1D0D5
 	},
 	dark: {
 		text: '#fff',

@@ -1,5 +1,5 @@
 import { Alert } from 'react-native'
-import { OtherGraphItem, User } from 'shared/types'
+import { Entry, OtherGraphItem, User } from 'shared/types'
 import { trimmed } from 'shared/utils'
 
 export const isNetworkError = (e: any) => {
@@ -28,3 +28,21 @@ export const userName = (user: User) => trimmed(user.user_name) ?? trimmed(user.
 
 export const graphItemName = (item: OtherGraphItem) =>
 	trimmed(item.spiritual_name) ?? trimmed(item.karmic_name) ?? trimmed(item.user_nicename)
+
+export const defaultMaxRounds = 17
+
+export const parseRounds = (entry?: Entry, maxRounds = defaultMaxRounds) => {
+	const before730 = entry?.jcount_730 ? parseInt(entry?.jcount_730) : 0
+	const before10 = entry?.jcount_1000 ? parseInt(entry?.jcount_1000) : 0
+	const before18 = entry?.jcount_1800 ? parseInt(entry?.jcount_1800) : 0
+	const after = entry?.jcount_after ? parseInt(entry?.jcount_after) : 0
+	const all = before730 + before10 + before18 + after
+	return {
+		before730,
+		before10,
+		before18,
+		after,
+		all,
+		left: Math.max(maxRounds - all, 0),
+	}
+}

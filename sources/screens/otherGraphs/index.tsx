@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { View, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, ActivityIndicator, TouchableOpacity, Text } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createScreen, createStyles } from 'screens/utils'
 import { fetchOtherGraphs } from 'logic/entries'
@@ -11,6 +11,8 @@ import { GraphItem } from './GraphItem'
 import { FastText, Spacer } from 'components/Spacer'
 import { graphStore } from 'store/GraphStore'
 import { navigate } from 'navigation'
+import { userStore } from 'store/UserStore'
+import { globalStyles } from 'globalStyles'
 
 export const OtherGraphsScreen = createScreen(
 	'OtherGraphs',
@@ -22,13 +24,19 @@ export const OtherGraphsScreen = createScreen(
 		return (
 			<View style={gloablStyles.flex1}>
 				{otherGraphsStore.showFavorites ? (
-					<FlashList data={graphStore.favorites} estimatedItemSize={85} renderItem={renderItem} />
+					userStore.favoriteIDs.size > 0 ? (
+						<FlashList data={graphStore.favorites} estimatedItemSize={88} renderItem={renderItem} />
+					) : (
+						<Text style={globalStyles.emptyListDummyText}>
+							Press ☆ in profile screen to add Favorites
+						</Text>
+					)
 				) : (
 					<FlashList
 						refreshing={otherGraphsStore.refreshing}
 						onRefresh={onRefresh}
 						data={otherGraphsStore.items}
-						estimatedItemSize={85}
+						estimatedItemSize={88}
 						renderItem={renderItem}
 						onEndReached={fetchOtherGraphs}
 						onEndReachedThreshold={1}
@@ -45,15 +53,17 @@ export const OtherGraphsScreen = createScreen(
 
 const NavigationHeaderRight = observer(() => {
 	return (
-		<Spacer flexDirection="row">
-			<TouchableOpacity onPress={otherGraphsStore.toggleFavorites}>
-				<FastText color={ORANGE} padding={5}>
-					{otherGraphsStore.showFavorites ? '★' : '☆'}
+		<Spacer flexDirection="row" marginTop={1}>
+			<TouchableOpacity onPress={showSearch}>
+				<FastText padding={5} paddingTop={4}>
+					🔍
 				</FastText>
 			</TouchableOpacity>
 			<Spacer width={10} />
-			<TouchableOpacity onPress={showSearch}>
-				<FastText padding={5}>🔍</FastText>
+			<TouchableOpacity onPress={otherGraphsStore.toggleFavorites}>
+				<FastText color={ORANGE} fontSize={20}>
+					{otherGraphsStore.showFavorites ? '★' : '☆'}
+				</FastText>
 			</TouchableOpacity>
 		</Spacer>
 	)

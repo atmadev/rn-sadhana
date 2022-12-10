@@ -9,7 +9,7 @@ import { EntryItem } from './EntryItem'
 import { createStyles } from 'screens/utils'
 import { store } from 'store'
 import { graphStore } from 'store/GraphStore'
-import { monthStringFromDate } from 'shared/dateUtil'
+import { monthStringFromDate, monthStringFromYmd } from 'shared/dateUtil'
 import { fetchOtherEntriesPreviousMonth } from 'logic/entries'
 import { userStore } from 'store/UserStore'
 
@@ -26,7 +26,7 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 	}, [])
 
 	const graph = graphStore.map.get(userID)!
-	const { refreshing, lastLoadedMonth, entries } = graph
+	const { refreshing, lastLoadedMonth, entries } = graph ?? {}
 
 	const { data, headerIndexes, lastItemIndexes } = calendarStore.lastYearDaysWithMonthsInPlace
 
@@ -35,9 +35,14 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 			headerIndexes.has(index) ? (
 				<SectionHeader title={item} />
 			) : (
-				<EntryItem ymd={item} userID={userID} isLast={lastItemIndexes.has(index)} />
+				<EntryItem
+					userID={userID}
+					ymd={item}
+					maxRounds={graph.maxRoundsByMonth[monthStringFromYmd(item)]}
+					isLast={lastItemIndexes.has(index)}
+				/>
 			),
-		[userID, headerIndexes],
+		[userID, headerIndexes, graph],
 	)
 
 	const stickyHeaderIndices = useMemo(() => Array.from(headerIndexes), [headerIndexes])
@@ -55,7 +60,7 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 		}
 
 		return data
-	}, [trimmed, data, lastLoadedMonth, entries.size])
+	}, [trimmed, data, lastLoadedMonth, entries?.size])
 
 	return (
 		<FlashList

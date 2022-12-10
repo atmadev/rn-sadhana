@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef } from 'react'
-import { View, TextInput, ActivityIndicator } from 'react-native'
+import { View, TextInput, ActivityIndicator, Text } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createScreen, createStyles } from 'screens/utils'
 import { searchGraph } from 'logic/entries'
@@ -13,6 +13,7 @@ import { FastText, Spacer } from 'components/Spacer'
 import { OtherGraphItem } from 'shared/types'
 import { searchGraphStore } from 'store/SearchGraphStore'
 import { TouchableOpacity } from 'components/primitives'
+import { globalStyles } from 'globalStyles'
 
 export const SearchGraphScreen = createScreen(
 	'SearchGraph',
@@ -22,9 +23,9 @@ export const SearchGraphScreen = createScreen(
 				<FlashList
 					ListHeaderComponent={ListHeader}
 					data={searchGraphStore.items}
-					estimatedItemSize={85}
+					estimatedItemSize={88}
 					renderItem={renderItem}
-					keyboardDismissMode="interactive"
+					keyboardDismissMode="on-drag"
 					ListFooterComponent={ListFooter}
 				/>
 			</View>
@@ -77,9 +78,7 @@ const ListFooter: FC = observer(() => {
 	return searchGraphStore.searchingTime !== null ? (
 		<ActivityIndicator style={styles.bottomActivityIndicator} />
 	) : (
-		<FastText textAlign="center" fontSize={20} color={store.theme.text2} marginTop={47}>
-			No Results
-		</FastText>
+		<Text style={globalStyles.emptyListDummyText}>No Results</Text>
 	)
 })
 

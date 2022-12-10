@@ -4,7 +4,7 @@ import { View, Text } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { TouchableHighlight } from 'components/primitives'
 import { createStyles } from 'screens/utils'
-import { Image, ViewStyle } from 'react-native'
+import { Image } from 'react-native'
 import { FastText, Spacer } from 'components/Spacer'
 import { graphStore } from 'store/GraphStore'
 import { BLUE, ORANGE, RED, YELLOW } from 'const/Colors'
@@ -14,43 +14,44 @@ import { Entry, YMD } from 'shared/types'
 import { MONTH_MS } from 'shared/dateUtil'
 import { graphEditingStore } from 'store/GraphEditingStore'
 import { userStore } from 'store/UserStore'
+import { parseRounds } from 'utils'
 
-export const EntryItem: FC<{ ymd: YMD; userID: string; isLast: boolean }> = observer(
-	({ ymd, userID, isLast }) => {
+export const EntryItem: FC<{ userID: string; ymd: YMD; maxRounds?: number; isLast: boolean }> =
+	observer(({ userID, ymd, maxRounds, isLast }) => {
 		const graph = graphStore.map.get(userID)!
 		const entry = graph.entries.get(ymd)
 		const date = new Date(ymd)
 
-		const rounds = parseRounds(entry)
+		const rounds = parseRounds(entry, maxRounds)
 
 		const onPress = useCallback(() => {
 			graphEditingStore.selectYMD(ymd)
 			navigate('GraphEditing')
 		}, [ymd])
 
-		const content = (
-			<View style={isLast ? styles.containerLast : styles.container}>
-				<View style={styles.date}>
-					<Text style={styles.day}>{date.getUTCDate()}</Text>
-					<Text style={styles.weekday}>{date.getUTCDay()}</Text>
-				</View>
-				<View style={styles.content}>
-					<EntryDataItem entry={entry} />
-					<JapaLine {...rounds} />
-				</View>
-				<Text style={styles.roundsText}>{rounds.all > 0 ? rounds.all : ''}</Text>
+		return (
+			<View style={isLast ? styles.backgroundLast : styles.background}>
+				<TouchableHighlight
+					style={styles.touchable}
+					underlayColor={store.theme.highlight}
+					onPress={onPress}
+					disabled={userID !== userStore.myID || Date.now() - date.getTime() > 2 * MONTH_MS}
+				>
+					<View style={styles.container}>
+						<View style={styles.date}>
+							<Text style={styles.day}>{date.getUTCDate()}</Text>
+							<Text style={styles.weekday}>{date.getUTCDay()}</Text>
+						</View>
+						<View style={styles.content}>
+							<EntryDataItem entry={entry} />
+							<JapaLine {...rounds} />
+						</View>
+						<Text style={styles.roundsText}>{rounds.all > 0 ? rounds.all : ''}</Text>
+					</View>
+				</TouchableHighlight>
 			</View>
 		)
-
-		return userID === userStore.myID && Date.now() - date.getTime() < 2 * MONTH_MS ? (
-			<TouchableHighlight underlayColor={store.theme.highlight} onPress={onPress}>
-				{content}
-			</TouchableHighlight>
-		) : (
-			content
-		)
-	},
-)
+	})
 
 export const EntryDataItem: FC<{ entry?: Entry }> = observer(({ entry }) => {
 	return (
@@ -109,41 +110,31 @@ interface JapaRounds {
 }
 
 export const JapaLine: FC<JapaRounds> = (rounds) => (
-	<View style={styles.japaLine}>
-		{rounds.before730 > 0 ? (
-			<Spacer backgroundColor={YELLOW} flex={rounds.before730 / rounds.all} />
-		) : null}
-		{rounds.before10 > 0 ? (
-			<Spacer backgroundColor={ORANGE} flex={rounds.before10 / rounds.all} />
-		) : null}
-		{rounds.before18 > 0 ? (
-			<Spacer backgroundColor={RED} flex={rounds.before18 / rounds.all} />
-		) : null}
-		{rounds.after > 0 ? <Spacer backgroundColor={BLUE} flex={rounds.after / rounds.all} /> : null}
-		{rounds.left > 0 ? (
-			<Spacer
-				backgroundColor={store.theme.separator2}
-				flex={rounds.all > 0 ? rounds.left / rounds.all : 1}
-			/>
-		) : null}
+	<View>
+		<View style={styles.japaLine}>
+			{rounds.before730 > 0 ? (
+				<Spacer backgroundColor={YELLOW} flex={rounds.before730 / rounds.all} />
+			) : null}
+			{rounds.before10 > 0 ? (
+				<Spacer backgroundColor={ORANGE} flex={rounds.before10 / rounds.all} />
+			) : null}
+			{rounds.before18 > 0 ? (
+				<Spacer backgroundColor={RED} flex={rounds.before18 / rounds.all} />
+			) : null}
+			{rounds.after > 0 ? <Spacer backgroundColor={BLUE} flex={rounds.after / rounds.all} /> : null}
+			{rounds.left > 0 ? (
+				<Spacer
+					backgroundColor={store.theme.separator2}
+					flex={rounds.all > 0 ? rounds.left / rounds.all : 1}
+				/>
+			) : null}
+		</View>
+		<Spacer
+			{...styles.sixteenRoundsMark}
+			marginLeft={`${(16 / (rounds.all + rounds.left)) * 100}%`}
+		/>
 	</View>
 )
-
-export const parseRounds = (entry?: Entry) => {
-	const before730 = entry?.jcount_730 ? parseInt(entry?.jcount_730) : 0
-	const before10 = entry?.jcount_1000 ? parseInt(entry?.jcount_1000) : 0
-	const before18 = entry?.jcount_1800 ? parseInt(entry?.jcount_1800) : 0
-	const after = entry?.jcount_after ? parseInt(entry?.jcount_after) : 0
-	const all = before730 + before10 + before18 + after
-	return {
-		before730,
-		before10,
-		before18,
-		after,
-		all,
-		left: Math.max(16 - all, 0),
-	}
-}
 
 const wakeUpIcon = require('assets/images/sun.png')
 const wakeUpIconActive = require('assets/images/sun-active.png')
@@ -157,31 +148,32 @@ const readingIconActive = require('assets/images/book-active.png')
 const bedIcon = require('assets/images/moon.png')
 const bedIconActive = require('assets/images/moon-active.png')
 
-const containerBasicStyle: ViewStyle = {
-	marginHorizontal: 10,
-	marginVertical: 4,
-	borderRadius: 6,
-	overflow: 'hidden',
-	flexDirection: 'row',
-	alignItems: 'center',
-	paddingHorizontal: 10,
-}
-
 const styles = createStyles({
-	container: () => ({
-		...containerBasicStyle,
-		backgroundColor: store.theme.background,
-	}),
-	containerLast: () => ({
-		...containerBasicStyle,
-		backgroundColor: store.theme.background,
+	background: {
+		marginVertical: 4,
+		marginHorizontal: 10,
+	},
+	backgroundLast: {
+		marginVertical: 4,
+		marginHorizontal: 10,
 		marginBottom: 11,
+	},
+	touchable: () => ({
+		backgroundColor: store.theme.background,
+		borderRadius: 6,
+		overflow: 'hidden',
+	}),
+	container: () => ({
+		flexDirection: 'row',
+		paddingHorizontal: 10,
+		alignItems: 'center',
+		height: 50,
 	}),
 	content: {
 		flex: 1,
 		margin: 10,
+		marginTop: 14,
 		justifyContent: 'space-between',
-		alignItems: 'center',
 	},
 	date: {
 		flexDirection: 'row',
@@ -206,6 +198,13 @@ const styles = createStyles({
 		borderRadius: 3,
 		overflow: 'hidden',
 		marginTop: 8,
+	},
+	sixteenRoundsMark: {
+		width: 1,
+		height: 4,
+		backgroundColor: '#DADADA',
+		marginTop: 1,
+		transform: [{ translateX: -1 }],
 	},
 	roundsText: () => ({
 		fontSize: 12,

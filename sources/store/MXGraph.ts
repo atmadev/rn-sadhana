@@ -1,4 +1,6 @@
+import { mapValues } from 'lodash'
 import { makeAutoObservable } from 'mobx'
+import { defaultMaxRounds, parseRounds } from 'utils'
 import { monthStringFromYmd } from 'shared/dateUtil'
 import { Entry, YMD } from 'shared/types'
 import { MXEntry } from './MXEntry'
@@ -28,6 +30,15 @@ export class MXGraph {
 		})
 
 		return entries
+	}
+
+	get maxRoundsByMonth() {
+		return mapValues(this.entriesByMonth, (value) =>
+			value.reduce(
+				(previous, current) => Math.max(parseRounds(current).all, previous),
+				defaultMaxRounds,
+			),
+		)
 	}
 
 	get lastEntry() {
