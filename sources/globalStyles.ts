@@ -10,4 +10,10 @@ export const globalStyles = createStyles({
 		marginHorizontal: 16,
 	}),
 	row: { flexDirection: 'row' },
+	barButton: {
+		height: 44,
+		width: 44,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 })

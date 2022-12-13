@@ -10,6 +10,7 @@ import { TouchableOpacity } from 'components/primitives'
 import { store } from 'store'
 import { navigate } from 'navigation'
 import { userStore } from 'store/UserStore'
+import { globalStyles } from 'globalStyles'
 
 export const MyGraphScreen = createScreen(
 	'MyGraph',
@@ -22,7 +23,7 @@ export const MyGraphScreen = createScreen(
 	}),
 	{
 		headerRight: () => (
-			<TouchableOpacity onPress={openSettings}>
+			<TouchableOpacity onPress={openSettings} style={styles.settingsButton}>
 				<Image source={require('assets/images/settings.png')} />
 			</TouchableOpacity>
 		),
@@ -36,4 +37,8 @@ const styles = createStyles({
 		backgroundColor: store.theme.background2,
 		flex: 1,
 	}),
+	settingsButton: {
+		...globalStyles.barButton,
+		marginRight: -10,
+	},
 })

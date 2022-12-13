@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef } from 'react'
-import { View, TextInput, ActivityIndicator, Text } from 'react-native'
+import { View, TextInput, ActivityIndicator, Text, Image } from 'react-native'
 import { observer } from 'mobx-react-lite'
 import { createScreen, createStyles } from 'screens/utils'
 import { searchGraph } from 'logic/entries'
@@ -9,10 +9,11 @@ import { store } from 'store'
 import { SearchIcon } from 'components/Icons'
 import { GRAY_SYSTEM } from 'const/Colors'
 import { GraphItem } from './GraphItem'
-import { FastText, Spacer } from 'components/Spacer'
+import { Spacer } from 'components/Spacer'
 import { OtherGraphItem } from 'shared/types'
 import { searchGraphStore } from 'store/SearchGraphStore'
 import { TouchableOpacity } from 'components/primitives'
+import { textClearDark, textClearLight } from 'assets/index'
 import { globalStyles } from 'globalStyles'
 
 export const SearchGraphScreen = createScreen(
@@ -61,10 +62,8 @@ const ListHeader: FC = observer(() => {
 				onChangeText={onSearch}
 			/>
 			{searchGraphStore.searchString.length > 0 ? (
-				<TouchableOpacity onPress={onClear}>
-					<FastText padding={5} fontSize={25}>
-						⨯
-					</FastText>
+				<TouchableOpacity onPress={onClear} style={gloablStyles.barButton}>
+					<Image source={store.colorScheme === 'dark' ? textClearDark : textClearLight} />
 				</TouchableOpacity>
 			) : null}
 		</View>

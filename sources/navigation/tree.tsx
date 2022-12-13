@@ -1,7 +1,10 @@
 import React, { useMemo } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import {
+	createNativeStackNavigator,
+	NativeStackNavigationOptions,
+} from '@react-navigation/native-stack'
 
 import { store } from 'store'
 import { LoginScreen } from 'screens/LoginScreen'
@@ -32,7 +35,7 @@ export const Navigation = observer(() => {
 			<RootStack.Navigator>
 				<RootStack.Screen name="Splash" component={BlankComponent} options={noHeader} />
 				<RootStack.Screen {...LoginScreen.Screen} />
-				<RootStack.Screen name="Tab" component={TabNavigator} options={noHeaderFade} />
+				<RootStack.Screen name="Tab" component={TabNavigator} options={noHeader} />
 				<RootStack.Screen {...GraphEditingScreen.Screen} />
 				<RootStack.Screen {...RegistrationScreen.Screen} />
 			</RootStack.Navigator>
@@ -94,8 +97,7 @@ const OtherGraphsTapOptions = {
 	title: 'Other Graphs',
 }
 
-const noHeader = { headerShown: false }
-const noHeaderFade = { headerShown: false, animation: 'fade' } as const
+const noHeader: NativeStackNavigationOptions = { headerShown: false, animation: 'none' }
 
 DefaultTheme.colors.primary = ORANGE
 DefaultTheme.colors.background = colors.light.background2

@@ -53,14 +53,11 @@ export const OtherGraphsScreen = createScreen(
 
 const NavigationHeaderRight = observer(() => {
 	return (
-		<Spacer flexDirection="row" marginTop={1}>
-			<TouchableOpacity onPress={showSearch}>
-				<FastText padding={5} paddingTop={4}>
-					🔍
-				</FastText>
+		<Spacer flexDirection="row" marginTop={1} marginRight={-10}>
+			<TouchableOpacity onPress={showSearch} style={globalStyles.barButton}>
+				<FastText>🔍</FastText>
 			</TouchableOpacity>
-			<Spacer width={10} />
-			<TouchableOpacity onPress={otherGraphsStore.toggleFavorites}>
+			<TouchableOpacity onPress={otherGraphsStore.toggleFavorites} style={globalStyles.barButton}>
 				<FastText color={ORANGE} fontSize={20}>
 					{otherGraphsStore.showFavorites ? '★' : '☆'}
 				</FastText>
