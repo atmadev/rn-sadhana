@@ -22,6 +22,7 @@ import { observer } from 'mobx-react-lite'
 import { fetchLocalEntries } from 'logic/entries'
 import { GRAY_LIGHT, ORANGE, ORANGE_LIGHT, WHITE } from 'const/Colors'
 import { navigate, resetToMyGraph } from 'navigation'
+import { Spacer } from 'components/Spacer'
 
 let keyboardMarginBottom = 0
 const formHorizontalOffset = new Animated.Value(0)
@@ -131,6 +132,8 @@ export const LoginScreen = createScreen(
 					<Image source={vaishnavaseva} style={styles.vaishnavaseva} />
 					{isKeyboardVisible && <View style={styles.dim} />}
 
+					<Spacer flex={1} />
+
 					<View style={{ ...styles.content, marginBottom: keyboardMarginBottom }}>
 						<Image source={beadsLight} style={styles.beads} />
 						<Text style={styles.title}>Садхана</Text>
@@ -181,14 +184,19 @@ export const LoginScreen = createScreen(
 								</TouchableHighlight>
 							</Card>
 						</Animated.View>
-						{error ? <Text style={styles.error}>⚠️ {error}</Text> : null}
-						{userStore.me ? (
-							<Text style={styles.error}>
-								Харе Кришна, {userStore.me!.user_name ?? userStore.me!.user_nicename} Завантажуємо
-								Вашу садхану...
-							</Text>
-						) : null}
+						<Spacer height={60} width={Device.width} marginTop={16}>
+							{error ? <Text style={styles.error}>⚠️ {error}</Text> : null}
+							{userStore.me ? (
+								<Text style={styles.error}>
+									Харе Кришна, {userStore.me!.user_name ?? userStore.me!.user_nicename}!{'\n'}
+									Завантажуємо Вашу садхану...
+								</Text>
+							) : null}
+						</Spacer>
+						{/* ) : null} */}
 					</View>
+
+					<Spacer flex={1} />
 					<View style={styles.registrationContainer}>
 						<TouchableOpacity
 							style={styles.registrationButton}
@@ -237,7 +245,7 @@ const styles = StyleSheet.create({
 		fontWeight: '500',
 	},
 	arrow: { transform: [{ translateY: 1 }] },
-	error: { position: 'absolute', bottom: -26, textAlign: 'center', color: WHITE, fontSize: 14 },
+	error: { textAlign: 'center', color: WHITE, fontSize: 14 },
 	registrationContainer: { position: 'absolute', bottom: 40, alignSelf: 'center', zIndex: 1 },
 	registrationButton: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: WHITE },
 	registrationText: { textAlign: 'center', fontSize: 12, color: WHITE },

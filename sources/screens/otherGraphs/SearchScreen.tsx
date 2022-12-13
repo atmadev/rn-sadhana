@@ -62,6 +62,7 @@ const ListHeader: FC = observer(() => {
 				onChangeText={onSearch}
 			/>
 			{searchGraphStore.searchString.length > 0 ? (
+				// @ts-ignore
 				<TouchableOpacity onPress={onClear} style={gloablStyles.barButton}>
 					<Image source={store.colorScheme === 'dark' ? textClearDark : textClearLight} />
 				</TouchableOpacity>

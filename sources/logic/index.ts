@@ -9,7 +9,7 @@ import { isNetworkError } from 'utils'
 import { InteractionManager } from 'react-native'
 import { loginStore } from 'store/LoginStore'
 import { fetchLocalEntries, sendEntries } from './entries'
-import { navigate, reset, resetToMyGraph } from 'navigation'
+import { reset, resetToMyGraph } from 'navigation'
 import { settingsStore } from 'store/SettingsStore'
 import { profileStore } from 'store/ProfileStore'
 
@@ -51,8 +51,8 @@ export const onAppStart = async () => {
 				await fetchLocalEntries()
 			} catch (e) {}
 			resetToMyGraph()
-
 			SplashScreen.hideAsync()
+
 			try {
 				const result = await login(username, password)
 
@@ -68,12 +68,12 @@ export const onAppStart = async () => {
 				throw e
 			}
 		} else {
+			reset('Login')
 			SplashScreen.hideAsync()
-			navigate('Login')
 		}
 	} catch (e) {
+		reset('Login')
 		SplashScreen.hideAsync()
-		navigate('Login')
 	}
 }
 
