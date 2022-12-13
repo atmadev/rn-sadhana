@@ -9,9 +9,11 @@ import { EntryItem } from './EntryItem'
 import { createStyles } from 'screens/utils'
 import { store } from 'store'
 import { graphStore } from 'store/GraphStore'
-import { monthStringFromDate, monthStringFromYmd } from 'shared/dateUtil'
+import { monthStringFromDate, monthStringFromYmd } from 'dateUtil'
 import { fetchOtherEntriesPreviousMonth } from 'logic/entries'
 import { userStore } from 'store/UserStore'
+import { formatLocal } from 'utils'
+import { capitalize } from 'lodash'
 
 interface Props {
 	userID: string
@@ -33,7 +35,7 @@ export const GraphList: FC<Props> = observer(({ userID, onRefresh, header, trimm
 	const renderItem = useCallback(
 		({ item, index }: { item: string; index: number }) =>
 			headerIndexes.has(index) ? (
-				<SectionHeader title={item} />
+				<SectionHeader title={capitalize(formatLocal(item, 'LLLL yyyy'))} />
 			) : (
 				<EntryItem
 					userID={userID}

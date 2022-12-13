@@ -19,7 +19,6 @@ module.exports = function (api) {
 					],
 					alias: {
 						assets: './assets',
-						shared: './shared',
 						resources: './resources',
 					},
 				},

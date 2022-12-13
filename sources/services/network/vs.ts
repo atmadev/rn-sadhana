@@ -1,6 +1,6 @@
-import { OtherGraphItem } from 'shared/types'
-import { Shaped, Shape } from 'shared/types/primitives'
-import { User, Profile } from 'shared/types/shapes'
+import { OtherGraphItem } from 'types'
+import { Shaped, Shape } from 'types/primitives'
+import { User, Profile } from 'types/shapes'
 import { request, RequestMethod, VSResponse } from '.'
 // prettier-ignore
 import { MonthEntriesRequest, LoginParams, PostEntry, EntryID, sTokens, UpdateEntry, EntriesResponse, EntriesRequest, Tokens, Registration, UserID } from './vsShapes'

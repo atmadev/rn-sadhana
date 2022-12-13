@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { pad } from 'shared/utils'
+import { pad } from 'utils'
 
 export class MXTime {
 	constructor(time?: string | number) {

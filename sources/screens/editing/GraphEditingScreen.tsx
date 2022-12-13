@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 // prettier-ignore
 import { View, Text, InteractionManager, ListRenderItemInfo, Animated, StyleSheet, Image } from 'react-native'
 
-import { observer } from 'mobx-react-lite'
+import { Observer, observer } from 'mobx-react-lite'
 import { goBack } from 'navigation'
 import { TouchableOpacity } from 'components/primitives'
 import { createScreen, createStyles } from 'screens/utils'
@@ -16,10 +16,13 @@ import { ORANGE } from 'const/Colors'
 import { store } from 'store'
 import { calendarStore } from 'store/CalendarStore'
 import { DateList } from './DateList'
-import { YMD } from 'shared/types'
+import { YMD } from 'types'
 import { Spacer } from 'components/Spacer'
 import { graphEditingStore } from 'store/GraphEditingStore'
 import { arrowLeft, arrowRight, checkButton } from 'assets/index'
+import { capitalize } from 'lodash'
+import { formatLocal } from 'utils'
+import { globalStyles } from 'globalStyles'
 
 export const GraphEditingScreen = createScreen(
 	'GraphEditing',
@@ -35,6 +38,7 @@ export const GraphEditingScreen = createScreen(
 			<View style={styles.container}>
 				<DateList />
 				<Animated.FlatList
+					ref={graphEditingStore.flatList}
 					contentOffset={graphEditingStore.flatListContentOffset}
 					data={calendarStore.lastYearDays}
 					renderItem={renderItem}
@@ -78,10 +82,25 @@ export const GraphEditingScreen = createScreen(
 		)
 	}),
 	{
-		headerTitle: 'My Graph Editing',
+		headerTitle: () => (
+			<Observer>
+				{() => {
+					return (
+						<Text style={styles.headerTitle}>
+							{capitalize(formatLocal(graphEditingStore.currentYMD, 'LLLL yyyy'))}
+						</Text>
+					)
+				}}
+			</Observer>
+		),
 		headerLeft: () => (
-			<TouchableOpacity onPress={onCancel}>
+			<TouchableOpacity onPress={onCancel} style={globalStyles.barButton}>
 				<Text style={styles.cancelText}>Cancel</Text>
+			</TouchableOpacity>
+		),
+		headerRight: () => (
+			<TouchableOpacity onPress={onToday} style={globalStyles.barButton}>
+				<Text style={styles.cancelText}>Today</Text>
 			</TouchableOpacity>
 		),
 		presentation: 'fullScreenModal',
@@ -101,6 +120,10 @@ const getItemLayout = (_: any, index: number) => ({
 const onCancel = () => {
 	goBack()
 	InteractionManager.runAfterInteractions(graphStore.my!.clearMXEntries)
+}
+
+const onToday = () => {
+	graphEditingStore.scrollToRight()
 }
 
 const onSave = () => {
@@ -125,4 +148,7 @@ const styles = createStyles({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
+	headerTitle: () => ({
+		color: store.theme.text,
+	}),
 })

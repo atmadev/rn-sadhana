@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import { Entry } from 'shared/types'
+import { Entry } from 'types'
 import { MXGraph } from './MXGraph'
 import { userStore } from './UserStore'
 

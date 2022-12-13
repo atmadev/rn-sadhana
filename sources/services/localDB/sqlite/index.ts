@@ -1,8 +1,4 @@
-import {
-	PersistentShaped,
-	PrimaryPartialPersistentShaped,
-	ShapeName,
-} from 'shared/types/primitives'
+import { PersistentShaped, PrimaryPartialPersistentShaped, ShapeName } from 'types/primitives'
 import { AggregateItem, SQLSchema } from './types'
 import {
 	AggregateQuery,

@@ -10,11 +10,11 @@ import { graphStore } from 'store/GraphStore'
 import { BLUE, ORANGE, RED, YELLOW } from 'const/Colors'
 import { store } from 'store'
 import { navigate } from 'navigation'
-import { Entry, YMD } from 'shared/types'
-import { MONTH_MS } from 'shared/dateUtil'
+import { Entry, YMD } from 'types'
+import { MONTH_MS } from 'dateUtil'
 import { graphEditingStore } from 'store/GraphEditingStore'
 import { userStore } from 'store/UserStore'
-import { parseRounds } from 'utils'
+import { formatLocal, parseRounds } from 'utils'
 
 export const EntryItem: FC<{ userID: string; ymd: YMD; maxRounds?: number; isLast: boolean }> =
 	observer(({ userID, ymd, maxRounds, isLast }) => {
@@ -39,8 +39,12 @@ export const EntryItem: FC<{ userID: string; ymd: YMD; maxRounds?: number; isLas
 				>
 					<View style={styles.container}>
 						<View style={styles.date}>
-							<Text style={styles.day}>{date.getUTCDate()}</Text>
-							<Text style={styles.weekday}>{date.getUTCDay()}</Text>
+							<FastText {...styles.day} color={date.getDay() === 0 ? RED : store.theme.text}>
+								{date.getUTCDate()}
+							</FastText>
+							<FastText {...styles.weekday} color={date.getDay() === 0 ? RED : '#CED2D5'}>
+								{formatLocal(date, 'eeeeee').toUpperCase()}
+							</FastText>
 						</View>
 						<View style={styles.content}>
 							<EntryDataItem entry={entry} />
@@ -179,14 +183,13 @@ const styles = createStyles({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		width: 40,
-		marginRight: 10,
+		width: 46,
+		marginRight: 8,
 	},
-	day: () => ({ fontSize: 22, fontWeight: '300', color: store.theme.text }),
+	day: () => ({ fontSize: 22, fontWeight: '300' }),
 	weekday: {
 		fontSize: 10,
 		fontWeight: 'bold',
-		color: '#CED2D5',
 	},
 	kirtan: { marginHorizontal: 16 },
 	dataContainer: { flexDirection: 'row' },

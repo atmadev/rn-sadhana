@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import { createRef, RefObject } from 'react'
 import { TextInput } from 'react-native'
-import { EntryInputFields, YMD } from 'shared/types'
+import { EntryInputFields, YMD } from 'types'
 import { MXTime } from './MXTime'
 import { settingsStore } from './SettingsStore'
 

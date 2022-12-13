@@ -4,7 +4,7 @@ import {
 	IsContain,
 	PersistentShaped,
 	ShapeName,
-} from 'shared/types/primitives'
+} from 'types/primitives'
 
 type NOT<T extends string> = T | `NOT ${T}`
 

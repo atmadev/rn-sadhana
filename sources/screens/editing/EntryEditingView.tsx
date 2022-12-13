@@ -4,7 +4,7 @@ import { View, Text, ScrollView } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 import { createStyles } from 'screens/utils'
-import { YMD } from 'shared/types'
+import { YMD } from 'types'
 import { HoursInput, MinutesInput } from './TimeInput'
 import { JapaInput } from './JapaInput'
 import { SwitcherCell } from './SwitcherCell'

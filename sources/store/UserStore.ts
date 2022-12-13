@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { db } from 'services/localDB'
-import { User } from 'shared/types'
+import { User } from 'types'
 
 class UserStore {
 	constructor() {

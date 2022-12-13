@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { db } from 'services/localDB'
-import { Profile } from 'shared/types'
+import { Profile } from 'types'
 
 class ProfileStore {
 	constructor() {

@@ -1,11 +1,11 @@
 import { Query } from 'expo-sqlite'
-import { getLast } from 'shared/utils'
+import { getLast } from 'utils'
 import {
 	PersistentShaped,
 	ShapeName,
 	Expand,
 	PrimaryPartialPersistentShaped,
-} from 'shared/types/primitives'
+} from 'types/primitives'
 import {
 	WhereItem,
 	OrderItem,
@@ -18,7 +18,7 @@ import {
 	COUNT,
 } from './types'
 import { readTransaction, transaction } from './engine'
-import { mapKeys } from 'shared/types/utils'
+import { mapKeys } from 'types/utils'
 
 export class SelectQuery<
 	TableName extends ShapeName,

@@ -1,8 +1,8 @@
-import { User, Profile, Entry } from 'shared/types'
-import { Shaped, primitiveTypes, Expand } from 'shared/types/primitives'
-import { KeyValue } from 'shared/types/shapes'
-import { shape } from 'shared/types/shapeTool'
-import { isObject } from 'shared/types/utils'
+import { User, Profile, Entry } from 'types'
+import { Shaped, primitiveTypes, Expand } from 'types/primitives'
+import { KeyValue } from 'types/shapes'
+import { shape } from 'types/shapeTool'
+import { isObject } from 'types/utils'
 import { preInitDB } from './sqlite'
 
 const { string, boolean } = primitiveTypes

@@ -1,7 +1,7 @@
 // prettier-ignore
-import {  r,  shape } from 'shared/types/shapeTool'
-import { Expand, primitiveTypes, Shaped } from 'shared/types/primitives'
-import { EntryInputFields, Entry } from 'shared/types/shapes'
+import {  r,  shape } from 'types/shapeTool'
+import { Expand, primitiveTypes, Shaped } from 'types/primitives'
+import { EntryInputFields, Entry } from 'types/shapes'
 
 const { string, number } = primitiveTypes
 

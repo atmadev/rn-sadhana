@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
-import { isTheSameDay, monthStringFromDate, ymdStringFromDate } from 'shared/dateUtil'
-import { YMD } from 'shared/types'
+import { isTheSameDay, monthStringFromDate, ymdStringFromDate } from 'dateUtil'
+import { YMD } from 'types'
 
 class CalendarStore {
 	constructor() {

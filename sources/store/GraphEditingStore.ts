@@ -1,7 +1,8 @@
 import { Device } from 'const'
 import { makeAutoObservable } from 'mobx'
-import { Animated, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
-import { YMD } from 'shared/types'
+import { createRef } from 'react'
+import { Animated, NativeScrollEvent, NativeSyntheticEvent, Easing, FlatList } from 'react-native'
+import { YMD } from 'types'
 import { calendarStore } from './CalendarStore'
 import { graphStore } from './GraphStore'
 
@@ -10,9 +11,20 @@ class GraphEditingStore {
 		makeAutoObservable(this)
 	}
 
+	flatList = createRef<FlatList>()
 	scrollX = new Animated.Value(0)
 	index = 0
-	setIndex = (i: number) => (this.index = i)
+	setIndex = (i: number) => (this.index = i >= 0 ? Math.floor(i) : 0)
+
+	scrollToRight = () => {
+		Animated.timing(this.scrollX, {
+			toValue: 0,
+			useNativeDriver: true,
+			easing: Easing.inOut(Easing.ease),
+		}).start()
+
+		this.flatList.current?.scrollToIndex({ animated: true, index: 0 })
+	}
 
 	get currentYMD() {
 		return calendarStore.lastYearDays[this.index]
@@ -34,7 +46,7 @@ class GraphEditingStore {
 	}
 
 	selectYMD = (ymd: YMD) => {
-		this.index = calendarStore.lastYearDays.indexOf(ymd)
+		this.setIndex(calendarStore.lastYearDays.indexOf(ymd))
 		this.scrollX.setValue(this.currentOffset)
 	}
 
@@ -43,7 +55,7 @@ class GraphEditingStore {
 	})
 
 	onScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-		this.index = event.nativeEvent.contentOffset.x / Device.width
+		this.setIndex(event.nativeEvent.contentOffset.x / Device.width)
 	}
 }
 

@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx'
-import { OtherGraphItem } from 'shared/types'
+import { OtherGraphItem } from 'types'
 
 class SearchGraphStore {
 	constructor() {

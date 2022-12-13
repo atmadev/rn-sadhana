@@ -12,7 +12,7 @@ export const globalStyles = createStyles({
 	row: { flexDirection: 'row' },
 	barButton: {
 		height: 44,
-		width: 44,
+		minWidth: 44,
 		alignItems: 'center',
 		justifyContent: 'center',
 	},

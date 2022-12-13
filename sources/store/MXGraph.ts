@@ -1,8 +1,8 @@
 import { mapValues } from 'lodash'
 import { makeAutoObservable } from 'mobx'
 import { defaultMaxRounds, parseRounds } from 'utils'
-import { monthStringFromYmd } from 'shared/dateUtil'
-import { Entry, YMD } from 'shared/types'
+import { monthStringFromYmd } from 'dateUtil'
+import { Entry, YMD } from 'types'
 import { MXEntry } from './MXEntry'
 import { userStore } from './UserStore'
 

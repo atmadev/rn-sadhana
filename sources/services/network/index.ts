@@ -1,5 +1,5 @@
-import { Expand, FALSE, Shape, Shaped, TRUE } from 'shared/types/primitives'
-import { validateObjectWithShape } from 'shared/types/utils'
+import { Expand, FALSE, Shape, Shaped, TRUE } from 'types/primitives'
+import { validateObjectWithShape } from 'types/utils'
 
 export const request = async <ParamsShape extends Shape, ResponseShape extends Shape>(
 	method: RequestMethod,
