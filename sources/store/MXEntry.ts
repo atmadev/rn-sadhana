@@ -3,7 +3,7 @@ import { createRef, RefObject } from 'react'
 import { TextInput } from 'react-native'
 import { EntryInputFields, YMD } from 'types'
 import { MXTime } from './MXTime'
-import { settingsStore } from './SettingsStore'
+import { persistentStore } from './PersistentStore'
 
 // TODO: check will server eat empty string as japa counts
 
@@ -28,8 +28,8 @@ export class MXEntry {
 		this.sleep = new MXTime(entry?.opt_sleep ?? undefined)
 
 		let refsCount = 6
-		if (settingsStore.wakeUpEnabled) refsCount += 2
-		if (settingsStore.bedEnabled) refsCount += 2
+		if (persistentStore.wakeUpEnabled) refsCount += 2
+		if (persistentStore.bedEnabled) refsCount += 2
 
 		for (let i = 0; i < refsCount; i++) {
 			this.refs.push(createRef<TextInput | null>())

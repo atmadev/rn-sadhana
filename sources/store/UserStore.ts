@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { db } from 'services/localDB'
 import { User } from 'types'
+import { persistentStore } from './PersistentStore'
 
 class UserStore {
 	constructor() {
@@ -13,17 +14,8 @@ class UserStore {
 	}
 
 	get favorites() {
-		return this.array.filter((u) => this.favoriteIDs.has(u.userid))
+		return this.array.filter((u) => persistentStore.favoriteIDs.has(u.userid))
 	}
-
-	setUserFavorite = async (userID: string, favorite: boolean) => {
-		if (favorite) this.favoriteIDs.add(userID)
-		else this.favoriteIDs.delete(userID)
-
-		db.setLocal('favorites', Array.from(this.favoriteIDs))
-	}
-
-	favoriteIDs = new Set<string>()
 
 	myID: string | null = null
 	setMyID = (ID: string | null) => (this.myID = ID)
@@ -48,10 +40,9 @@ class UserStore {
 	}
 
 	loadFromDisk = async () => {
-		const [users, favoriteIDs] = await Promise.all([db.fetchUsers(), db.getLocal('favorites')])
+		const users = await db.fetchUsers()
 		runInAction(() => {
 			users.forEach((u) => this.map.set(u.userid, u))
-			if (favoriteIDs) favoriteIDs.forEach((_) => this.favoriteIDs.add(_))
 		})
 	}
 

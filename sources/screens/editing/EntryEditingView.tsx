@@ -12,7 +12,7 @@ import { BLUE, ORANGE, RED, YELLOW } from 'const/Colors'
 import { store } from 'store'
 import { graphStore } from 'store/GraphStore'
 import { Device } from 'const'
-import { settingsStore } from 'store/SettingsStore'
+import { persistentStore } from 'store/PersistentStore'
 
 export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 	const entry = graphStore.my!.getMXEntry(ymd)
@@ -31,7 +31,7 @@ export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 			contentContainerStyle={styles.contentContainer}
 			keyboardDismissMode="on-drag"
 		>
-			{settingsStore.wakeUpEnabled ? (
+			{persistentStore.wakeUpEnabled ? (
 				<>
 					<Text style={styles.title}>Wake Up</Text>
 					<View style={styles.row}>
@@ -78,7 +78,7 @@ export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 
 			<Text style={styles.title}>Reading books</Text>
 			<View style={styles.row}>
-				{!settingsStore.readingInMinutes ? (
+				{!persistentStore.readingInMinutes ? (
 					<>
 						<HoursInput time={entry.reading} {...currentRefs()} />
 						<View style={styles.verticalSeparator} />
@@ -87,23 +87,23 @@ export const EntryEditingView: FC<{ ymd: YMD }> = observer(({ ymd }) => {
 
 				<MinutesInput
 					time={entry.reading}
-					allInMinutes={settingsStore.readingInMinutes}
+					allInMinutes={persistentStore.readingInMinutes}
 					{...currentRefs()}
 				/>
 			</View>
 
-			<SwitcherCell title="Kirtan" value={entry.kirtan} setValue={entry.setKirtan} />
-			{settingsStore.serviceEnabled ? (
-				<SwitcherCell title="Service" value={entry.service} setValue={entry.setService} />
+			<SwitcherCell title="Kirtan" value={entry.kirtan} onValueChange={entry.setKirtan} />
+			{persistentStore.serviceEnabled ? (
+				<SwitcherCell title="Service" value={entry.service} onValueChange={entry.setService} />
 			) : null}
-			{settingsStore.yogaEnabled ? (
-				<SwitcherCell title="Yoga" value={entry.yoga} setValue={entry.setYoga} />
+			{persistentStore.yogaEnabled ? (
+				<SwitcherCell title="Yoga" value={entry.yoga} onValueChange={entry.setYoga} />
 			) : null}
-			{settingsStore.lectionsEnabled ? (
-				<SwitcherCell title="Lections" value={entry.lections} setValue={entry.setLections} />
+			{persistentStore.lectionsEnabled ? (
+				<SwitcherCell title="Lections" value={entry.lections} onValueChange={entry.setLections} />
 			) : null}
 
-			{settingsStore.bedEnabled ? (
+			{persistentStore.bedEnabled ? (
 				<>
 					<Text style={styles.title}>Sleep</Text>
 					<View style={styles.row}>

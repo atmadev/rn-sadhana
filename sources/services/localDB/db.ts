@@ -73,6 +73,7 @@ const LocalStoreShape = shape({
 	lectionsEnabled: boolean,
 	bedEnabled: boolean,
 	readingInMinutes: boolean,
+	keyboardAutoFocus: boolean,
 	favorites: [string],
 })
 

@@ -23,6 +23,7 @@ import { arrowLeft, arrowRight, checkButton } from 'assets/index'
 import { capitalize } from 'lodash'
 import { formatLocal } from 'utils'
 import { globalStyles } from 'globalStyles'
+import { persistentStore } from 'store/PersistentStore'
 
 export const GraphEditingScreen = createScreen(
 	'GraphEditing',
@@ -33,6 +34,13 @@ export const GraphEditingScreen = createScreen(
 				if (keyboardStore.lastKeyboardEvent && Date.now() - t < 1000)
 					configureLayoutAnimationFromKeyboardEvent(keyboardStore.lastKeyboardEvent)
 			}, [keyboardStore.lastKeyboardEventTime])
+
+		useEffect(() => {
+			const entry = graphEditingStore.currentEntry
+			if (!persistentStore.keyboardAutoFocusEnabled || !entry) return
+
+			entry.goNext()
+		}, [])
 
 		return (
 			<View style={styles.container}>
@@ -119,6 +127,7 @@ const getItemLayout = (_: any, index: number) => ({
 
 const onCancel = () => {
 	goBack()
+	graphEditingStore.clear()
 	InteractionManager.runAfterInteractions(graphStore.my!.clearMXEntries)
 }
 
@@ -129,6 +138,7 @@ const onToday = () => {
 const onSave = () => {
 	goBack()
 	saveEditing()
+	graphEditingStore.clear()
 }
 
 const styles = createStyles({

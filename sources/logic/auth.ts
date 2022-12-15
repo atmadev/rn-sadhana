@@ -5,7 +5,7 @@ import { userStore } from 'store/UserStore'
 import { db } from 'services/localDB'
 import { fetchMyRecentEntries } from './entries'
 import { loginStore } from 'store/LoginStore'
-import { settingsStore } from 'store/SettingsStore'
+import { persistentStore } from 'store/PersistentStore'
 import { clearRegistrationStore, registrationStore } from 'store/RegistrationStore'
 import { InteractionManager } from 'react-native'
 import { resetToMyGraph } from 'navigation'
@@ -42,7 +42,7 @@ export const fetchInitialData = async () => {
 		loginStore.setStatus(`Hey, ${me.user_name ?? 'user'}! Downloading your sadhana...`)
 
 		userStore.setMe(me)
-		settingsStore.mapFromUser(me)
+		persistentStore.mapFromUser(me)
 		await db.setLocal('myID', me.userid)
 
 		const profileResult = await vs.profile(me.userid)

@@ -5,6 +5,7 @@ import { monthStringFromYmd } from 'dateUtil'
 import { Entry, YMD } from 'types'
 import { MXEntry } from './MXEntry'
 import { userStore } from './UserStore'
+import { persistentStore } from './PersistentStore'
 
 export class MXGraph {
 	userID: string
@@ -77,6 +78,6 @@ export class MXGraph {
 	}
 
 	toggleFavorite = () => {
-		userStore.setUserFavorite(this.userID, !this.favorite)
+		persistentStore.setUserFavorite(this.userID, !this.favorite)
 	}
 }

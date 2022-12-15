@@ -10,7 +10,7 @@ import { InteractionManager } from 'react-native'
 import { loginStore } from 'store/LoginStore'
 import { fetchLocalEntries, sendEntries } from './entries'
 import { reset, resetToMyGraph } from 'navigation'
-import { settingsStore } from 'store/SettingsStore'
+import { persistentStore } from 'store/PersistentStore'
 import { profileStore } from 'store/ProfileStore'
 
 // TODO: think about offline mode
@@ -24,7 +24,7 @@ export const initApp = async () => {
 		await Promise.all([
 			userStore.loadFromDisk(),
 			profileStore.loadFromDisk(),
-			settingsStore.loadFromDisk(),
+			persistentStore.loadFromDisk(),
 		])
 		store.setInited()
 	} catch (e) {

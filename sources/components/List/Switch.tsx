@@ -9,16 +9,18 @@ import { store } from 'store'
 export const Switch: FC<{
 	title: string
 	value: boolean
-	setValue: (value: boolean) => void
-}> = observer(({ title, value, setValue }) => {
+	onValueChange: (value: boolean) => void
+}> = observer(({ title, value, onValueChange }) => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>{title}</Text>
 			<Spacer flex={1} />
-			<RNSwitch value={value} onValueChange={setValue} />
+			<RNSwitch {...{ value, onValueChange, trackColor }} />
 		</View>
 	)
 })
+
+const trackColor = { true: '#FF9206' }
 
 const styles = createStyles({
 	container: () => ({

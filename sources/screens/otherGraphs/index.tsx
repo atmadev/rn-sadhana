@@ -11,8 +11,8 @@ import { GraphItem } from './GraphItem'
 import { FastText, Spacer } from 'components/Spacer'
 import { graphStore } from 'store/GraphStore'
 import { navigate } from 'navigation'
-import { userStore } from 'store/UserStore'
 import { globalStyles } from 'globalStyles'
+import { persistentStore } from 'store/PersistentStore'
 
 export const OtherGraphsScreen = createScreen(
 	'OtherGraphs',
@@ -24,7 +24,7 @@ export const OtherGraphsScreen = createScreen(
 		return (
 			<View style={gloablStyles.flex1}>
 				{otherGraphsStore.showFavorites ? (
-					userStore.favoriteIDs.size > 0 ? (
+					persistentStore.favoriteIDs.size > 0 ? (
 						<FlashList data={graphStore.favorites} estimatedItemSize={88} renderItem={renderItem} />
 					) : (
 						<Text style={globalStyles.emptyListDummyText}>

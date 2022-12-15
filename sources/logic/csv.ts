@@ -1,5 +1,5 @@
 import { graphStore } from 'store/GraphStore'
-import { settingsStore } from 'store/SettingsStore'
+import { persistentStore } from 'store/PersistentStore'
 import { userStore } from 'store/UserStore'
 import * as Sharing from 'expo-sharing'
 import * as FileSystem from 'expo-file-system'
@@ -18,7 +18,7 @@ export const shareCSV = async (months: string[]) => {
 			// | create string
 			csv += capitalize(formatLocal(month, 'LLLL yyyy'))
 			const { wakeUpEnabled, serviceEnabled, yogaEnabled, lectionsEnabled, bedEnabled } =
-				settingsStore
+				persistentStore
 
 			// | add header (based on ther user options)
 			if (wakeUpEnabled) csv += ',☀️'

@@ -1,7 +1,14 @@
 import { Device } from 'const'
 import { makeAutoObservable } from 'mobx'
 import { createRef } from 'react'
-import { Animated, NativeScrollEvent, NativeSyntheticEvent, Easing, FlatList } from 'react-native'
+import {
+	Animated,
+	NativeScrollEvent,
+	NativeSyntheticEvent,
+	Easing,
+	FlatList,
+	Keyboard,
+} from 'react-native'
 import { YMD } from 'types'
 import { calendarStore } from './CalendarStore'
 import { graphStore } from './GraphStore'
@@ -55,7 +62,14 @@ class GraphEditingStore {
 	})
 
 	onScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+		const prevIndex = this.index
 		this.setIndex(event.nativeEvent.contentOffset.x / Device.width)
+		if (prevIndex !== this.index) Keyboard.dismiss()
+	}
+
+	clear = () => {
+		this.index = 0
+		this.scrollX.setValue(0)
 	}
 }
 

@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { db } from 'services/localDB'
 import { User } from 'types'
 
-class SettingsStore {
+class PersistentStore {
 	constructor() {
 		makeAutoObservable(this)
 	}
@@ -43,22 +43,32 @@ class SettingsStore {
 		db.setLocal('readingInMinutes', _)
 	}
 
+	keyboardAutoFocusEnabled = true
+	setKeyboardAutoFocusEnabled = (_: boolean) => {
+		this.keyboardAutoFocusEnabled = _
+		db.setLocal('keyboardAutoFocus', _)
+	}
+
+	favoriteIDs = new Set<string>()
+	setUserFavorite = async (userID: string, favorite: boolean) => {
+		if (favorite) this.favoriteIDs.add(userID)
+		else this.favoriteIDs.delete(userID)
+
+		db.setLocal('favorites', Array.from(this.favoriteIDs))
+	}
+
 	loadFromDisk = async () => {
-		const props = await db.getLocals(
-			'wakeUpEnabled',
-			'serviceEnabled',
-			'yogaEnabled',
-			'lectionsEnabled',
-			'bedEnabled',
-			'readingInMinutes',
-		)
+		const local = await db.fetchLocalStore()
 
 		runInAction(() => {
-			this.wakeUpEnabled = props.wakeUpEnabled ?? true
-			this.serviceEnabled = props.serviceEnabled ?? true
-			this.yogaEnabled = props.yogaEnabled ?? true
-			this.lectionsEnabled = props.lectionsEnabled ?? true
-			this.bedEnabled = props.bedEnabled ?? true
+			this.wakeUpEnabled = local.wakeUpEnabled ?? true
+			this.serviceEnabled = local.serviceEnabled ?? true
+			this.yogaEnabled = local.yogaEnabled ?? true
+			this.lectionsEnabled = local.lectionsEnabled ?? true
+			this.bedEnabled = local.bedEnabled ?? true
+			this.readingInMinutes = local.readingInMinutes ?? false
+			this.keyboardAutoFocusEnabled = local.keyboardAutoFocus ?? true
+			if (local.favorites) this.favoriteIDs = new Set(this.favoriteIDs)
 		})
 	}
 
@@ -71,4 +81,4 @@ class SettingsStore {
 	}
 }
 
-export const settingsStore = new SettingsStore()
+export const persistentStore = new PersistentStore()
