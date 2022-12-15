@@ -88,7 +88,6 @@ export const updateProfile = async (data: Shaped<typeof Profile>) => {
 			shape: { Profile },
 			data,
 		})
-		// console.log('result', result)
 		return result
 	} catch (e) {
 		console.log('load userProfile error', e)

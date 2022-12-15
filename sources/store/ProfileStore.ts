@@ -21,6 +21,11 @@ class ProfileStore {
 		this.myID = me.userid
 	}
 
+	updateMe = (me: Partial<Profile>) => {
+		if (!this.me) return
+		this.setProfile({ ...this.me, ...me })
+	}
+
 	setProfile = (profile: Profile) => {
 		this.map.set(profile.userid, profile)
 		db.insertProfile(profile)

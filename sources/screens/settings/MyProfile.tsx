@@ -6,6 +6,7 @@ import { profileStore } from 'store/ProfileStore'
 import { useFocusEffect } from '@react-navigation/native'
 import { updateProfile } from 'services/network/vs'
 import { openURL } from 'expo-linking'
+import { userStore } from 'store/UserStore'
 
 export const MyProfileSettingsScreen = createScreen(
 	'MyProfileSettings',
@@ -27,11 +28,21 @@ export const MyProfileSettingsScreen = createScreen(
 			() => () => {
 				if (!profile) return
 
-				updateProfile({
+				const update = {
 					userid: profile.userid,
 					spiritual_name: localStore.spiritual_name,
 					first_name: localStore.first_name,
 					last_name: localStore.last_name,
+				}
+
+				updateProfile(update).then(() => {
+					profileStore.updateMe(update)
+					userStore.updateMe({
+						user_name:
+							localStore.spiritual_name.length > 0
+								? localStore.spiritual_name
+								: localStore.first_name + ' ' + localStore.last_name,
+					})
 				})
 			},
 			[localStore],

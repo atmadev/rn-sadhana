@@ -37,6 +37,11 @@ class UserStore {
 		this.myID = me.userid
 	}
 
+	updateMe = (me: Partial<User>) => {
+		if (!this.me) return
+		this.setMe({ ...this.me, ...me })
+	}
+
 	setUser = (user: User) => {
 		this.map.set(user.userid, user)
 		db.insertUsers(user)

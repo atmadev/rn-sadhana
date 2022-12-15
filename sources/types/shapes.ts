@@ -49,9 +49,6 @@ export const EntryInputFields = shape({
 	opt_lections: string,
 })
 
-// TODO: remove primary key from ID. It should be pair userId - date.
-// BC some entries will be unsynchonized, without id, but we still need to store it in the local DB
-
 export const Entry = shape({
 	id: string,
 	created_at: r(string),
