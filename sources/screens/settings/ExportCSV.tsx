@@ -11,6 +11,8 @@ import { FastText, Spacer } from 'components/Spacer'
 import { GRAY, GRAY_SYSTEM, GRAY_ULTRALIGHT, ORANGE } from 'const/Colors'
 import { Device } from 'const'
 import { shareCSV } from 'logic/csv'
+import { formatLocal } from 'utils'
+import { capitalize } from 'lodash'
 
 export const ExportCSVScreen = createScreen(
 	'ExportCSV',
@@ -30,7 +32,6 @@ export const ExportCSVScreen = createScreen(
 
 		const done = useCallback(() => {
 			setSelectedMonths((selected) => {
-				// TODO: call generate CSV function
 				shareCSV(selected)
 				return selected
 			})
@@ -63,7 +64,7 @@ export const ExportCSVScreen = createScreen(
 						<Button title="Cancel" onPress={goBack} color={ORANGE} />
 					</View>
 				</View>
-				<Spacer height={Device.safeBottomInset} />
+				<Spacer height={Device.safeBottomInset === 0 ? 12 : Device.safeBottomInset} />
 			</View>
 		)
 	}),
@@ -101,7 +102,7 @@ const MonthItem: FC<{
 					fontWeight={selected ? 'bold' : today ? 'normal' : '200'}
 					fontSize={16}
 				>
-					{month}
+					{capitalize(formatLocal(month, 'LLLL'))}
 				</FastText>
 			</Spacer>
 		</TouchableHighlight>

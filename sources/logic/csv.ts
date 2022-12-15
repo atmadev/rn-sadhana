@@ -3,6 +3,8 @@ import { settingsStore } from 'store/SettingsStore'
 import { userStore } from 'store/UserStore'
 import * as Sharing from 'expo-sharing'
 import * as FileSystem from 'expo-file-system'
+import { capitalize } from 'lodash'
+import { formatLocal } from 'utils'
 
 export const shareCSV = async (months: string[]) => {
 	if (!userStore.me) return
@@ -14,7 +16,7 @@ export const shareCSV = async (months: string[]) => {
 		.forEach((month) => {
 			// | month
 			// | create string
-			csv += month
+			csv += capitalize(formatLocal(month, 'LLLL yyyy'))
 			const { wakeUpEnabled, serviceEnabled, yogaEnabled, lectionsEnabled, bedEnabled } =
 				settingsStore
 
